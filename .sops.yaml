@@ -1,0 +1,8 @@
+creation_rules:
+- path_regex: secrets/.*
+  key_groups:
+  - pgp:
+    - A784DBF88D718B5FA46CF254040BD409F274BE67
+    age:
+    # libvirtd
+    - age1uh8e63xdhdyhs7vtvp626x0c6lxrec7al35q0yjljql73en2c90q66hwas
