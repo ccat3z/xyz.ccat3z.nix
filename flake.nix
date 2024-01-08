@@ -7,20 +7,27 @@
   };
 
   outputs = { self, nixpkgs, sops-nix, ... }@inputs: {
-    nixosConfigurations = rec {
-      base = {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit sops-nix;
-        };
-        modules = [
-          ./modules
-          ./secrets
-        ];
+    nixosConfigurationsBase = {
+      system = "x86_64-linux";
+      specialArgs = {
+        inherit sops-nix;
       };
-      libvirtd = nixpkgs.lib.nixosSystem (base // {
-        modules = base.modules ++ [ ./hosts/libvirtd.nix ];
-      });
+      modules = [
+        ./modules
+        ./secrets
+      ];
     };
+    nixosConfigurations = (
+      let
+        inherit (nixpkgs) lib;
+        inherit (builtins) listToAttrs attrNames readDir;
+        base = self.nixosConfigurationsBase;
+      in listToAttrs (map (x: {
+          name = lib.strings.removeSuffix ".nix" x;
+          value = nixpkgs.lib.nixosSystem (base // {
+              modules = base.modules ++ [(./hosts + ("/" + x))];
+          });
+      }) (attrNames (readDir ./hosts)))
+    );
   };
 }
