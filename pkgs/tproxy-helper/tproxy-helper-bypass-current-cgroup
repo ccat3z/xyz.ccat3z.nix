@@ -1,0 +1,45 @@
+#! /usr/bin/env bash
+
+set -e
+
+BYPASS_MARK=0xff
+
+if [ "$UID" -ne 0 ]; then
+    echo "Exec as root..." >&2
+    exec sudo "$0" "$@"
+fi
+
+usage () {
+    echo "$0 [-h] [--help] [clean]" >&2
+}
+
+add_rule () {
+    CGROUP=$(cat /proc/$$/cgroup | sed 's|^[^:]*:[^:]*:/||')
+    CGROUP_PATHS=${CGROUP//[!\/]}
+    CGROUP_LEVEL=$((${#CGROUP_PATHS}+1))
+
+    echo "Add nft rule for cgroup: $CGROUP" >&2
+    nft -f - <<EOF
+table inet proxy_skip
+table inet proxy_skip {
+  chain prerouting {
+    type route hook output priority mangle - 1
+    policy accept
+    socket cgroupv2 level $CGROUP_LEVEL "$CGROUP" meta mark set ${BYPASS_MARK}
+  }
+}
+EOF
+}
+
+clean_rules () {
+    echo "Clean outdate rules..." >&2
+    nft -a list chain inet proxy_skip prerouting | sed -nE 's/^\s*socket cgroupv2 level [0-9]* [0-9]* .* # handle ([0-9]*)$/delete rule inet proxy_skip prerouting handle \1/p' | nft -f -
+}
+
+case "$1" in
+    -h|--help) usage; exit 0;;
+    clean) clean_rules;;
+    '') add_rule;;
+    *) usage; exit 1;;
+esac
+

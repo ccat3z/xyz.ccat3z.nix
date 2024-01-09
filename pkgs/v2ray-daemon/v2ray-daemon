@@ -1,0 +1,60 @@
+#! /usr/bin/env bash
+
+set -eu
+
+export PATH="@path@:$PATH"
+SOPS_ENC_V2RAY_CONFIG="@sops_enc_v2ray_config@"
+
+V2RAY_DAEMON_WORKDIR="$XDG_RUNTIME_DIR/v2ray-daemon"
+V2RAY_DAEMON_LOCK="$V2RAY_DAEMON_WORKDIR/lock"
+V2RAY_DAEMON_LOG="$V2RAY_DAEMON_WORKDIR/log"
+
+up () {
+  mkdir -p "$V2RAY_DAEMON_WORKDIR"
+  cd "$V2RAY_DAEMON_WORKDIR"
+
+  sops -d "$SOPS_ENC_V2RAY_CONFIG" > v2ray.yaml
+  flock -n -E 255 "$V2RAY_DAEMON_LOCK" \
+    sudo -E capsh \
+    --caps="cap_setpcap,cap_setuid,cap_setgid+ep cap_net_bind_service,cap_net_admin+eip" \
+    --keep=1 \
+    --user="$USER" \
+    --addamb="cap_net_bind_service,cap_net_admin" \
+    -- \
+    -c "nohup v2ray run -config v2ray.yaml &> $V2RAY_DAEMON_LOG &" || {
+    if [ "$?" = 255 ]; then
+      echo "Service is already running." >&2
+      exit 2
+    else
+      echo "Service failed to start." >&2
+      exit 1
+    fi
+  }
+}
+
+down () {
+  [ -f "$V2RAY_DAEMON_LOCK" ] || return 0
+  
+  pids=$(lsof -t "$V2RAY_DAEMON_LOCK")
+  [ -n "$pids" ] || return 0
+
+  echo "killing $pids" >&2
+  kill $pids
+  flock -w 5 "$V2RAY_DAEMON_LOCK" true || {
+    echo "Failed to wait service stop."
+    exit 1
+  }
+}
+
+log () {
+  tail "$@" "$V2RAY_DAEMON_LOG"
+}
+
+case $1 in
+  up|down|log)
+    action="$1"
+    shift
+    $action "$@"
+  ;;
+  *) echo "$0 [up|down|log]";;
+esac

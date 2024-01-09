@@ -15,6 +15,7 @@
       modules = [
         ./modules
         ./secrets
+        ({ nixpkgs.overlays = [ self.overlays.default ]; })
       ];
     };
     nixosConfigurations = (
@@ -34,5 +35,24 @@
     );
 
     formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
+
+    packages.x86_64-linux = import ./pkgs { pkgs = nixpkgs.legacyPackages.x86_64-linux; };
+    overlays.default = import ./pkgs/overlay.nix;
+
+    devShells.x86_64-linux.default =
+      let
+        pkgs = import nixpkgs { system = "x86_64-linux"; overlays = [ self.overlays.default ]; };
+      in
+      pkgs.mkShell {
+        packages = with pkgs; [
+          sops
+          gnupg
+        ];
+
+        shellHook = ''
+          echo -e '\033[34mIn dev shell\033[0m' >&2
+          exec $SHELL
+        '';
+      };
   };
 }

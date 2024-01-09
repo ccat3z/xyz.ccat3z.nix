@@ -1,0 +1,147 @@
+#! /usr/bin/env bash
+
+set -e
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 
+   exit 1
+fi
+
+PROXY_MARK=0x01
+BYPASS_MARK=0xff
+IP_ROUTE_TABLE=100
+
+up () {
+down
+ip rule add fwmark ${PROXY_MARK} table ${IP_ROUTE_TABLE}
+ip route add table ${IP_ROUTE_TABLE} local default dev lo
+ip -6 rule add fwmark ${PROXY_MARK} table ${IP_ROUTE_TABLE}
+ip -6 route add table ${IP_ROUTE_TABLE} local default dev lo
+
+nft -f - <<EOF
+define tproxy_port = 12345
+define bypass_ipv4 = {
+  0.0.0.0/8,
+  10.0.0.0/8,
+  127.0.0.0/8,
+  169.254.0.0/16,
+  172.16.0.0/12,
+  192.168.0.0/16,
+  224.0.0.0/4,
+  240.0.0.0/4,
+}
+define bypass_ipv6 = {
+  ::1/128,
+  fe80::/10,
+  fc00::/7,
+  ff00::/8,
+}
+define bypass_mark = ${BYPASS_MARK}
+define proxy_mark = ${PROXY_MARK}
+
+table ip proxy
+delete table ip proxy
+table ip proxy {
+  chain proxy {
+    meta l4proto tcp tproxy to 127.0.0.1:\$tproxy_port
+    meta l4proto udp tproxy to 127.0.0.1:\$tproxy_port
+  }
+
+  chain set_proxy_mark {
+    meta mark set \$proxy_mark
+  }
+
+  chain mark_proxy_packet {
+    meta mark \$proxy_mark return     # skip marked package
+    meta mark \$bypass_mark return    # skip bypass package
+
+    tcp dport {22000,22067} return    # skip syncthing
+    udp dport {22000,22067} return    # skip syncthing
+    ip daddr 127.0.0.0/8 return       # skip lo
+    ip saddr 10.42.0.0/24 return      # skip traffic from local lan
+
+    # mark dns package
+    tcp dport 53 jump set_proxy_mark
+    udp dport 53 jump set_proxy_mark
+
+    ip daddr 10.74.0.0/16 jump set_proxy_mark # fake ip
+    ip daddr 10.24.4.82/32 jump set_proxy_mark # ecnu ucloud
+    ip daddr \$bypass_ipv4 return  # skip bypass list
+    jump set_proxy_mark  # mark other package
+  }
+
+  chain output {
+    type route hook output priority mangle
+    policy accept
+    jump mark_proxy_packet
+  }
+
+  chain prerouting {
+    type filter hook prerouting priority mangle
+    policy accept
+    jump mark_proxy_packet
+    meta mark \$proxy_mark goto proxy
+  }
+}
+
+table ip6 proxy
+delete table ip6 proxy
+table ip6 proxy {
+  chain proxy {
+    meta l4proto tcp tproxy to ::1:\$tproxy_port
+    meta l4proto udp tproxy to ::1:\$tproxy_port
+  }
+
+  chain set_proxy_mark {
+    meta mark set \$proxy_mark
+  }
+
+  chain mark_proxy_packet {
+    meta mark \$proxy_mark return     # skip marked package
+    meta mark \$bypass_mark return    # skip bypass package
+
+    # mark dns package
+    tcp dport 53 jump set_proxy_mark
+    udp dport 53 jump set_proxy_mark
+
+    ip6 daddr fc00:0074::/112 jump set_proxy_mark # fake ip
+    ip6 daddr \$bypass_ipv6 return  # skip bypass list
+    jump set_proxy_mark  # mark other package
+  }
+
+  chain output {
+    type route hook output priority mangle
+    policy accept
+    jump mark_proxy_packet
+  }
+
+  chain prerouting {
+    type filter hook prerouting priority mangle
+    policy accept
+    jump mark_proxy_packet
+    meta mark \$proxy_mark goto proxy
+  }
+}
+EOF
+}
+
+down () {
+ip route del default dev lo table ${IP_ROUTE_TABLE} || true
+ip rule del fwmark ${PROXY_MARK} table ${IP_ROUTE_TABLE} || true
+ip -6 route del local default dev lo table ${IP_ROUTE_TABLE} || true
+ip -6 rule del fwmark ${PROXY_MARK} table ${IP_ROUTE_TABLE} || true
+
+nft -f - <<EOF
+table ip proxy
+delete table ip proxy
+table ip6 proxy
+delete table ip6 proxy
+EOF
+}
+
+echo "$0 $1"
+case $1 in
+    "up") up;;
+    "down") down;;
+    *) echo "$0 [up|down]";;
+esac

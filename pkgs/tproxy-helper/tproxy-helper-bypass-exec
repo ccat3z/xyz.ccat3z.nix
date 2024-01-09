@@ -1,0 +1,5 @@
+#! /usr/bin/env sh
+
+set -x
+trap "tproxy-helper-bypass-current-cgroup clean" EXIT
+systemd-run --user --scope --expand-environment=no bash -c 'set -x; tproxy-helper-bypass-current-cgroup && exec "$@"' -- "$@"
