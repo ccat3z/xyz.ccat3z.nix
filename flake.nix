@@ -22,12 +22,17 @@
         inherit (nixpkgs) lib;
         inherit (builtins) listToAttrs attrNames readDir;
         base = self.nixosConfigurationsBase;
-      in listToAttrs (map (x: {
+      in
+      listToAttrs (map
+        (x: {
           name = lib.strings.removeSuffix ".nix" x;
           value = nixpkgs.lib.nixosSystem (base // {
-              modules = base.modules ++ [(./hosts + ("/" + x))];
+            modules = base.modules ++ [ (./hosts + ("/" + x)) ];
           });
-      }) (attrNames (readDir ./hosts)))
+        })
+        (attrNames (readDir ./hosts)))
     );
+
+    formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
   };
 }

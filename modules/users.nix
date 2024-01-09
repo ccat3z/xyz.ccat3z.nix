@@ -7,22 +7,22 @@
     ccat3z = {
       isNormalUser = true;
       group = "users";
-      extraGroups = ["wheel"];
+      extraGroups = [ "wheel" ];
       packages = with pkgs; [
         chezmoi
         oh-my-zsh
         gcc13
         neovim
         (vim-full.customize (with vimPlugins; {
-           vimrcConfig.packages.myVimPackage = {
-             start = [ vim-plug ];
-             opt = [];
-           };
+          vimrcConfig.packages.myVimPackage = {
+            start = [ vim-plug ];
+            opt = [ ];
+          };
 
-           vimrcConfig.customRC = ''
-             source ${vim-plug}/plug.vim
-             source ~/.vimrc
-           '';
+          vimrcConfig.customRC = ''
+            source ${vim-plug}/plug.vim
+            source ~/.vimrc
+          '';
         }))
         (python3.withPackages (ps: with ps; [
           pynvim
