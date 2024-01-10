@@ -6,6 +6,19 @@
     sops-nix.url = "github:Mic92/sops-nix";
   };
 
+  nixConfig = {
+    # override the default substituters
+    substituters = [
+      # cache mirror located in China
+      # status: https://mirror.sjtu.edu.cn/
+      "https://mirror.sjtu.edu.cn/nix-channels/store"
+      # status: https://mirrors.ustc.edu.cn/status/
+      # "https://mirrors.ustc.edu.cn/nix-channels/store"
+
+      "https://cache.nixos.org"
+    ];
+  };
+
   outputs = { self, nixpkgs, sops-nix, ... }@inputs:
     let
       system = "x86_64-linux";
