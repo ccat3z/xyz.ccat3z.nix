@@ -1,10 +1,10 @@
-{ lib, stdenvNoCC, bash, nftables, makeWrapper, ... }:
-stdenvNoCC.mkDerivation {
+{ lib, stdenvNoCC, bash, nftables, iproute2, libcap, makeWrapper, ... }:
+stdenvNoCC.mkDerivation rec {
   name = "tproxy-helper";
   src = ./.;
 
   nativeBuildInputs = [ makeWrapper ];
-  buildInputs = [ bash nftables ];
+  buildInputs = [ bash nftables iproute2 libcap ];
 
   installPhase = ''
     mkdir -p $out/bin
@@ -12,7 +12,7 @@ stdenvNoCC.mkDerivation {
       cmd_name="$(basename "$cmd")"
       cp "$cmd" "$out/bin/$cmd_name"
       wrapProgram "$out/bin/$cmd_name" \
-        --prefix PATH : ${lib.makeBinPath [ nftables ]}:$out/bin
+        --prefix PATH : ${lib.makeBinPath buildInputs}:$out/bin
     done
   '';
 

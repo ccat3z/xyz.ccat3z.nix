@@ -2,7 +2,12 @@
 
 set -e
 
-if [[ $EUID -ne 0 ]]; then
+has_cap_amb () {
+  _cap="$(cat /proc/$$/status | sed -n "s/^CapAmb:\s*//p" )"
+  capsh --decode="$_cap" | grep "$1" &> /dev/null
+}
+
+if [ $EUID -ne 0 ] && ! has_cap_amb cap_net_admin ; then
    echo "This script must be run as root" 
    exit 1
 fi
