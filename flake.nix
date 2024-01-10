@@ -75,6 +75,7 @@
           packages = with pkgs; [
             sops
             gnupg
+            age
           ];
 
           shellHook = ''
