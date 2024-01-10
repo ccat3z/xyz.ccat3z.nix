@@ -16,7 +16,7 @@ in
 
     systemd.packages = with pkgs; [ v2ray ];
     systemd.services.v2ray = {
-      wantedBy = if config.services.proxy.enable then [ "multi-user.target" ] else [];
+      wantedBy = if config.services.proxy.enable then [ "multi-user.target" ] else [ ];
       preStart = "${lib.getExe tproxy-helper} up";
       preStop = "${lib.getExe tproxy-helper} down";
       serviceConfig = {

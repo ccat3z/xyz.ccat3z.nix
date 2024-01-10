@@ -1,4 +1,8 @@
-{ sops-nix, ... }:
+{ lib, config, sops-nix, ... }:
+let
+  encNebulaConfig = ./nebula/${config.networking.hostName}.yaml.enc;
+  enableNebula = builtins.pathExists encNebulaConfig;
+in
 {
   imports = [
     sops-nix.nixosModules.sops
@@ -12,6 +16,15 @@
         sopsFile = ./v2ray.yaml.enc;
         format = "binary";
         mode = "0444";
+      };
+      "nebula.yaml" = lib.mkIf enableNebula {
+        sopsFile = encNebulaConfig;
+        format = "binary";
+        mode = "0444";
+      };
+      "nebula/ssh_host_key" = lib.mkIf enableNebula {
+        mode = "0444";
+        path = "/etc/nebula/ssh_host_ed25519_key";
       };
     };
   };
