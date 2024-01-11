@@ -4,6 +4,7 @@
   programs.zsh.ohMyZsh.enable = true;
   users.mutableUsers = false;
   users.users = {
+    root.hashedPasswordFile = config.sops.secrets."users/password".path;
     ccat3z = {
       isNormalUser = true;
       group = "users";
@@ -28,6 +29,19 @@
           pynvim
         ]))
         cmake
+
+        # graphical
+        firefox
+        gnome.gnome-tweaks
+        papirus-icon-theme
+        gnomeExtensions.user-themes
+        gnomeExtensions.ddterm
+
+        vscode.fhs
+        remmina
+        gnome.gnome-terminal
+        dconf
+        moonlight-qt
       ];
       hashedPasswordFile = config.sops.secrets."users/password".path;
       openssh.authorizedKeys.keys = [
