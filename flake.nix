@@ -25,6 +25,8 @@
       pkgs = import nixpkgs { inherit system; };
     in
     {
+      inherit inputs;
+
       nixosConfigurationsBase = {
         inherit system;
         specialArgs = {
