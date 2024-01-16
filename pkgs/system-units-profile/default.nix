@@ -1,0 +1,43 @@
+{ lib, pkgs, buildEnv, v2ray, ... }:
+evalModulesArg:
+let
+  config = (lib.evalModules (
+    let
+      baseArg = evalModulesArg;
+    in
+    baseArg // {
+      modules = [
+        ./nixos.nix
+        ./systemd.nix
+      ] ++ baseArg.modules;
+      specialArgs = {
+        inherit pkgs;
+      } // baseArg.specialArgs;
+    }
+  )).config;
+
+  # Handle assertions and warnings
+  failedAssertions = with lib; map (x: x.message) (filter (x: !x.assertion) config.assertions);
+  assertWarnOr = x:
+    with lib;
+    if failedAssertions != [ ]
+    then throw "\nFailed assertions:\n${concatStringsSep "\n" (map (x: "- ${x}") failedAssertions)}"
+    else showWarnings config.warnings x;
+in
+assertWarnOr (
+  buildEnv {
+    name = "service-profile";
+    paths = [
+      v2ray
+    ];
+    pathsToLink = [ "/lib/systemd/system" ];
+    postBuild = ''
+      cp ${./activate} $out/activate
+      chmod +x $out/activate
+    '';
+
+    passthru = {
+      inherit config;
+    };
+  }
+)

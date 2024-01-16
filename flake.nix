@@ -22,32 +22,15 @@
   outputs = { self, nixpkgs, sops-nix, ... }@inputs:
     let
       system = "x86_64-linux";
+
       pkgs = import nixpkgs { inherit system; };
+      myPkgs = import ./pkgs { nixpkgs = pkgs; };
+      allPkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
 
-      nixosConfigurationsBase = {
-        inherit system;
-        specialArgs = {
-          inherit sops-nix;
-        };
-        modules = [
-          ./modules
-          ./secrets
-          ({ nixpkgs.overlays = [ self.overlays.default ]; })
-        ];
-      };
-    in
-    {
-      inherit inputs;
-
-      packages.${system} = import ./pkgs { nixpkgs = pkgs; };
-
-      overlays.default = import ./pkgs/overlay.nix;
-
-      nixosConfigurations = (
+      hostsModules =
         let
           inherit (nixpkgs) lib;
           inherit (builtins) listToAttrs attrNames readDir;
-          base = nixosConfigurationsBase;
         in
         listToAttrs (map
           (x:
@@ -56,24 +39,81 @@
             in
             {
               name = hostName;
-              value = lib.nixosSystem (base // {
-                modules = base.modules ++ [
-                  (./hosts + ("/" + x))
-                  {
-                    networking.hostName = hostName;
-                    networking.domain = "ccat3z.xyz";
-                  }
-                ];
-              });
+              value = (./hosts + ("/" + x));
             })
-          (attrNames (readDir ./hosts)))
+          (attrNames (readDir ./hosts)));
+    in
+    {
+      inherit inputs;
+
+      packages.${system} = myPkgs;
+
+      overlays.default = import ./pkgs/overlay.nix;
+
+      nixosConfigurations = (
+        let
+          inherit (nixpkgs) lib;
+          inherit (builtins) mapAttrs;
+          base = {
+            inherit system;
+            specialArgs = {
+              inherit sops-nix;
+            };
+            modules = [
+              ./modules
+              ./secrets
+              ({ nixpkgs.overlays = [ self.overlays.default ]; })
+            ];
+          };
+        in
+        mapAttrs
+          (hostName: hostModule: (
+            lib.nixosSystem (base // {
+              modules = base.modules ++ [
+                hostModule
+                {
+                  networking.hostName = hostName;
+                  networking.domain = "ccat3z.xyz";
+                }
+              ];
+            })
+          ))
+          hostsModules
       );
 
-      formatter.${system} = pkgs.nixpkgs-fmt;
+      systemUnitsProfiles =
+        let
+          inherit (nixpkgs) lib;
+          inherit (builtins) mapAttrs;
+        in
+        mapAttrs
+          (hostName: hostModule: (
+            self.packages.${system}.system-units-profile {
+              modules = [
+                {
+                  config = {
+                    networking.hostName = hostName;
+                    networking.domain = "ccat3z.xyz";
+                  };
+                }
+                ./secrets
+                ./modules/network
+                hostModule
+              ];
+              specialArgs = {
+                inherit sops-nix;
+                modulesPath = "${nixpkgs}/nixos/modules";
+                pkgs = allPkgs;
+              };
+            }
+          ))
+          hostsModules;
+
+      formatter.${system} = allPkgs.nixpkgs-fmt;
 
       devShells.${system}.default =
         let
-          pkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
+          pkgs = allPkgs;
         in
         pkgs.mkShell {
           packages = with pkgs; [
