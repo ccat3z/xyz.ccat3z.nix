@@ -1,1 +1,1 @@
-self: super: import ./. { pkgs = super; }
+self: super: import ./. { nixpkgs = super; }

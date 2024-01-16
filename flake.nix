@@ -23,9 +23,6 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-    in
-    {
-      inherit inputs;
 
       nixosConfigurationsBase = {
         inherit system;
@@ -38,11 +35,19 @@
           ({ nixpkgs.overlays = [ self.overlays.default ]; })
         ];
       };
+    in
+    {
+      inherit inputs;
+
+      packages.${system} = import ./pkgs { nixpkgs = pkgs; };
+
+      overlays.default = import ./pkgs/overlay.nix;
+
       nixosConfigurations = (
         let
           inherit (nixpkgs) lib;
           inherit (builtins) listToAttrs attrNames readDir;
-          base = self.nixosConfigurationsBase;
+          base = nixosConfigurationsBase;
         in
         listToAttrs (map
           (x:
@@ -65,9 +70,6 @@
       );
 
       formatter.${system} = pkgs.nixpkgs-fmt;
-
-      packages.${system} = import ./pkgs { inherit pkgs; };
-      overlays.default = import ./pkgs/overlay.nix;
 
       devShells.${system}.default =
         let

@@ -1,17 +1,18 @@
-{ pkgs, ... }:
+{ nixpkgs, ... }:
 let
-  lib = pkgs.lib;
+  lib = nixpkgs.lib;
   pkgsNames = with lib.attrsets; attrNames (
     filterAttrs
       (n: v: v == "directory")
       (builtins.readDir ./.)
   );
-in
-with builtins; listToAttrs (
-  builtins.map
+  callPackage = lib.callPackageWith (nixpkgs // pkgs // { super = nixpkgs; });
+  pkgs = with builtins; listToAttrs (map
     (n: {
       name = n;
-      value = pkgs.callPackage ./${n} { };
+      value = callPackage ./${n} { };
     })
     pkgsNames
-)
+  );
+in
+pkgs
