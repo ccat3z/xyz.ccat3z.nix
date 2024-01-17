@@ -148,5 +148,11 @@ in
               ln -sfn '../${name}' $out/'${name2}.requires'/
             '') (unit.requiredBy or [])) units)}
       ''; # */
+
+    activateHooks = [
+      ''
+        echo ${config.systemd.systemUnits};
+      ''
+    ];
   };
 }

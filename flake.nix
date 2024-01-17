@@ -89,10 +89,11 @@
         in
         mapAttrs
           (hostName: hostModule: (
-            self.packages.${system}.nixsvc-profile {
+            nixpkgs.lib.evalModules {
               modules = [
                 {
                   config = {
+                    nixpkgs.hostPlatform = system;
                     networking.hostName = hostName;
                     networking.domain = "ccat3z.xyz";
                   };
@@ -100,11 +101,10 @@
                 ./secrets
                 ./modules/system-units-profile
                 hostModule
+                ({ nixpkgs.overlays = [ self.overlays.default ]; })
               ];
               specialArgs = {
-                inherit sops-nix;
-                modulesPath = "${nixpkgs}/nixos/modules";
-                pkgs = allPkgs;
+                inherit sops-nix nixpkgs;
               };
             }
           ))

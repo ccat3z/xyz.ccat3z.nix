@@ -1,9 +1,0 @@
-#! /usr/bin/env bash
-
-PROFILE=/nix/var/nix/profiles/system-units
-
-cur_profile_ins="$(realpath "$(dirname "$0")")"
-cur_units_dir="$cur_profile_ins/lib/systemd/system"
-cur_units=($(ls "$cur_units_dir"))
-
-declare -p cur_units
