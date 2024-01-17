@@ -20,6 +20,7 @@
       swapDevices = mkCompatOpt { };
       nixpkgs = mkCompatOpt { };
       environment = mkCompatOpt { };
+      hardware = mkCompatOpt { };
     };
 
   config = {

@@ -1,4 +1,4 @@
-{ lib, pkgs, buildEnv, v2ray, ... }:
+{ lib, pkgs, runCommandLocal, v2ray, ... }:
 evalModulesArg:
 let
   config = (lib.evalModules (
@@ -25,19 +25,16 @@ let
     else showWarnings config.warnings x;
 in
 assertWarnOr (
-  buildEnv {
-    name = "service-profile";
-    paths = [
-      v2ray
-    ];
-    pathsToLink = [ "/lib/systemd/system" ];
-    postBuild = ''
-      cp ${./activate} $out/activate
-      chmod +x $out/activate
-    '';
-
+  runCommandLocal "system-units-profile"
+  {
     passthru = {
       inherit config;
     };
-  }
+  } ''
+    mkdir -p "$out/etc/systemd"
+
+    cp ${./activate} $out/activate
+    chmod +x $out/activate
+    ln -s "${config.systemd.systemUnits}" "$out/etc/systemd/system"
+  ''
 )
