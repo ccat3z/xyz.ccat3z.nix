@@ -99,7 +99,7 @@
                   };
                 }
                 ./secrets
-                ./modules/system-units-profile
+                ./modules/nixsvc
                 hostModule
                 ({ nixpkgs.overlays = [ self.overlays.default ]; })
               ];
