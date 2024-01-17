@@ -3,7 +3,7 @@
   imports = [
     ./users.nix
     ./graphical.nix
-    ./network
+    ../network
   ];
 
   time.timeZone = "Asia/Shanghai";

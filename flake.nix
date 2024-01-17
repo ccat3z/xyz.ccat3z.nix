@@ -28,20 +28,21 @@
       allPkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
 
       hostsModules =
+        type:
         let
           inherit (nixpkgs) lib;
           inherit (builtins) listToAttrs attrNames readDir;
         in
         listToAttrs (map
           (x:
-            let
-              hostName = lib.strings.removeSuffix ".nix" x;
-            in
-            {
-              name = hostName;
-              value = (./hosts + ("/" + x));
-            })
-          (attrNames (readDir ./hosts)));
+          let
+            hostName = lib.strings.removeSuffix ".nix" x;
+          in
+          {
+            name = hostName;
+            value = (./hosts + "/${type}/${x}");
+          })
+          (attrNames (readDir ./hosts/${type})));
     in
     {
       inherit inputs;
@@ -60,7 +61,7 @@
               inherit sops-nix;
             };
             modules = [
-              ./modules
+              ./modules/nixos
               ./secrets
               ({ nixpkgs.overlays = [ self.overlays.default ]; })
             ];
@@ -78,17 +79,17 @@
               ];
             })
           ))
-          hostsModules
+          (hostsModules "nixos")
       );
 
-      systemUnitsProfiles =
+      nixsvcProfiles =
         let
           inherit (nixpkgs) lib;
           inherit (builtins) mapAttrs;
         in
         mapAttrs
           (hostName: hostModule: (
-            self.packages.${system}.system-units-profile {
+            self.packages.${system}.nixsvc-profile {
               modules = [
                 {
                   config = {
@@ -97,7 +98,7 @@
                   };
                 }
                 ./secrets
-                ./modules/network
+                ./modules/system-units-profile
                 hostModule
               ];
               specialArgs = {
@@ -107,7 +108,7 @@
               };
             }
           ))
-          hostsModules;
+          (hostsModules "nixsvc");
 
       formatter.${system} = allPkgs.nixpkgs-fmt;
 

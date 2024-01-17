@@ -25,7 +25,7 @@ let
     else showWarnings config.warnings x;
 in
 assertWarnOr (
-  runCommandLocal "system-units-profile"
+  runCommandLocal "nixsvc-profile"
   {
     passthru = {
       inherit config;

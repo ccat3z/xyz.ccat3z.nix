@@ -1,4 +1,4 @@
-{ lib, stdenvNoCC, bash, nftables, iproute2, libcap, makeWrapper, ... }:
+{ lib, stdenvNoCC, bash, nftables, iproute2, libcap, makeWrapper, useSystemWideTools ? false, ... }:
 stdenvNoCC.mkDerivation rec {
   name = "tproxy-helper";
   src = ./.;
@@ -11,8 +11,10 @@ stdenvNoCC.mkDerivation rec {
     for cmd in $src/tproxy-helper*; do
       cmd_name="$(basename "$cmd")"
       cp "$cmd" "$out/bin/$cmd_name"
-      wrapProgram "$out/bin/$cmd_name" \
-        --prefix PATH : ${lib.makeBinPath buildInputs}:$out/bin
+      ${ if useSystemWideTools then "" else ''
+        wrapProgram "$out/bin/$cmd_name" \
+          --prefix PATH : ${lib.makeBinPath buildInputs}:$out/bin
+      '' }
     done
   '';
 
