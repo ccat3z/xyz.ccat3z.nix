@@ -149,10 +149,23 @@ in
             '') (unit.requiredBy or [])) units)}
       ''; # */
 
-    nixsvc.activateHooks = [
-      ''
-        echo ${config.systemd.systemUnits};
-      ''
-    ];
+    nixsvc.activateHooks = {
+      linkUnits = ''
+        # Link units
+        echo ${config.systemd.systemUnits}
+      '';
+
+      startUnits = lib.packEntry [ "linkUnits" ];
+
+      restartChangedUnits = lib.stringAfter [ "startUnits" ]
+        ''
+          # Restart changed units
+        '';
+
+      startNewUnits = lib.stringAfter [ "startUnits" ]
+        ''
+          # Start new units
+        '';
+    };
   };
 }

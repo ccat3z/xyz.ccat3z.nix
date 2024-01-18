@@ -1,4 +1,4 @@
-{ lib, config, sops-nix, ... }:
+{ lib, config, pkgs, sops-nix, ... }:
 let
   encNebulaConfig = ./nebula/${config.networking.hostName}.yaml.enc;
   enableNebula = builtins.pathExists encNebulaConfig;
@@ -35,5 +35,26 @@ in
     };
 
     gnupg.sshKeyPaths = [ ];
+  };
+
+  nixsvc.activateHooks = let
+    cfg = config.sops;
+  in
+  {
+    generateAgeKey = with lib; mkIf (cfg.age.generateKey) (stringAfter [] ''
+      if [[ ! -f '${cfg.age.keyFile}' ]]; then
+        echo generating machine-specific age key...
+        mkdir -p $(dirname ${cfg.age.keyFile})
+        # age-keygen sets 0600 by default, no need to chmod.
+        ${pkgs.age}/bin/age-keygen -o ${cfg.age.keyFile}
+      fi
+    '');
+
+    setupSecrets = lib.stringAfter [ "generateAgeKey" ] ''
+      # Setup secrets
+      echo ${config.system.build.sops-nix-manifest}
+    '';
+
+    startUnits.deps = [ "setupSecrets" ];
   };
 }

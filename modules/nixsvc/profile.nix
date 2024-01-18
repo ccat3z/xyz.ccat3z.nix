@@ -11,7 +11,7 @@
   config.topLevel =
     let
       inherit (pkgs) writeTextFile;
-      inherit (lib) mkOption types;
+      inherit (lib) mkOption types mapAttrs;
 
       # Handle assertions and warnings
       failedAssertions = with lib; map (x: x.message) (filter (x: !x.assertion) config.assertions);
@@ -20,6 +20,8 @@
         if failedAssertions != [ ]
         then throw "\nFailed assertions:\n${concatStringsSep "\n" (map (x: "- ${x}") failedAssertions)}"
         else showWarnings config.warnings x;
+
+      activateHooks = mapAttrs (name: hook: if builtins.isString hook then (lib.noDepEntry hook) else hook) config.nixsvc.activateHooks;
     in
     assertWarnOr (
       (writeTextFile {
@@ -27,7 +29,7 @@
         text = with lib; ''
           #! /usr/bin/env bash
 
-          ${concatStrings config.nixsvc.activateHooks}
+          ${textClosureMap id activateHooks (builtins.attrNames activateHooks)}
         '';
         executable = true;
         destination = "/activate";
