@@ -17,17 +17,12 @@ in
         type = lib.types.str;
         default = "v2ray.yaml";
       };
-      tproxyPackage = lib.mkOption {
-        type = lib.types.package;
-        default = pkgs.tproxy-helper;
-      };
     };
   };
 
   config =
     let
       cfg = config.services.proxy;
-      tproxy-helper = cfg.tproxyPackage;
     in
     lib.mkIf cfg.enable
       {
@@ -37,8 +32,8 @@ in
         systemd.services.v2ray =
           {
             wantedBy = [ "multi-user.target" ];
-            preStart = lib.mkIf cfg.tproxy "${lib.getExe tproxy-helper} up";
-            preStop = lib.mkIf cfg.tproxy "${lib.getExe tproxy-helper} down";
+            preStart = lib.mkIf cfg.tproxy "${lib.getExe pkgs.tproxy-helper} up";
+            preStop = lib.mkIf cfg.tproxy "${lib.getExe pkgs.tproxy-helper} down";
             serviceConfig = {
               # https://github.com/NixOS/nixpkgs/issues/63703#issuecomment-504836857
               ExecStart = [
