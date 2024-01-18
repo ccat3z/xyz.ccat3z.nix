@@ -4,6 +4,7 @@
     ./users.nix
     ./graphical.nix
     ../network
+    ../nixsvc/options.nix
   ];
 
   time.timeZone = "Asia/Shanghai";

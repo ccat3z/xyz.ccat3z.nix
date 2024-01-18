@@ -1,21 +1,11 @@
 { lib, ... }:
 {
   imports = [
+    ./options.nix
     ./compat.nix
     ./systemd.nix
     ./profile.nix
     ../network/nebula.nix
     ../network/proxy.nix
   ];
-
-  options =
-    let
-      inherit (lib) mkOption types;
-    in
-    {
-      nixsvc.activateHooks = mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-      };
-    };
 }
