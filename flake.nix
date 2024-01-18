@@ -56,7 +56,6 @@
           inherit (nixpkgs) lib;
           inherit (builtins) mapAttrs;
           base = {
-            inherit system;
             specialArgs = {
               inherit sops-nix;
             };
@@ -93,7 +92,6 @@
               modules = [
                 {
                   config = {
-                    nixpkgs.hostPlatform = system;
                     networking.hostName = hostName;
                     networking.domain = "ccat3z.xyz";
                   };
