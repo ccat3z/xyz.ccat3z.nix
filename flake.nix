@@ -21,11 +21,8 @@
 
   outputs = { self, nixpkgs, sops-nix, ... }@inputs:
     let
-      system = "x86_64-linux";
-
-      pkgs = import nixpkgs { inherit system; };
-      myPkgs = import ./pkgs { nixpkgs = pkgs; };
-      allPkgs = import nixpkgs { inherit system; overlays = [ self.overlays.default ]; };
+      systems = [ "x86_64-linux" ];
+      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
       hostsModules =
         type:
@@ -47,7 +44,7 @@
     {
       inherit inputs;
 
-      packages.${system} = myPkgs;
+      packages = forAllSystems (sys: import ./pkgs { nixpkgs = nixpkgs.legacyPackages.${sys}; });
 
       overlays.default = import ./pkgs/overlay.nix;
 
@@ -108,23 +105,27 @@
           ))
           (hostsModules "nixsvc");
 
-      formatter.${system} = allPkgs.nixpkgs-fmt;
+      formatter = forAllSystems (sys: nixpkgs.legacyPackages.${sys}.nixpkgs-fmt);
 
-      devShells.${system}.default =
+      devShells = forAllSystems (
+        sys:
         let
-          pkgs = allPkgs;
+          pkgs = nixpkgs.legacyPackages.${sys};
         in
-        pkgs.mkShell {
-          packages = with pkgs; [
-            sops
-            gnupg
-            age
-          ];
+        {
+          default = pkgs.mkShell {
+            packages = with pkgs; [
+              sops
+              gnupg
+              age
+            ];
 
-          shellHook = ''
-            echo -e '\033[34mIn dev shell\033[0m' >&2
-            exec $SHELL
-          '';
-        };
+            shellHook = ''
+              echo -e '\033[34mIn dev shell\033[0m' >&2
+              exec $SHELL
+            '';
+          };
+        }
+      );
     };
 }
