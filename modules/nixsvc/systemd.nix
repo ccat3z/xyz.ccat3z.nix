@@ -149,7 +149,7 @@ in
             '') (unit.requiredBy or [])) units)}
       ''; # */
 
-    activateHooks = [
+    nixsvc.activateHooks = [
       ''
         echo ${config.systemd.systemUnits};
       ''

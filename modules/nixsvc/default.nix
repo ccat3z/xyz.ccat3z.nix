@@ -13,7 +13,7 @@
       inherit (lib) mkOption types;
     in
     {
-      activateHooks = mkOption {
+      nixsvc.activateHooks = mkOption {
         type = types.listOf types.str;
         default = [ ];
       };

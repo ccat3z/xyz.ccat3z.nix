@@ -27,7 +27,7 @@
         text = with lib; ''
           #! /usr/bin/env bash
 
-          ${concatStrings config.activateHooks}
+          ${concatStrings config.nixsvc.activateHooks}
         '';
         executable = true;
         destination = "/activate";
