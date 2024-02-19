@@ -10,6 +10,14 @@
     adw-gtk3
     papirus-icon-theme
     qogir-icon-theme
+    (graphite-gtk-theme.overrideAttrs ({
+      src = pkgs.fetchFromGitHub {
+        owner = "ccat3z";
+        repo = "Graphite-gtk-theme";
+        rev = "d2c94965d22de519e3d677b6bb4e90e9ae31d9c5";
+        hash = "sha256-Y0TLg+HqXTLZsMsazlReVo8GgvN8dl4YHSdE69qeE7c=";
+      };
+    }))
 
     # Font
     sarasa-gothic
