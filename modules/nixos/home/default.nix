@@ -35,7 +35,9 @@
     # Graphical Tools
     firefox
     gnome.gnome-tweaks
-    gnome.gnome-terminal
+    (gnome.gnome-terminal.overrideAttrs {
+      patches = [./patches/gnome-terminal-resize.patch];
+    })
     vscode.fhs
     remmina
     dconf
