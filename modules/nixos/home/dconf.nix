@@ -28,7 +28,6 @@ with lib.hm.gvariant;
     "org/gnome/shell" = {
       enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" ];
       favorite-apps = [ "org.gnome.Nautilus.desktop" "firefox.desktop" ];
-      welcome-dialog-last-shown-version = "45.2";
     };
 
     "org/gnome/shell/extensions/caffeine" = {
@@ -63,16 +62,14 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell/extensions/nightthemeswitcher/shell-variants" = {
-      enabled = false;
+      day = "Graphite";
+      enabled = true;
+      night = "Graphite-Dark";
     };
 
     "org/gnome/shell/extensions/nightthemeswitcher/time" = {
       manual-schedule = false;
       nightthemeswitcher-ondemand-keybinding = [ "<Shift><Super>t" ];
-    };
-
-    "org/gnome/shell/world-clocks" = {
-      locations = [];
     };
 
     "org/gnome/system/location" = {

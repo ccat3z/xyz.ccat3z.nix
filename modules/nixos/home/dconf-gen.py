@@ -2,7 +2,7 @@
 
 import subprocess
 import configparser
-import io
+import os
 
 def get_dconf_dump():
     output = subprocess.check_output(['dconf', 'dump', '/']).decode('utf-8')
@@ -13,11 +13,11 @@ def get_dconf_dump():
     return config
 
 def save_dconf_nix(config):
-    with open('dconf.nix', 'w') as outfile:
-        p = subprocess.Popen(['dconf2nix'], stdin=subprocess.PIPE, stdout=outfile, encoding='utf-8')
-        config.write(p.stdin, space_around_delimiters=False)
-        p.stdin.close()
-        p.wait()
+    dir = os.path.dirname(os.path.abspath(__file__))
+    with open(f'{dir}/dconf.ini', 'w') as f:
+        config.write(f, space_around_delimiters=False)
+
+    subprocess.run(['dconf2nix', '-i', 'dconf.ini', '-o', 'dconf.nix'], cwd=dir)
 
 if __name__ == '__main__':
     filter = {
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         "org/gnome/desktop/interface": True,
         "org/gnome/desktop/peripherals/touchpad": True,
         "org/gnome/desktop/wm/preferences": True,
-        "org/gnome/shell": True,
+        "org/gnome/shell": ["enabled-extensions", "favorite-apps"],
         "org/gnome/shell/extensions": False,
         "org/gnome/shell/extensions/caffeine": True,
         "org/gnome/shell/extensions/just-perfection": True,
