@@ -32,6 +32,9 @@
     })
   ];
 
+  # Docker
+  virtualisation.docker.enable = true;
+
   # Support unpatched dynamic binaries like vscode remote server
   programs.nix-ld.enable = true;
 }

@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.loader.systemd-boot.enable = true;
@@ -15,7 +16,8 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
+    {
+      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
       fsType = "btrfs";
       options = [ "subvol=rootfs" ];
     };
@@ -23,12 +25,24 @@
   boot.initrd.luks.devices."root0".device = "/dev/disk/by-uuid/1c22c9fd-b730-4af0-9efe-75dcdaa806fe";
 
   fileSystems."/mnt/volume" =
-    { device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
+    {
+      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
       fsType = "btrfs";
     };
 
+  fileSystems."/mnt/syncthing" =
+    {
+      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
+      fsType = "btrfs";
+      options = [ "subvol=syncthing" ];
+    };
+  system.activationScripts.chownSyncthing = ''
+    chown ccat3z:${config.users.users.ccat3z.group} /mnt/syncthing
+  '';
+
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/D05D-5377";
+    {
+      device = "/dev/disk/by-uuid/D05D-5377";
       fsType = "vfat";
     };
 
