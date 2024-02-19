@@ -44,6 +44,8 @@
     moonlight-qt
     zotero
     gnome.dconf-editor
+    drawio
+    virt-manager
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
@@ -59,6 +61,7 @@
     clipboard-indicator
     tiling-assistant
     wireshark
+    syncthing-icon
   ]);
 
   services.gpg-agent = {
