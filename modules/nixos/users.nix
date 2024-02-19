@@ -27,10 +27,18 @@ in
     ccat3z = {
       isNormalUser = true;
       group = "users";
-      extraGroups = [ "wheel" "docker" ];
+      extraGroups = [ "wheel" "docker" "wireshark" ];
       hashedPasswordFile = config.sops.secrets."users/password".path;
       openssh.authorizedKeys = sshAuthorizedKeys;
       shell = pkgs.zsh;
     };
+  };
+  users.groups.wireshark = {};
+  security.wrappers.dumpcap = {
+    source = "${pkgs.wireshark}/bin/dumpcap";
+    capabilities = "cap_net_raw,cap_net_admin+eip";
+    owner = "root";
+    group = "wireshark";
+    permissions = "u+rx,g+x";
   };
 }

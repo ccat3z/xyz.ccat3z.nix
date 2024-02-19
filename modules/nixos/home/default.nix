@@ -58,6 +58,7 @@
     })
     clipboard-indicator
     tiling-assistant
+    wireshark
   ]);
 
   services.gpg-agent = {
