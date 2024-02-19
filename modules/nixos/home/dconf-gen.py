@@ -27,7 +27,7 @@ if __name__ == '__main__':
         "org/gnome/desktop/wm/preferences": True,
         "org/gnome/shell": ["enabled-extensions", "favorite-apps"],
         "org/gnome/shell/extensions": False,
-        "org/gnome/shell/extensions/caffeine": True,
+        "org/gnome/shell/extensions/caffeine": ["restore-state"],
         "org/gnome/shell/extensions/just-perfection": True,
         "org/gnome/shell/extensions/nightthemeswitcher": True,
         "org/gnome/shell/extensions/nightthemeswitcher/time": ["manual-schedule", "nightthemeswitcher-ondemand-keybinding"],

@@ -80,9 +80,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell/extensions/caffeine" = {
-      indicator-position-max = -1;
-      toggle-state = true;
-      user-enabled = true;
+      restore-state = true;
     };
 
     "org/gnome/shell/extensions/clipboard-indicator" = {
