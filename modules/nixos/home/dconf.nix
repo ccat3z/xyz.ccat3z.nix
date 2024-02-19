@@ -70,8 +70,58 @@ with lib.hm.gvariant;
       two-finger-scrolling-enabled = true;
     };
 
+    "org/gnome/desktop/wm/keybindings" = {
+      always-on-top = [ "<Super>T" ];
+      maximize = [];
+      move-to-workspace-1 = [ "<Shift><Super>exclam" ];
+      move-to-workspace-2 = [ "<Shift><Super>at" ];
+      move-to-workspace-3 = [ "<Shift><Super>numbersign" ];
+      move-to-workspace-4 = [ "<Shift><Super>4" ];
+      move-to-workspace-5 = [ "<Shift><Super>5" ];
+      move-to-workspace-6 = [ "<Shift><Super>6" ];
+      move-to-workspace-7 = [ "<Shift><Super>7" ];
+      move-to-workspace-8 = [ "<Shift><Super>8" ];
+      move-to-workspace-9 = [ "<Shift><Super>9" ];
+      move-to-workspace-down = [ "<Shift><Super>Page_Down" ];
+      move-to-workspace-last = [ "<Shift><Super>End" ];
+      move-to-workspace-left = [ "<Primary><Shift><Super>Left" ];
+      move-to-workspace-right = [ "<Primary><Shift><Super>Right" ];
+      move-to-workspace-up = [ "<Shift><Super>Page_Up" ];
+      switch-applications = [];
+      switch-applications-backward = [];
+      switch-to-workspace-1 = [ "<Super>1" ];
+      switch-to-workspace-2 = [ "<Super>2" ];
+      switch-to-workspace-3 = [ "<Super>3" ];
+      switch-to-workspace-4 = [ "<Super>4" ];
+      switch-to-workspace-5 = [ "<Super>5" ];
+      switch-to-workspace-6 = [ "<Super>6" ];
+      switch-to-workspace-7 = [ "<Super>7" ];
+      switch-to-workspace-8 = [ "<Super>8" ];
+      switch-to-workspace-9 = [ "<Super>9" ];
+      switch-to-workspace-down = [ "<Super>Page_Down" ];
+      switch-to-workspace-left = [ "<Primary><Super>Left" ];
+      switch-to-workspace-right = [ "<Primary><Super>Right" ];
+      switch-to-workspace-up = [ "<Super>Page_Up" ];
+      switch-windows = [ "<Alt>Tab" ];
+      switch-windows-backward = [ "<Shift><Alt>Tab" ];
+      toggle-fullscreen = [];
+      toggle-maximized = [ "<Super>m" ];
+      toggle-on-all-workspaces = [ "<Super>s" ];
+      unmaximize = [];
+    };
+
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "close:appmenu";
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys" = {
+      custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
+    };
+
+    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+      binding = "<Control><Alt>t";
+      command = "gnome-terminal";
+      name = "Terminal";
     };
 
     "org/gnome/shell" = {
@@ -125,6 +175,22 @@ with lib.hm.gvariant;
     "org/gnome/shell/extensions/nightthemeswitcher/time" = {
       manual-schedule = false;
       nightthemeswitcher-ondemand-keybinding = [ "<Shift><Super>t" ];
+    };
+
+    "org/gnome/shell/keybindings" = {
+      focus-active-notification = [];
+      switch-to-application-1 = [];
+      switch-to-application-2 = [];
+      switch-to-application-3 = [];
+      switch-to-application-4 = [];
+      switch-to-application-5 = [];
+      switch-to-application-6 = [];
+      switch-to-application-7 = [];
+      switch-to-application-8 = [];
+      switch-to-application-9 = [];
+      toggle-application-view = [ "<Super>a" ];
+      toggle-message-tray = [ "<Super>n" ];
+      toggle-overview = [ "" ];
     };
 
     "org/gnome/system/location" = {
