@@ -4,6 +4,15 @@
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.gnome.core-utilities.enable = true;
+  environment.gnome.excludePackages = [
+    pkgs.gnome-console
+    pkgs.loupe
+  ];
+
+  environment.systemPackages = [
+    pkgs.gnome.eog
+    pkgs.gnome-console
+  ];
 
   fonts = {
     enableDefaultPackages = true;
