@@ -5,46 +5,10 @@ with lib.hm.gvariant;
 
 {
   dconf.settings = {
-    "org/gnome/Console" = {
-      last-window-size = mkTuple [ 652 480 ];
-    };
-
-    "org/gnome/control-center" = {
-      last-panel = "privacy";
-      window-state = mkTuple [ 980 640 false ];
-    };
-
-    "org/gnome/desktop/app-folders" = {
-      folder-children = [ "Utilities" "YaST" "Pardus" ];
-    };
-
-    "org/gnome/desktop/app-folders/folders/Pardus" = {
-      categories = [ "X-Pardus-Apps" ];
-      name = "X-Pardus-Apps.directory";
-      translate = true;
-    };
-
-    "org/gnome/desktop/app-folders/folders/Utilities" = {
-      apps = [ "gnome-abrt.desktop" "gnome-system-log.desktop" "nm-connection-editor.desktop" "org.gnome.baobab.desktop" "org.gnome.Connections.desktop" "org.gnome.DejaDup.desktop" "org.gnome.Dictionary.desktop" "org.gnome.DiskUtility.desktop" "org.gnome.Evince.desktop" "org.gnome.FileRoller.desktop" "org.gnome.fonts.desktop" "org.gnome.Loupe.desktop" "org.gnome.seahorse.Application.desktop" "org.gnome.tweaks.desktop" "org.gnome.Usage.desktop" "vinagre.desktop" ];
-      categories = [ "X-GNOME-Utilities" ];
-      name = "X-GNOME-Utilities.directory";
-      translate = true;
-    };
-
-    "org/gnome/desktop/app-folders/folders/YaST" = {
-      categories = [ "X-SuSE-YaST" ];
-      name = "suse-yast.directory";
-      translate = true;
-    };
-
-    "org/gnome/desktop/input-sources" = {
-      sources = [ (mkTuple [ "xkb" "us" ]) ];
-      xkb-options = [ "terminate:ctrl_alt_bksp" ];
-    };
-
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       cursor-theme = "Qogir-dark";
+      enable-animations = true;
       font-antialiasing = "grayscale";
       font-hinting = "slight";
       gtk-theme = "adw-gtk3-dark";
@@ -52,86 +16,17 @@ with lib.hm.gvariant;
       toolkit-accessibility = false;
     };
 
-    "org/gnome/desktop/notifications" = {
-      application-children = [ "gnome-power-panel" "firefox" "code" ];
-    };
-
-    "org/gnome/desktop/notifications/application/code" = {
-      application-id = "code.desktop";
-    };
-
-    "org/gnome/desktop/notifications/application/firefox" = {
-      application-id = "firefox.desktop";
-    };
-
-    "org/gnome/desktop/notifications/application/gnome-power-panel" = {
-      application-id = "gnome-power-panel.desktop";
-    };
-
     "org/gnome/desktop/peripherals/touchpad" = {
       tap-to-click = true;
       two-finger-scrolling-enabled = true;
-    };
-
-    "org/gnome/desktop/privacy" = {
-      old-files-age = mkUint32 30;
-      recent-files-max-age = -1;
-    };
-
-    "org/gnome/desktop/session" = {
-      idle-delay = mkUint32 300;
     };
 
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "close:appmenu";
     };
 
-    "org/gnome/epiphany" = {
-      ask-for-default = false;
-    };
-
-    "org/gnome/evolution-data-server" = {
-      migrated = true;
-    };
-
-    "org/gnome/gnome-system-monitor" = {
-      current-tab = "resources";
-      network-total-in-bits = false;
-      show-dependencies = false;
-      show-whose-processes = "user";
-    };
-
-    "org/gnome/gnome-system-monitor/disktreenew" = {
-      col-6-visible = true;
-      col-6-width = 0;
-    };
-
-    "org/gnome/nautilus/preferences" = {
-      default-folder-viewer = "icon-view";
-      migrated-gtk-settings = true;
-      search-filter-time-type = "last_modified";
-    };
-
-    "org/gnome/nautilus/window-state" = {
-      initial-size = mkTuple [ 890 550 ];
-    };
-
-    "org/gnome/settings-daemon/plugins/color" = {
-      night-light-last-coordinates = mkTuple [ 34.506105 (-94.6967) ];
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys" = {
-      custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
-    };
-
-    "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-      binding = "<Control><Alt>t";
-      command = "gnome-terminal";
-      name = "Terminal";
-    };
-
     "org/gnome/shell" = {
-      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" ];
+      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" ];
       favorite-apps = [ "org.gnome.Nautilus.desktop" "firefox.desktop" ];
       welcome-dialog-last-shown-version = "45.2";
     };
@@ -142,14 +37,13 @@ with lib.hm.gvariant;
       user-enabled = true;
     };
 
-    "org/gnome/shell/extensions/gsconnect" = {
-      id = "e4642e91-97cc-4bb2-be8e-d8b51e7a8392";
-      name = "laptop-1";
-    };
-
-    "org/gnome/shell/extensions/gsconnect/preferences" = {
-      window-maximized = false;
-      window-size = mkTuple [ 640 460 ];
+    "org/gnome/shell/extensions/just-perfection" = {
+      activities-button = false;
+      clock-menu-position = 2;
+      clock-menu-position-offset = 0;
+      notification-banner-position = 0;
+      window-demands-attention-focus = true;
+      workspace = true;
     };
 
     "org/gnome/shell/extensions/nightthemeswitcher/cursor-variants" = {
@@ -173,11 +67,8 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell/extensions/nightthemeswitcher/time" = {
-      location = mkTuple [ 31.318699 121.446911 ];
       manual-schedule = false;
       nightthemeswitcher-ondemand-keybinding = [ "<Shift><Super>t" ];
-      sunrise = 6.942585;
-      sunset = 17.328003;
     };
 
     "org/gnome/shell/world-clocks" = {
@@ -274,25 +165,6 @@ with lib.hm.gvariant;
       use-theme-colors = false;
       use-transparent-background = true;
       visible-name = "c0ldcat";
-    };
-
-    "org/gnome/tweaks" = {
-      show-extensions-notice = false;
-    };
-
-    "org/gtk/settings/file-chooser" = {
-      date-format = "regular";
-      location-mode = "path-bar";
-      show-hidden = false;
-      show-size-column = true;
-      show-type-column = true;
-      sidebar-width = 165;
-      sort-column = "name";
-      sort-directories-first = false;
-      sort-order = "ascending";
-      type-format = "category";
-      window-position = mkTuple [ 0 131 ];
-      window-size = mkTuple [ 1203 902 ];
     };
 
   };
