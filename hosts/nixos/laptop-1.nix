@@ -40,6 +40,13 @@
     chown ccat3z:${config.users.users.ccat3z.group} /mnt/syncthing
   '';
 
+  fileSystems."/var/lib/libvirt" =
+    {
+      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
+      fsType = "btrfs";
+      options = [ "subvol=libvirt" ];
+    };
+
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/D05D-5377";
@@ -55,6 +62,8 @@
   networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp58s0.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
+
+  virtualisation.libvirtd.enable = true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
