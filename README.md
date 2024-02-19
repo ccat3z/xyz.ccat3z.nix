@@ -23,3 +23,20 @@ The current idea of this repo is outlined in the table below:
 | rootless android mobile | Simple scripts based on adb | **nixsvc** + sing-box | **nix-for-android + home manager** | - | syncthing |
 
 nixsvc is a profile similar to Home Manager, but designed for deploying configurations and services on non-NixOS systems.
+
+## Setup nixos
+
+``` sh
+cat > ~/.config/nix/nix.conf <<EOF
+experimental-features = nix-command flakes repl-flake
+EOF
+nix develop
+cat > ~/.gnupg/gpg-agent.conf <<EOF
+    pinentry-program $(which pinentry-gnome)
+EOF
+```
+
+1. Setup disk
+2. Generate hardware configure via nixos-generate-config. Then copy it to `./hosts/nixos/${hostname}.nix`
+3. Generate agekeys to /var/lib/sops/key.txt
+4. Import gpg and resign
