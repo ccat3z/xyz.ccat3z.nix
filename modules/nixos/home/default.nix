@@ -41,6 +41,7 @@
     dconf
     moonlight-qt
     zotero
+    gnome.dconf-editor
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
