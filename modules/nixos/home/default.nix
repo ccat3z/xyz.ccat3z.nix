@@ -55,6 +55,7 @@
       patchFlags = ["-p4"];
     })
     clipboard-indicator
+    tiling-assistant
   ]);
 
   services.gpg-agent = {

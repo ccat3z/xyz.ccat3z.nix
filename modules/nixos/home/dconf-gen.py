@@ -35,8 +35,10 @@ if __name__ == '__main__':
         "org/gnome/shell/extensions/nightthemeswitcher": True,
         "org/gnome/shell/extensions/nightthemeswitcher/time": ["manual-schedule", "nightthemeswitcher-ondemand-keybinding"],
         "org/gnome/shell/extensions/clipboard-indicator": True,
+        "org/gnome/shell/extensions/gestureImprovements": True,
+        "org/gnome/shell/extensions/tiling-assistant": ['!', 'overridden-settings'],
         "org/gnome/system/location": True,
-        "org/gnome/terminal/legacy": True,
+        "org/gnome/terminal/legacy": ['!', 'overridden-settings'],
         "com/github/amezin/ddterm": True,
     }
 
@@ -48,19 +50,26 @@ if __name__ == '__main__':
             prefixs = sec.split('/')
             while prefixs and '/'.join(prefixs) not in filter:
                 prefixs.pop()
-            attributes_filter = filter['/'.join(prefixs)]
+            key_filter = filter['/'.join(prefixs)]
         else:
-            attributes_filter = filter[sec]
+            key_filter = filter[sec]
 
-        if type(attributes_filter) == list:
-            attributes = {}
-            for key in config[sec]:
-                if key in attributes_filter:
-                    attributes[key] = config[sec][key]
-            if attributes:
-                filtered_config[sec] = attributes
-        elif attributes_filter:
-            filtered_config[sec] = config[sec]
+        key_filter_fn = lambda x: False
+        if type(key_filter) == list:
+            if key_filter:
+                if key_filter[0] == '!':
+                    key_filter_fn = lambda x: x not in key_filter
+                else:
+                    key_filter_fn = lambda x: x in key_filter
+        elif key_filter:
+            key_filter_fn = lambda x: True
+
+        attributes = {}
+        for key in config[sec]:
+            if key_filter_fn(key):
+                attributes[key] = config[sec][key]
+        if attributes:
+            filtered_config[sec] = attributes
                     
     save_dconf_nix(filtered_config)
 
