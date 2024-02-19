@@ -43,6 +43,7 @@ with lib.hm.gvariant;
       theme-variant = "system";
       transparent-background = true;
       use-gnome-terminal-colors = true;
+      use-system-font = true;
       use-theme-colors = false;
       window-above = true;
       window-height = 0.430887;
@@ -57,11 +58,14 @@ with lib.hm.gvariant;
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       cursor-theme = "Qogir-dark";
+      document-font-name = "Serif 11";
       enable-animations = true;
       font-antialiasing = "grayscale";
       font-hinting = "slight";
+      font-name = "Sans 11";
       gtk-theme = "adw-gtk3-dark";
       icon-theme = "Papirus-Dark";
+      monospace-font-name = "Monospace 14";
       toolkit-accessibility = false;
     };
 
@@ -112,6 +116,7 @@ with lib.hm.gvariant;
 
     "org/gnome/desktop/wm/preferences" = {
       button-layout = "close:appmenu";
+      titlebar-font = "Sans 11";
     };
 
     "org/gnome/settings-daemon/plugins/media-keys" = {
