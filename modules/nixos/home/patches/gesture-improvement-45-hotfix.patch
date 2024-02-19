@@ -1,0 +1,844 @@
+commit 6d8a0759f2d48ac05fb434724ec587b72e55be56
+Author: ccat3z <fzhang.chn@outlook.com>
+Date:   Sun Oct 22 13:41:26 2023 +0800
+
+    gnome-extensions: update for 45 (hotfix)
+
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/common/appGestures.js b/.config/gnome-extensions/gestureImprovements@gestures/common/appGestures.js
+index c7e533c..39d7a82 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/common/appGestures.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/common/appGestures.js
+@@ -1,13 +1,12 @@
+ /* exported getAppKeybindingGesturePrefsPage */
+-const Gtk = imports.gi.Gtk;
+-const Gio = imports.gi.Gio;
+-const GLib = imports.gi.GLib;
+-const GObject = imports.gi.GObject;
+-const Adw = imports.gi.Adw;
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { ForwardBackKeyBinds } = Me.imports.common.settings;
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { printStack } = Me.imports.common.utils.logging;
++import Gtk from 'gi://Gtk';
++import Gio from 'gi://Gio';
++import GLib from 'gi://GLib';
++import GObject from 'gi://GObject';
++import Adw from 'gi://Adw';
++import { ForwardBackKeyBinds } from './settings.js'
++import { registerClass } from './utils/gobject.js'
++import { printStack } from './utils/logging.js'
+ 
+ /** return icon image for give app */
+ function getAppIconImage(app) {
+@@ -334,7 +333,7 @@ const AppKeybindingGesturePrefsGroup = registerClass(class GIE_AppKeybindingGest
+ /**
+  * @returns preference page for application gestures
+  */
+-function getAppKeybindingGesturePrefsPage(prefsWindow, settings) {
++export function getAppKeybindingGesturePrefsPage(prefsWindow, settings) {
+ 	const page = new Adw.PreferencesPage({
+ 		title: 'App Gestures',
+ 		iconName: 'org.gnome.Settings-applications-symbolic',
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/common/prefs.js b/.config/gnome-extensions/gestureImprovements@gestures/common/prefs.js
+index ff48b58..4b1e506 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/common/prefs.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/common/prefs.js
+@@ -1,11 +1,10 @@
+ /* exported buildPrefsWidget */
+-const Gio = imports.gi.Gio;
+-const Gtk = imports.gi.Gtk;
+-const Gdk = imports.gi.Gdk;
+-const Adw = imports.gi.Adw;
++import Gio from 'gi://Gio';
++import Gtk from 'gi://Gtk';
++import Gdk from 'gi://Gdk';
++import Adw from 'gi://Adw';
+ // eslint-disable-next-line @typescript-eslint/no-unused-vars
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { getAppKeybindingGesturePrefsPage } = Me.imports.common.appGestures;
++import { getAppKeybindingGesturePrefsPage } from './appGestures.js'
+ 
+ /**
+  * Bind value of setting to {@link Gtk.SpinButton}
+@@ -90,7 +89,7 @@ function loadCssProvider(styleManager, uiDir) {
+ 	}
+ }
+ 
+-function buildPrefsWidget(prefsWindow, settings, uiDir) {
++export function buildPrefsWidget(prefsWindow, settings, uiDir) {
+ 	prefsWindow.set_search_enabled(true);
+ 	const styleManager = Adw.StyleManager.get_default();
+ 	styleManager.connect('notify::dark', () => loadCssProvider(styleManager, uiDir));
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/common/settings.js b/.config/gnome-extensions/gestureImprovements@gestures/common/settings.js
+index 699879d..4dc3e02 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/common/settings.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/common/settings.js
+@@ -1,6 +1,6 @@
+ // define enum
+ /* exported PinchGestureType, OverviewNavigationState, ForwardBackKeyBinds */
+-var PinchGestureType;
++export var PinchGestureType;
+ (function (PinchGestureType) {
+ 	PinchGestureType[PinchGestureType['NONE'] = 0] = 'NONE';
+ 	PinchGestureType[PinchGestureType['SHOW_DESKTOP'] = 1] = 'SHOW_DESKTOP';
+@@ -9,14 +9,14 @@ var PinchGestureType;
+ })(PinchGestureType || (PinchGestureType = {}));
+ 
+ // define enum
+-var OverviewNavigationState;
++export var OverviewNavigationState;
+ (function (OverviewNavigationState) {
+ 	OverviewNavigationState[OverviewNavigationState['CYCLIC'] = 0] = 'CYCLIC';
+ 	OverviewNavigationState[OverviewNavigationState['GNOME'] = 1] = 'GNOME';
+ 	OverviewNavigationState[OverviewNavigationState['WINDOW_PICKER_ONLY'] = 2] = 'WINDOW_PICKER_ONLY';
+ })(OverviewNavigationState || (OverviewNavigationState = {}));
+ 
+-var ForwardBackKeyBinds;
++export var ForwardBackKeyBinds;
+ (function (ForwardBackKeyBinds) {
+ 	ForwardBackKeyBinds[ForwardBackKeyBinds['Default'] = 0] = 'Default';
+ 	ForwardBackKeyBinds[ForwardBackKeyBinds['Forward/Backward'] = 1] = 'Forward/Backward';
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/common/utils/gobject.js b/.config/gnome-extensions/gestureImprovements@gestures/common/utils/gobject.js
+index 57a49d9..5fa993b 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/common/utils/gobject.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/common/utils/gobject.js
+@@ -8,10 +8,10 @@
+ /* eslint-disable @typescript-eslint/ban-types */
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+ /* exported registerClass */
+-const GObject = imports.gi.GObject;
++import GObject from 'gi://GObject';
+ const OGRegisterClass = GObject.registerClass;
+ 
+-function registerClass(...args) {
++export function registerClass(...args) {
+ 	if (args.length === 2)
+ 		return OGRegisterClass(args[0], args[1]);
+ 	return OGRegisterClass(args[0]);
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/common/utils/logging.js b/.config/gnome-extensions/gestureImprovements@gestures/common/utils/logging.js
+index 8435981..6a22b85 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/common/utils/logging.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/common/utils/logging.js
+@@ -1,5 +1,5 @@
+ /* exported printStack */
+-function printStack(message) {
++export function printStack(message) {
+ 	const stack = new Error().stack;
+ 	let prefix = '';
+ 	if (stack) {
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/constants.js b/.config/gnome-extensions/gestureImprovements@gestures/constants.js
+index 9bd65f9..77766e0 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/constants.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/constants.js
+@@ -3,7 +3,7 @@
+ // directly, but GTK apps cannot get it, so use an arbitrary value so that
+ // it's consistent with apps.
+ /* exported TouchpadConstants, AltTabConstants, OverviewControlsState, ExtSettings, RELOAD_DELAY, WIGET_SHOWING_DURATION */
+-var TouchpadConstants = {
++export var TouchpadConstants = {
+ 	DEFAULT_SWIPE_MULTIPLIER: 1,
+ 	SWIPE_MULTIPLIER: 1,
+ 	DEFAULT_PINCH_MULTIPLIER: 1,
+@@ -14,7 +14,7 @@ var TouchpadConstants = {
+ 	HOLD_SWIPE_DELAY_DURATION: 100,
+ };
+ 
+-var AltTabConstants = {
++export var AltTabConstants = {
+ 	DEFAULT_DELAY_DURATION: 100,
+ 	DELAY_DURATION: 100,
+ 	POPUP_SCROLL_TIME: 100,
+@@ -22,7 +22,7 @@ var AltTabConstants = {
+ 	MIN_WIN_COUNT: 8,
+ };
+ 
+-var OverviewControlsState = {
++export var OverviewControlsState = {
+ 	APP_GRID_P: -1,
+ 	HIDDEN: 0,
+ 	WINDOW_PICKER: 1,
+@@ -30,7 +30,7 @@ var OverviewControlsState = {
+ 	HIDDEN_N: 3,
+ };
+ 
+-var ExtSettings = {
++export var ExtSettings = {
+ 	DEFAULT_SESSION_WORKSPACE_GESTURE: false,
+ 	DEFAULT_OVERVIEW_GESTURE: false,
+ 	ALLOW_MINIMIZE_WINDOW: false,
+@@ -39,5 +39,5 @@ var ExtSettings = {
+ 	DEFAULT_OVERVIEW_GESTURE_DIRECTION: true,
+ };
+ 
+-var RELOAD_DELAY = 150; // reload extension delay in ms
+-var WIGET_SHOWING_DURATION = 100; // animation duration for showing widget
++export var RELOAD_DELAY = 150; // reload extension delay in ms
++export var WIGET_SHOWING_DURATION = 100; // animation duration for showing widget
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/extension.js b/.config/gnome-extensions/gestureImprovements@gestures/extension.js
+index 86a31c8..19783d0 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/extension.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/extension.js
+@@ -1,22 +1,22 @@
+ /* exported init */
+-const GLib = imports.gi.GLib;
+-
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { PinchGestureType } = Me.imports.common.settings;
+-const Constants = Me.imports.constants;
+-const { AltTabConstants, ExtSettings, TouchpadConstants } = Me.imports.constants;
+-const { AltTabGestureExtension } = Me.imports.src.altTab;
+-const { ForwardBackGestureExtension } = Me.imports.src.forwardBack;
+-const { GestureExtension } = Me.imports.src.gestures;
+-const { OverviewRoundTripGestureExtension } = Me.imports.src.overviewRoundTrip;
+-const { CloseWindowExtension } = Me.imports.src.pinchGestures.closeWindow;
+-const { ShowDesktopExtension } = Me.imports.src.pinchGestures.showDesktop;
+-const { SnapWindowExtension } = Me.imports.src.snapWindow;
+-const DBusUtils = Me.imports.src.utils.dbus;
+-const VKeyboard = Me.imports.src.utils.keyboard;
+-const ExtensionUtils = imports.misc.extensionUtils;
+-class Extension {
+-	constructor() {
++import GLib from 'gi://GLib';
++
++import { PinchGestureType } from './common/settings.js'
++import * as Constants from './constants.js'
++import { AltTabConstants, ExtSettings, TouchpadConstants } from './constants.js'
++import { AltTabGestureExtension } from './src/altTab.js'
++import { ForwardBackGestureExtension } from './src/forwardBack.js'
++import { GestureExtension } from './src/gestures.js'
++import { OverviewRoundTripGestureExtension } from './src/overviewRoundTrip.js'
++import { CloseWindowExtension } from './src/pinchGestures/closeWindow.js'
++import { ShowDesktopExtension } from './src/pinchGestures/showDesktop.js'
++import { SnapWindowExtension } from './src/snapWindow.js'
++import * as DBusUtils from './src/utils/dbus.js'
++import * as VKeyboard from './src/utils/keyboard.js'
++import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
++export default class MyExtension extends Extension {
++	constructor(metadata) {
++		super(metadata);
+ 		this._settingChangedId = 0;
+ 		this._reloadWaitId = 0;
+ 		this._extensions = [];
+@@ -28,7 +28,7 @@ class Extension {
+ 	}
+ 
+ 	enable() {
+-		this.settings = ExtensionUtils.getSettings();
++		this.settings = this.getSettings();
+ 		this._settingChangedId = this.settings.connect('changed', this.reload.bind(this));
+ 		this._enable();
+ 	}
+@@ -133,7 +133,3 @@ class Extension {
+ 		return gestureToFingersMap;
+ 	}
+ }
+-
+-function init() {
+-	return new Extension();
+-}
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/metadata.json b/.config/gnome-extensions/gestureImprovements@gestures/metadata.json
+index c2266c0..e561a7d 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/metadata.json
++++ b/.config/gnome-extensions/gestureImprovements@gestures/metadata.json
+@@ -4,11 +4,9 @@
+   "name": "Gesture Improvements",
+   "settings-schema": "org.gnome.shell.extensions.gestureImprovements",
+   "shell-version": [
+-    "42",
+-    "43",
+-    "44"
++    "45"
+   ],
+   "url": "https://github.com/harshadgavali/gnome-gesture-improvements",
+   "uuid": "gestureImprovements@gestures",
+   "version": 25
+-}
+\ No newline at end of file
++}
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/prefs.js b/.config/gnome-extensions/gestureImprovements@gestures/prefs.js
+index 051b4d8..dd6354c 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/prefs.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/prefs.js
+@@ -1,16 +1,13 @@
+ /* exported init, fillPreferencesWindow */
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { buildPrefsWidget } = Me.imports.common.prefs;
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const ExtMe = ExtensionUtils.getCurrentExtension();
++import { buildPrefsWidget } from './common/prefs.js'
++import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+ 
+-// eslint-disable-next-line @typescript-eslint/no-empty-function
+-function init() { }
+-
+-function fillPreferencesWindow(prefsWindow) {
+-	var _a;
+-	const UIDirPath = (_a = ExtMe.dir.get_child('ui').get_path()) !== null && _a !== void 0 ? _a : '';
+-	const settings = ExtensionUtils.getSettings();
+-	buildPrefsWidget(prefsWindow, settings, UIDirPath);
++export default class MyExtensionPreferences extends ExtensionPreferences {
++    fillPreferencesWindow(prefsWindow) {
++		var _a;
++		const UIDirPath = (_a = this.dir.get_child('ui').get_path()) !== null && _a !== void 0 ? _a : '';
++		const settings = this.getSettings();
++		buildPrefsWidget(prefsWindow, settings, UIDirPath);
++    }
+ }
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/altTab.js b/.config/gnome-extensions/gestureImprovements@gestures/src/altTab.js
+index 9fb2fbf..d59aafe 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/altTab.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/altTab.js
+@@ -1,14 +1,13 @@
+ /* exported AltTabGestureExtension */
+-const Clutter = imports.gi.Clutter;
+-const GLib = imports.gi.GLib;
+-const Shell = imports.gi.Shell;
+-const St = imports.gi.St;
+-
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { AltTabConstants, ExtSettings } = Me.imports.constants;
+-const { TouchpadSwipeGesture } = Me.imports.src.swipeTracker;
+-const Main = imports.ui.main;
+-const { WindowSwitcherPopup } = imports.ui.altTab;
++import Clutter from 'gi://Clutter';
++import GLib from 'gi://GLib';
++import Shell from 'gi://Shell';
++import St from 'gi://St';
++
++import { AltTabConstants, ExtSettings } from '../constants.js'
++import { TouchpadSwipeGesture } from './swipeTracker.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import { WindowSwitcherPopup } from 'resource:///org/gnome/shell/ui/altTab.js';
+ let dummyWinCount = AltTabConstants.DUMMY_WIN_COUNT;
+ 
+ function getIndexForProgress(progress, nelement) {
+@@ -25,7 +24,7 @@ function getAvgProgressForIndex(index, nelement) {
+ }
+ 
+ // declare enum
+-var AltTabExtState;
++export var AltTabExtState;
+ (function (AltTabExtState) {
+ 	AltTabExtState[AltTabExtState['DISABLED'] = 0] = 'DISABLED';
+ 	AltTabExtState[AltTabExtState['DEFAULT'] = 1] = 'DEFAULT';
+@@ -33,7 +32,7 @@ var AltTabExtState;
+ 	AltTabExtState[AltTabExtState['ALTTAB'] = 3] = 'ALTTAB';
+ })(AltTabExtState || (AltTabExtState = {}));
+ 
+-var AltTabGestureExtension = class AltTabGestureExtension {
++export var AltTabGestureExtension = class AltTabGestureExtension {
+ 	constructor() {
+ 		this._extState = AltTabExtState.DISABLED;
+ 		this._progress = 0;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/animations/arrow.js b/.config/gnome-extensions/gestureImprovements@gestures/src/animations/arrow.js
+index 475c217..a6fcb6a 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/animations/arrow.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/animations/arrow.js
+@@ -1,15 +1,14 @@
+ // import GObject from '@gi-types/gobject2';
+ /* exported ArrowIconAnimation */
+-const Gio = imports.gi.Gio;
+-const Clutter = imports.gi.Clutter;
+-const St = imports.gi.St;
++import Gio from 'gi://Gio';
++import Clutter from 'gi://Clutter';
++import St from 'gi://St';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { easeActor } = Me.imports.src.utils.environment;
+-const { WIGET_SHOWING_DURATION } = Me.imports.constants;
+-const ExtMe = imports.misc.extensionUtils.getCurrentExtension();
+-const Util = imports.misc.util;
++import { registerClass } from '../../common/utils/gobject.js'
++import { easeActor } from '../utils/environment.js'
++import { WIGET_SHOWING_DURATION } from '../../constants.js'
++// const ExtMe = imports.misc.extensionUtils.getCurrentExtension();
++import * as Util from 'resource:///org/gnome/shell/misc/util.js';
+ const Circle = registerClass(class GIE_Circle extends St.Widget {
+ 	_init(style_class) {
+ 		style_class = `gie-circle ${style_class}`;
+@@ -18,7 +17,7 @@ const Circle = registerClass(class GIE_Circle extends St.Widget {
+ 	}
+ });
+ 
+-var ArrowIconAnimation = registerClass(class GIE_ArrowIcon extends St.Widget {
++export var ArrowIconAnimation = registerClass(class GIE_ArrowIcon extends St.Widget {
+ 	_init() {
+ 		super._init();
+ 		this._inner_circle = new Circle('gie-inner-circle');
+@@ -56,7 +55,7 @@ var ArrowIconAnimation = registerClass(class GIE_ArrowIcon extends St.Widget {
+ 			duration: WIGET_SHOWING_DURATION,
+ 		});
+ 
+-		this._arrow_icon.set_gicon(Gio.Icon.new_for_string(`${ExtMe.dir.get_uri()}/assets/${icon_name}`));
++		// this._arrow_icon.set_gicon(Gio.Icon.new_for_string(`${ExtMe.dir.get_uri()}/assets/${icon_name}`));
+ 	}
+ 
+ 	gestureUpdate(progress) {
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/forwardBack.js b/.config/gnome-extensions/gestureImprovements@gestures/src/forwardBack.js
+index 4f4d612..3ead6fd 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/forwardBack.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/forwardBack.js
+@@ -1,17 +1,16 @@
+ /* exported ForwardBackGestureExtension */
+-const Clutter = imports.gi.Clutter;
+-const Shell = imports.gi.Shell;
++import Clutter from 'gi://Clutter';
++import Shell from 'gi://Shell';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { ExtSettings } = Me.imports.constants;
+-const { ArrowIconAnimation } = Me.imports.src.animations.arrow;
+-const { createSwipeTracker } = Me.imports.src.swipeTracker;
+-const { getVirtualKeyboard } = Me.imports.src.utils.keyboard;
+-const { ForwardBackKeyBinds } = Me.imports.common.settings;
+-const Main = imports.ui.main;
++import { ExtSettings } from '../constants.js'
++import { ArrowIconAnimation } from './animations/arrow.js'
++import { createSwipeTracker } from './swipeTracker.js'
++import { getVirtualKeyboard } from './utils/keyboard.js'
++import { ForwardBackKeyBinds } from '../common/settings.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ 
+ // declare enum
+-var AnimationState;
++export var AnimationState;
+ (function (AnimationState) {
+ 	AnimationState[AnimationState['WAITING'] = 0] = 'WAITING';
+ 	AnimationState[AnimationState['DEFAULT'] = 0] = 'DEFAULT';
+@@ -20,7 +19,7 @@ var AnimationState;
+ })(AnimationState || (AnimationState = {}));
+ 
+ // declare enum
+-var SwipeGestureDirection;
++export var SwipeGestureDirection;
+ (function (SwipeGestureDirection) {
+ 	SwipeGestureDirection[SwipeGestureDirection['LeftToRight'] = 1] = 'LeftToRight';
+ 	SwipeGestureDirection[SwipeGestureDirection['RightToLeft'] = 2] = 'RightToLeft';
+@@ -28,7 +27,7 @@ var SwipeGestureDirection;
+ 
+ const SnapPointThreshold = 0.1;
+ 
+-var ForwardBackGestureExtension = class ForwardBackGestureExtension {
++export var ForwardBackGestureExtension = class ForwardBackGestureExtension {
+ 	constructor(appForwardBackKeyBinds) {
+ 		this._animationState = AnimationState.WAITING;
+ 		this._appForwardBackKeyBinds = appForwardBackKeyBinds;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/gestures.js b/.config/gnome-extensions/gestureImprovements@gestures/src/gestures.js
+index 6294f3a..dfddaf7 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/gestures.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/gestures.js
+@@ -1,12 +1,11 @@
+ /* exported GestureExtension */
+-const Clutter = imports.gi.Clutter;
+-const GObject = imports.gi.GObject;
+-const Shell = imports.gi.Shell;
++import Clutter from 'gi://Clutter';
++import GObject from 'gi://GObject';
++import Shell from 'gi://Shell';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { ExtSettings, OverviewControlsState } = Me.imports.constants;
+-const { createSwipeTracker, TouchpadSwipeGesture } = Me.imports.src.swipeTracker;
+-const Main = imports.ui.main;
++import { ExtSettings, OverviewControlsState } from '../constants.js'
++import { createSwipeTracker, TouchpadSwipeGesture } from './swipeTracker.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ 
+ function connectTouchpadEventToTracker(tracker) {
+ 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+@@ -99,7 +98,7 @@ class WorkspaceAnimationModifier extends SwipeTrackerEndPointsModifer {
+ 	}
+ }
+ 
+-var GestureExtension = class GestureExtension {
++export var GestureExtension = class GestureExtension {
+ 	constructor() {
+ 		this._stateAdjustment = Main.overview._overview._controls._stateAdjustment;
+ 		this._swipeTrackers = [
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/overviewRoundTrip.js b/.config/gnome-extensions/gestureImprovements@gestures/src/overviewRoundTrip.js
+index 447e389..bf73c59 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/overviewRoundTrip.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/overviewRoundTrip.js
+@@ -1,23 +1,21 @@
+ /* exported OverviewRoundTripGestureExtension */
+-const Clutter = imports.gi.Clutter;
+-const Shell = imports.gi.Shell;
++import Clutter from 'gi://Clutter';
++import Shell from 'gi://Shell';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { OverviewNavigationState } = Me.imports.common.settings;
+-const { ExtSettings, OverviewControlsState } = Me.imports.constants;
+-const { createSwipeTracker } = Me.imports.src.swipeTracker;
+-const Main = imports.ui.main;
+-const { SwipeTracker } = imports.ui.swipeTracker;
++import { OverviewNavigationState } from '../common/settings.js'
++import { ExtSettings, OverviewControlsState } from '../constants.js'
++import { createSwipeTracker } from './swipeTracker.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ 
+ // declare enum
+-var ExtensionState;
++export var ExtensionState;
+ (function (ExtensionState) {
+ 	// DISABLED = 0,
+ 	ExtensionState[ExtensionState['DEFAULT'] = 1] = 'DEFAULT';
+ 	ExtensionState[ExtensionState['CUSTOM'] = 2] = 'CUSTOM';
+ })(ExtensionState || (ExtensionState = {}));
+ 
+-var OverviewRoundTripGestureExtension = class OverviewRoundTripGestureExtension {
++export var OverviewRoundTripGestureExtension = class OverviewRoundTripGestureExtension {
+ 	constructor(navigationStates) {
+ 		this._progress = 0;
+ 		this._extensionState = ExtensionState.DEFAULT;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/closeWindow.js b/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/closeWindow.js
+index bd0bb16..5d41bea 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/closeWindow.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/closeWindow.js
+@@ -1,25 +1,24 @@
+ /* exported CloseWindowExtension */
+-const Clutter = imports.gi.Clutter;
+-const Shell = imports.gi.Shell;
+-const St = imports.gi.St;
++import Clutter from 'gi://Clutter';
++import Shell from 'gi://Shell';
++import St from 'gi://St';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { PinchGestureType } = Me.imports.common.settings;
+-const { WIGET_SHOWING_DURATION } = Me.imports.constants;
+-const { TouchpadPinchGesture } = Me.imports.src.trackers.pinchTracker;
+-const { easeActor } = Me.imports.src.utils.environment;
+-const { getVirtualKeyboard } = Me.imports.src.utils.keyboard;
+-const Main = imports.ui.main;
+-const Util = imports.misc.util;
++import { PinchGestureType } from '../../common/settings.js'
++import { WIGET_SHOWING_DURATION } from '../../constants.js'
++import { TouchpadPinchGesture } from '../trackers/pinchTracker.js'
++import { easeActor } from '../utils/environment.js'
++import { getVirtualKeyboard } from '../utils/keyboard.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import * as Util from 'resource:///org/gnome/shell/misc/util.js';
+ const END_OPACITY = 0;
+ const END_SCALE = 0.5;
+-var CloseWindowGestureState;
++export var CloseWindowGestureState;
+ (function (CloseWindowGestureState) {
+ 	CloseWindowGestureState[CloseWindowGestureState['PINCH_IN'] = -1] = 'PINCH_IN';
+ 	CloseWindowGestureState[CloseWindowGestureState['DEFAULT'] = 0] = 'DEFAULT';
+ })(CloseWindowGestureState || (CloseWindowGestureState = {}));
+ 
+-var CloseWindowExtension = class CloseWindowExtension {
++export var CloseWindowExtension = class CloseWindowExtension {
+ 	constructor(nfingers, closeType) {
+ 		this._closeType = closeType;
+ 		this._keyboard = getVirtualKeyboard();
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/showDesktop.js b/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/showDesktop.js
+index 5c9b8cc..291221a 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/showDesktop.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/pinchGestures/showDesktop.js
+@@ -1,24 +1,23 @@
+ /* exported ShowDesktopExtension */
+-const Clutter = imports.gi.Clutter;
+-const Meta = imports.gi.Meta;
+-const Shell = imports.gi.Shell;
++import Clutter from 'gi://Clutter';
++import Meta from 'gi://Meta';
++import Shell from 'gi://Shell';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { TouchpadPinchGesture } = Me.imports.src.trackers.pinchTracker;
+-const { easeActor } = Me.imports.src.utils.environment;
+-const Main = imports.ui.main;
+-const Layout = imports.ui.layout;
+-const { lerp } = imports.misc.util;
++import { TouchpadPinchGesture } from '../trackers/pinchTracker.js'
++import { easeActor } from '../utils/environment.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import * as Layout from 'resource:///org/gnome/shell/ui/layout.js'
++import { lerp } from 'resource:///org/gnome/shell/misc/util.js';
+ 
+ // declare enum 
+-var WorkspaceManagerState;
++export var WorkspaceManagerState;
+ (function (WorkspaceManagerState) {
+ 	WorkspaceManagerState[WorkspaceManagerState['DEFAULT'] = 0] = 'DEFAULT';
+ 	WorkspaceManagerState[WorkspaceManagerState['SHOW_DESKTOP'] = 1] = 'SHOW_DESKTOP';
+ })(WorkspaceManagerState || (WorkspaceManagerState = {}));
+ 
+ // declare enum
+-var ExtensionState;
++export var ExtensionState;
+ (function (ExtensionState) {
+ 	ExtensionState[ExtensionState['DEFAULT'] = 0] = 'DEFAULT';
+ 	ExtensionState[ExtensionState['ANIMATING'] = 1] = 'ANIMATING';
+@@ -197,7 +196,7 @@ class MonitorGroup {
+ 	}
+ }
+ 
+-var ShowDesktopExtension = class ShowDesktopExtension {
++export var ShowDesktopExtension = class ShowDesktopExtension {
+ 	constructor(nfingers) {
+ 		this._windows = new Set();
+ 		this._workspaceChangedId = 0;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/snapWindow.js b/.config/gnome-extensions/gestureImprovements@gestures/src/snapWindow.js
+index 6882054..3fa6f7c 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/snapWindow.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/snapWindow.js
+@@ -1,24 +1,22 @@
+ /* exported SnapWindowExtension */
+-const Clutter = imports.gi.Clutter;
+-const Meta = imports.gi.Meta;
+-const Shell = imports.gi.Shell;
+-const St = imports.gi.St;
+-
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { ExtSettings } = Me.imports.constants;
+-const { createSwipeTracker } = Me.imports.src.swipeTracker;
+-const { easeActor, easeAdjustment } = Me.imports.src.utils.environment;
+-const { getVirtualKeyboard } = Me.imports.src.utils.keyboard;
+-const Main = imports.ui.main;
+-const Utils = imports.misc.util;
+-const { SwipeTracker } = imports.ui.swipeTracker;
++import Clutter from 'gi://Clutter';
++import Meta from 'gi://Meta';
++import Shell from 'gi://Shell';
++import St from 'gi://St';
++
++import { registerClass } from '../common/utils/gobject.js'
++import { ExtSettings } from '../constants.js'
++import { createSwipeTracker } from './swipeTracker.js'
++import { easeActor, easeAdjustment } from './utils/environment.js'
++import { getVirtualKeyboard } from './utils/keyboard.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import * as Utils from 'resource:///org/gnome/shell/misc/util.js';
+ const WINDOW_ANIMATION_TIME = 250;
+ const UPDATED_WINDOW_ANIMATION_TIME = 150;
+ const TRIGGER_THRESHOLD = 0.1;
+ 
+ // define enum
+-var GestureMaxUnMaxState;
++export var GestureMaxUnMaxState;
+ (function (GestureMaxUnMaxState) {
+ 	GestureMaxUnMaxState[GestureMaxUnMaxState['MINIMIZE'] = -1] = 'MINIMIZE';
+ 	GestureMaxUnMaxState[GestureMaxUnMaxState['UNMAXIMIZE'] = 0] = 'UNMAXIMIZE';
+@@ -27,7 +25,7 @@ var GestureMaxUnMaxState;
+ })(GestureMaxUnMaxState || (GestureMaxUnMaxState = {}));
+ 
+ // define enum
+-var GestureTileState;
++export var GestureTileState;
+ (function (GestureTileState) {
+ 	GestureTileState[GestureTileState['RIGHT_TILE'] = -1] = 'RIGHT_TILE';
+ 	GestureTileState[GestureTileState['NORMAL'] = 0] = 'NORMAL';
+@@ -255,7 +253,7 @@ const TilePreview = registerClass(class TilePreview extends St.Widget {
+ 	}
+ });
+ 
+-var SnapWindowExtension = class SnapWindowExtension {
++export var SnapWindowExtension = class SnapWindowExtension {
+ 	constructor() {
+ 		this._connectors = [];
+ 		this._toggledDirection = false;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/swipeTracker.js b/.config/gnome-extensions/gestureImprovements@gestures/src/swipeTracker.js
+index 1c033f7..f839532 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/swipeTracker.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/swipeTracker.js
+@@ -1,18 +1,17 @@
+ /* exported TouchpadSwipeGesture, createSwipeTracker */
+-const Clutter = imports.gi.Clutter;
+-const GObject = imports.gi.GObject;
+-const Meta = imports.gi.Meta;
+-const Shell = imports.gi.Shell;
+-
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { TouchpadConstants } = Me.imports.constants;
+-const DBusUtils = Me.imports.src.utils.dbus;
+-const Main = imports.ui.main;
+-const { SwipeTracker } = imports.ui.swipeTracker;
++import Clutter from 'gi://Clutter';
++import GObject from 'gi://GObject';
++import Meta from 'gi://Meta';
++import Shell from 'gi://Shell';
++
++import { registerClass } from '../common/utils/gobject.js'
++import { TouchpadConstants } from '../constants.js'
++import * as DBusUtils from './utils/dbus.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import { SwipeTracker } from 'resource:///org/gnome/shell/ui/swipeTracker.js';
+ 
+ // define enum
+-var TouchpadState;
++export var TouchpadState;
+ (function (TouchpadState) {
+ 	TouchpadState[TouchpadState['NONE'] = 0] = 'NONE';
+ 	TouchpadState[TouchpadState['PENDING'] = 1] = 'PENDING';
+@@ -20,7 +19,7 @@ var TouchpadState;
+ 	TouchpadState[TouchpadState['IGNORED'] = 3] = 'IGNORED';
+ })(TouchpadState || (TouchpadState = {}));
+ 
+-var TouchpadSwipeGesture = registerClass({
++export var TouchpadSwipeGesture = registerClass({
+ 	Properties: {
+ 		'enabled': GObject.ParamSpec.boolean('enabled', 'enabled', 'enabled', GObject.ParamFlags.READWRITE, true),
+ 		'orientation': GObject.ParamSpec.enum('orientation', 'orientation', 'orientation', GObject.ParamFlags.READWRITE, Clutter.Orientation, Clutter.Orientation.HORIZONTAL),
+@@ -209,7 +208,7 @@ var TouchpadSwipeGesture = registerClass({
+ 	}
+ });
+ 
+-function createSwipeTracker(actor, nfingers, allowedModes, orientation, followNaturalScroll = true, gestureSpeed = 1, params) {
++export function createSwipeTracker(actor, nfingers, allowedModes, orientation, followNaturalScroll = true, gestureSpeed = 1, params) {
+ 	var _a, _b, _c;
+ 	params = params !== null && params !== void 0 ? params : {};
+ 	params.allowDrag = (_a = params.allowDrag) !== null && _a !== void 0 ? _a : false;
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/trackers/pinchTracker.js b/.config/gnome-extensions/gestureImprovements@gestures/src/trackers/pinchTracker.js
+index ba308a1..f3e7582 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/trackers/pinchTracker.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/trackers/pinchTracker.js
+@@ -1,14 +1,13 @@
+ /* exported TouchpadPinchGesture */
+-const Clutter = imports.gi.Clutter;
+-const GObject = imports.gi.GObject;
+-const Meta = imports.gi.Meta;
+-const Shell = imports.gi.Shell;
+-
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { TouchpadConstants } = Me.imports.constants;
+-const DBusUtils = Me.imports.src.utils.dbus;
+-const Main = imports.ui.main;
++import Clutter from 'gi://Clutter';
++import GObject from 'gi://GObject';
++import Meta from 'gi://Meta';
++import Shell from 'gi://Shell';
++
++import { registerClass } from '../../common/utils/gobject.js'
++import { TouchpadConstants } from '../../constants.js'
++import * as DBusUtils from '../utils/dbus.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+ const MIN_ANIMATION_DURATION = 100;
+ const MAX_ANIMATION_DURATION = 400;
+ 
+@@ -53,21 +52,21 @@ class EventHistoryTracker {
+ }
+ 
+ // define enum
+-var TouchpadState;
++export var TouchpadState;
+ (function (TouchpadState) {
+ 	TouchpadState[TouchpadState['NONE'] = 0] = 'NONE';
+ 	TouchpadState[TouchpadState['HANDLING'] = 1] = 'HANDLING';
+ 	TouchpadState[TouchpadState['IGNORED'] = 2] = 'IGNORED';
+ })(TouchpadState || (TouchpadState = {}));
+ 
+-var GestureACKState;
++export var GestureACKState;
+ (function (GestureACKState) {
+ 	GestureACKState[GestureACKState['NONE'] = 0] = 'NONE';
+ 	GestureACKState[GestureACKState['PENDING_ACK'] = 1] = 'PENDING_ACK';
+ 	GestureACKState[GestureACKState['ACKED'] = 2] = 'ACKED';
+ })(GestureACKState || (GestureACKState = {}));
+ 
+-var TouchpadPinchGesture = registerClass({
++export var TouchpadPinchGesture = registerClass({
+ 	Properties: {},
+ 	Signals: {
+ 		'begin': { param_types: [] },
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/dbus.js b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/dbus.js
+index 2d172c3..72a9cfa 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/dbus.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/dbus.js
+@@ -1,12 +1,11 @@
+ /* exported subscribe, unsubscribeAll, drop_proxy */
+-const Clutter = imports.gi.Clutter;
+-const Gio = imports.gi.Gio;
+-const GObject = imports.gi.GObject;
++import Clutter from 'gi://Clutter';
++import Gio from 'gi://Gio';
++import GObject from 'gi://GObject';
+ 
+-const Me = imports.misc.extensionUtils.getCurrentExtension();
+-const { registerClass } = Me.imports.common.utils.gobject;
+-const { printStack } = Me.imports.common.utils.logging;
+-const Util = imports.misc.util;
++import { registerClass } from '../../common/utils/gobject.js'
++import { printStack } from '../../common/utils/logging.js'
++import * as Util from 'resource:///org/gnome/shell/misc/util.js';
+ const X11GestureDaemonXml = `<node>
+ 	<interface name="org.gestureImprovements.gestures">
+ 		<signal name="TouchpadSwipe">
+@@ -126,7 +125,7 @@ function GenerateEvent(typ, sphase, fingers, time, params) {
+ let proxy;
+ let connectedSignalIds = [];
+ 
+-function subscribe(callback) {
++export function subscribe(callback) {
+ 	if (!proxy) {
+ 		printStack('starting dbus service \'gesture_improvements_gesture_daemon.service\' via spawn');
+ 		Util.spawn(['systemctl', '--user', 'start', 'gesture_improvements_gesture_daemon.service']);
+@@ -150,14 +149,14 @@ function subscribe(callback) {
+ 	}));
+ }
+ 
+-function unsubscribeAll() {
++export function unsubscribeAll() {
+ 	if (proxy) {
+ 		connectedSignalIds.forEach(id => proxy === null || proxy === void 0 ? void 0 : proxy.disconnect(id));
+ 		connectedSignalIds = [];
+ 	}
+ }
+ 
+-function drop_proxy() {
++export function drop_proxy() {
+ 	if (proxy) {
+ 		unsubscribeAll();
+ 		proxy.dropProxy();
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/environment.js b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/environment.js
+index d82d24a..669b532 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/environment.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/environment.js
+@@ -1,9 +1,9 @@
+ /* eslint-disable @typescript-eslint/no-explicit-any */
+ /* exported easeActor, easeAdjustment */
+-function easeActor(actor, params) {
++export function easeActor(actor, params) {
+ 	actor.ease(params);
+ }
+ 
+-function easeAdjustment(actor, value, params) {
++export function easeAdjustment(actor, value, params) {
+ 	actor.ease(value, params);
+ }
+diff --git a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/keyboard.js b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/keyboard.js
+index dabcd95..f025d11 100644
+--- a/.config/gnome-extensions/gestureImprovements@gestures/src/utils/keyboard.js
++++ b/.config/gnome-extensions/gestureImprovements@gestures/src/utils/keyboard.js
+@@ -1,6 +1,6 @@
+ /* exported getVirtualKeyboard, extensionCleanup */
+-const Clutter = imports.gi.Clutter;
+-const GLib = imports.gi.GLib;
++import Clutter from 'gi://Clutter';
++import GLib from 'gi://GLib';
+ const DELAY_BETWEEN_KEY_PRESS = 10; // ms
+ const timeoutIds = new Set();
+ class VirtualKeyboard {
+@@ -38,12 +38,12 @@ class VirtualKeyboard {
+ }
+ let _keyboard;
+ 
+-function getVirtualKeyboard() {
++export function getVirtualKeyboard() {
+ 	_keyboard = _keyboard !== null && _keyboard !== void 0 ? _keyboard : new VirtualKeyboard();
+ 	return _keyboard;
+ }
+ 
+-function extensionCleanup() {
++export function extensionCleanup() {
+ 	timeoutIds.forEach(id => GLib.Source.remove(id));
+ 	timeoutIds.clear();
+ 	_keyboard = undefined;

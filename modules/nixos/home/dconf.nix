@@ -5,6 +5,55 @@ with lib.hm.gvariant;
 
 {
   dconf.settings = {
+    "com/github/amezin/ddterm" = {
+      background-color = "rgb(33,33,33)";
+      background-opacity = 0.95;
+      bold-color = "#c5c8c6";
+      bold-color-same-as-fg = true;
+      bold-is-bright = true;
+      cursor-background-color = "#c5c8c6";
+      cursor-colors-set = true;
+      cursor-foreground-color = "#1d1f21";
+      ddterm-toggle-hotkey = [ "<Control><Alt>d" ];
+      foreground-color = "#c5c8c6";
+      hide-animation = "ease-in-expo";
+      hide-when-focus-lost = false;
+      hide-window-on-esc = false;
+      highlight-background-color = "#000000";
+      highlight-colors-set = true;
+      highlight-foreground-color = "#ffffff";
+      new-tab-button = false;
+      new-tab-front-button = false;
+      override-window-animation = true;
+      palette = [ "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#8abeb7" "#c5c8c6" "#969896" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#8abeb7" "#ffffff" ];
+      panel-icon-type = "none";
+      pointer-autohide = false;
+      scroll-on-output = false;
+      scrollback-lines = 10001;
+      show-animation = "ease-in-expo";
+      show-banner = false;
+      show-scrollbar = false;
+      tab-close-buttons = false;
+      tab-expand = true;
+      tab-label-ellipsize-mode = "middle";
+      tab-label-width = 0.1;
+      tab-policy = "automatic";
+      tab-position = "bottom";
+      tab-switcher-popup = false;
+      theme-variant = "system";
+      transparent-background = true;
+      use-gnome-terminal-colors = true;
+      use-theme-colors = false;
+      window-above = true;
+      window-height = 0.430887;
+      window-maximize = false;
+      window-monitor = "current";
+      window-position = "left";
+      window-resizable = false;
+      window-size = 0.467708;
+      window-skip-taskbar = true;
+    };
+
     "org/gnome/desktop/interface" = {
       color-scheme = "prefer-dark";
       cursor-theme = "Qogir-dark";
@@ -26,14 +75,22 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" ];
+      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" "ddterm@amezin.github.com" "clipboard-indicator@tudmotu.com" ];
       favorite-apps = [ "org.gnome.Nautilus.desktop" "firefox.desktop" ];
     };
 
     "org/gnome/shell/extensions/caffeine" = {
-      indicator-position-max = 1;
+      indicator-position-max = -1;
       toggle-state = true;
       user-enabled = true;
+    };
+
+    "org/gnome/shell/extensions/clipboard-indicator" = {
+      clear-history = [];
+      next-entry = [];
+      prev-entry = [];
+      private-mode-binding = [];
+      toggle-menu = [ "<Super>c" ];
     };
 
     "org/gnome/shell/extensions/just-perfection" = {

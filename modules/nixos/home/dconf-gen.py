@@ -31,8 +31,10 @@ if __name__ == '__main__':
         "org/gnome/shell/extensions/just-perfection": True,
         "org/gnome/shell/extensions/nightthemeswitcher": True,
         "org/gnome/shell/extensions/nightthemeswitcher/time": ["manual-schedule", "nightthemeswitcher-ondemand-keybinding"],
+        "org/gnome/shell/extensions/clipboard-indicator": True,
         "org/gnome/system/location": True,
         "org/gnome/terminal/legacy": True,
+        "com/github/amezin/ddterm": True,
     }
 
     config = get_dconf_dump()
