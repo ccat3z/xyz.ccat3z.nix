@@ -11,3 +11,10 @@ nixos/test:
 nixos/diff:
 	nixos-rebuild build --flake .
 	nix-diff /run/current-system ./result
+
+nixos/gen-dconf:
+	./modules/nixos/home/dconf-gen.py
+	nix fmt ./modules/nixos/home/dconf.nix
+
+nixos/diff-dconf:
+	diff --color=always -u ./modules/nixos/home/dconf.ini <(dconf dump /) | less

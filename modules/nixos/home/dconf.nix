@@ -127,8 +127,25 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" "ddterm@amezin.github.com" "clipboard-indicator@tudmotu.com" "tiling-assistant@leleat-on-github" "gestureImprovements@gestures" ];
+      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" "ddterm@amezin.github.com" "clipboard-indicator@tudmotu.com" "tiling-assistant@leleat-on-github" "gestureImprovements@gestures" "monitor@astraext.github.io" ];
       favorite-apps = [ "org.gnome.Nautilus.desktop" "firefox.desktop" ];
+    };
+
+    "org/gnome/shell/extensions/astra-monitor" = {
+      memory-header-bars = true;
+      memory-header-bars-breakdown = true;
+      memory-header-percentage = false;
+      memory-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\",\"value\",\"free\"]";
+      memory-menu-graph-breakdown = true;
+      monitors-order = "[\"processor\",\"memory\",\"storage\",\"network\",\"sensors\"]";
+      network-indicators-order = "[\"icon\",\"IO bar\",\"IO graph\",\"IO speed\"]";
+      processor-header-icon = true;
+      processor-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\"]";
+      queued-pref-category = "";
+      sensors-indicators-order = "[\"icon\",\"value\"]";
+      storage-indicators-order = "[\"icon\",\"bar\",\"percentage\",\"value\",\"free\",\"IO bar\",\"IO graph\",\"IO speed\"]";
+      storage-main = "name-root0";
+      theme-style = "dark";
     };
 
     "org/gnome/shell/extensions/caffeine" = {
@@ -139,6 +156,7 @@ with lib.hm.gvariant;
       clear-history = [ ];
       next-entry = [ ];
       prev-entry = [ ];
+      preview-size = 50;
       private-mode-binding = [ ];
       toggle-menu = [ "<Super>c" ];
     };

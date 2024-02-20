@@ -37,6 +37,7 @@ if __name__ == '__main__':
         "org/gnome/shell/extensions/clipboard-indicator": True,
         "org/gnome/shell/extensions/gestureImprovements": True,
         "org/gnome/shell/extensions/tiling-assistant": ['!', 'overridden-settings'],
+        "org/gnome/shell/extensions/astra-monitor": True,
         "org/gnome/system/location": True,
         "org/gnome/terminal/legacy": ['!', 'overridden-settings'],
         "com/github/amezin/ddterm": True,
