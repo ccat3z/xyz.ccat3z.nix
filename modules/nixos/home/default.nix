@@ -64,6 +64,7 @@
     tiling-assistant
     wireshark
     syncthing-icon
+    pkgs.astra-monitor
   ]);
 
   services.gpg-agent = {
