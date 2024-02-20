@@ -31,6 +31,7 @@
       pynvim
     ]))
     dconf2nix
+    nix-diff
 
     # Graphical Tools
     firefox
