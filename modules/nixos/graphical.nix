@@ -11,7 +11,6 @@
 
   environment.systemPackages = [
     pkgs.gnome.eog
-    pkgs.gnome-console
   ];
 
   fonts = {
