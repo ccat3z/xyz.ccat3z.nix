@@ -47,6 +47,7 @@
     gnome.dconf-editor
     drawio
     virt-manager
+    gedit
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
