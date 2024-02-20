@@ -10,4 +10,4 @@ nixos/test:
 
 nixos/diff:
 	nixos-rebuild build --flake .
-	nix-diff ./result /run/current-system
+	nix-diff /run/current-system ./result
