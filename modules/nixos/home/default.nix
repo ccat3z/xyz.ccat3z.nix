@@ -37,7 +37,7 @@
     firefox
     gnome.gnome-tweaks
     (gnome.gnome-terminal.overrideAttrs {
-      patches = [./patches/gnome-terminal-resize.patch];
+      patches = [ ./patches/gnome-terminal-resize.patch ];
     })
     vscode.fhs
     remmina
@@ -57,8 +57,8 @@
     ddterm
     just-perfection
     (gesture-improvements.overrideAttrs {
-      patches = [./patches/gesture-improvement-45-hotfix.patch];
-      patchFlags = ["-p4"];
+      patches = [ ./patches/gesture-improvement-45-hotfix.patch ];
+      patchFlags = [ "-p4" ];
     })
     clipboard-indicator
     tiling-assistant

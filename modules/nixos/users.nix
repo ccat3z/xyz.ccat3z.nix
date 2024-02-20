@@ -33,7 +33,7 @@ in
       shell = pkgs.zsh;
     };
   };
-  users.groups.wireshark = {};
+  users.groups.wireshark = { };
   security.wrappers.dumpcap = {
     source = "${pkgs.wireshark}/bin/dumpcap";
     capabilities = "cap_net_raw,cap_net_admin+eip";
