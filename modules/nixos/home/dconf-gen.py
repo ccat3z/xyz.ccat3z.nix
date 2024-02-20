@@ -22,7 +22,7 @@ def save_dconf_nix(config):
 if __name__ == '__main__':
     filter = {
         "": False,
-        "org/gnome/desktop/interface": True,
+        "org/gnome/desktop/interface": ['!', 'color-scheme', 'gtk-theme', 'icon-theme'],
         "org/gnome/desktop/peripherals/touchpad": True,
         "org/gnome/desktop/wm/preferences": True,
         "org/gnome/shell": ["enabled-extensions", "favorite-apps"],

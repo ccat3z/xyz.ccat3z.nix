@@ -56,15 +56,12 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/desktop/interface" = {
-      color-scheme = "prefer-dark";
       cursor-theme = "Qogir-dark";
       document-font-name = "Serif 11";
       enable-animations = true;
       font-antialiasing = "grayscale";
       font-hinting = "slight";
       font-name = "Sans 11";
-      gtk-theme = "adw-gtk3-dark";
-      icon-theme = "Papirus-Dark";
       monospace-font-name = "Monospace 14";
       toolkit-accessibility = false;
     };
