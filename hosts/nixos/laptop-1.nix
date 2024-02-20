@@ -53,7 +53,11 @@
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  swapDevices = [
+    {
+      device = "/dev/disk/by-uuid/96f47977-5b5c-4670-a6b4-0711748d0e15";
+    }
+  ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
