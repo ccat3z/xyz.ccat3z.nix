@@ -8,8 +8,10 @@ nixos/deploy:
 nixos/test:
 	nixos-rebuild test --flake . --use-remote-sudo
 
-nixos/diff:
+nixos/build:
 	nixos-rebuild build --flake .
+
+nixos/diff: nixos/build
 	nix-diff /run/current-system ./result
 
 nixos/gen-dconf:
