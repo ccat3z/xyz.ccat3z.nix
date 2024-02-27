@@ -65,6 +65,7 @@
     tiling-assistant
     wireshark
     syncthing-icon
+    panel-workspace-scroll
     pkgs.astra-monitor
   ]);
 
