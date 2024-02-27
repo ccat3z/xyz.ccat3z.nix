@@ -4,9 +4,17 @@
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.displayManager.gdm.enable = true;
   services.gnome.core-utilities.enable = true;
-  environment.gnome.excludePackages = [
+  environment.gnome.excludePackages = with pkgs.gnome; [
     pkgs.gnome-console
     pkgs.loupe
+    pkgs.gnome-connections
+    gnome-weather
+    gnome-maps
+    gnome-logs
+    gnome-music
+    epiphany
+    pkgs.gnome-tour
+    gnome-contacts
   ];
 
   environment.systemPackages = [
