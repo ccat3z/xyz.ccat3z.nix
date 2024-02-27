@@ -1,0 +1,32 @@
+diff --git a/src/container.js b/src/container.js
+index ca127c3..ce0789b 100644
+--- a/src/container.js
++++ b/src/container.js
+@@ -128,10 +128,17 @@ export default GObject.registerClass(class AstraMonitorContainer extends PanelMe
+             }
+         }
+     }
++    getPanelBoxOrder(update = false) {
++        const order = Config.get_int('panel-box-order');
++        if (order < 0)
++            return Main.panel._rightBox.get_children().length + order + (update ? -1 : 0);
++        else
++            return order;
++    }
+     place(uuid) {
+         this.uuid = uuid;
+         const panelBox = Config.get_string('panel-box');
+-        const order = Config.get_int('panel-box-order');
++        const order = this.getPanelBoxOrder();
+         Utils.log(`Placing container in ${panelBox} box at position ${order}`);
+         Main.panel.addToStatusArea(this.uuid, this, order, panelBox);
+     }
+@@ -143,7 +150,7 @@ export default GObject.registerClass(class AstraMonitorContainer extends PanelMe
+             right: Main.panel._rightBox,
+         };
+         const boxContainer = boxes[panelBox] || Main.panel._rightBox;
+-        const order = Config.get_int('panel-box-order');
++        const order = this.getPanelBoxOrder(true);
+         Utils.log(`Reordering container in ${panelBox} box at position ${order}`);
+         Main.panel._addToPanelBox(this.uuid, this, order, boxContainer);
+     }

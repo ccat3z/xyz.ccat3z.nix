@@ -19,4 +19,6 @@ in
     stripRoot = false;
     inherit sha256;
   };
+
+  patches = [ ./negative-order.patch ];
 }
