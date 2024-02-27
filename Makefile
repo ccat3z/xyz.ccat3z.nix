@@ -20,3 +20,13 @@ nixos/gen-dconf:
 
 nixos/diff-dconf:
 	diff --color=always -u ./modules/nixos/home/dconf.ini <(dconf dump /) | less
+
+nixos/history:
+	sudo nix-env \
+		--profile /nix/var/nix/profiles/system \
+		--list-generations \
+
+nixos/gc:
+	sudo nix-env \
+		--profile /nix/var/nix/profiles/system \
+		--delete-generations 3d
