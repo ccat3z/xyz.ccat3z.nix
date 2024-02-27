@@ -41,6 +41,7 @@ if __name__ == '__main__':
         "org/gnome/system/location": True,
         "org/gnome/terminal/legacy": ['!', 'overridden-settings'],
         "com/github/amezin/ddterm": True,
+        "org/gnome/desktop/input-sources": True,
     }
 
     config = get_dconf_dump()

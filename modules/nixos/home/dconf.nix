@@ -55,6 +55,12 @@ with lib.hm.gvariant;
       window-skip-taskbar = true;
     };
 
+    "org/gnome/desktop/input-sources" = {
+      mru-sources = [ (mkTuple [ "ibus" "rime" ]) (mkTuple [ "xkb" "us" ]) ];
+      sources = [ (mkTuple [ "xkb" "us" ]) (mkTuple [ "ibus" "rime" ]) ];
+      xkb-options = [ "terminate:ctrl_alt_bksp" ];
+    };
+
     "org/gnome/desktop/interface" = {
       cursor-theme = "Qogir-dark";
       document-font-name = "Serif 11";
@@ -136,18 +142,22 @@ with lib.hm.gvariant;
       memory-header-bars-breakdown = true;
       memory-header-graph = true;
       memory-header-graph-breakdown = true;
+      memory-header-icon = false;
       memory-header-percentage = false;
       memory-header-tooltip = false;
       memory-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\",\"value\",\"free\"]";
       memory-menu-graph-breakdown = true;
-      monitors-order = "[\"processor\",\"memory\",\"storage\",\"network\",\"sensors\"]";
+      monitors-order = "[\"processor\",\"memory\",\"network\",\"storage\",\"sensors\"]";
+      network-header-icon = false;
       network-header-tooltip = false;
       network-indicators-order = "[\"icon\",\"IO bar\",\"IO graph\",\"IO speed\"]";
-      processor-header-icon = true;
+      panel-box-order = -2;
+      processor-header-icon = false;
       processor-header-tooltip = false;
       processor-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\"]";
       queued-pref-category = "";
       sensors-indicators-order = "[\"icon\",\"value\"]";
+      storage-header-icon = false;
       storage-header-tooltip = false;
       storage-indicators-order = "[\"icon\",\"bar\",\"percentage\",\"value\",\"free\",\"IO bar\",\"IO graph\",\"IO speed\"]";
       storage-main = "name-root0";
