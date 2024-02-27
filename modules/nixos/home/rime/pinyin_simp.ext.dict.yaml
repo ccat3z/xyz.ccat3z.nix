@@ -1,0 +1,9 @@
+---
+name: pinyin_simp.ext
+version: 1.0.0
+sort: by_weight
+import_tables:
+  - pinyin_simp
+  - sougou
+  - zhwiki
+...

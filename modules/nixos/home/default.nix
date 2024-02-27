@@ -2,6 +2,7 @@
 {
   imports = [
     ./dconf.nix
+    ./rime
   ];
 
   home.stateVersion = "23.11";
