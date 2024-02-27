@@ -28,6 +28,7 @@
       source-han-sans
       source-han-serif
       noto-fonts-color-emoji
+      source-han-sans-cn
     ];
     fontconfig = {
       defaultFonts = {
