@@ -132,8 +132,10 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell/extensions/astra-monitor" = {
-      memory-header-bars = true;
+      memory-header-bars = false;
       memory-header-bars-breakdown = true;
+      memory-header-graph = true;
+      memory-header-graph-breakdown = true;
       memory-header-percentage = false;
       memory-header-tooltip = false;
       memory-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\",\"value\",\"free\"]";
