@@ -64,9 +64,12 @@
     clipboard-indicator
     tiling-assistant
     wireshark
-    syncthing-icon
+    (syncthing-icon.overrideAttrs {
+      patches = [ ./patches/syncthing-icon-45-hotfix.patch ];
+    })
     panel-workspace-scroll
     pkgs.astra-monitor
+    syncthing-indicator
   ]);
 
   services.gpg-agent = {

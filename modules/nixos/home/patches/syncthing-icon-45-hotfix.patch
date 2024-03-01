@@ -1,0 +1,576 @@
+diff --git a/extension.js b/extension.js
+index 040f747..4f99c56 100644
+--- a/extension.js
++++ b/extension.js
+@@ -1,53 +1,34 @@
+ "use strict";
+ 
+-const Config = imports.misc.config;
+-const Clutter = imports.gi.Clutter;
+-const Gio = imports.gi.Gio;
+-const GLib = imports.gi.GLib;
+-const Gtk = imports.gi.Gtk;
+-const St = imports.gi.St;
+-const GObject = imports.gi.GObject;
+-
+-const Main = imports.ui.main;
+-const PanelMenu = imports.ui.panelMenu;
+-const PopupMenu = imports.ui.popupMenu;
+-
+-
+-const GETTEXT_DOMAIN = "gnome-shell-extension-syncthing";
+-const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
+-const _ = Gettext.gettext;
+-
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-const Filewatcher = Me.imports.filewatcher;
+-const Folders = Me.imports.folders;
+-const SyncthingApi = Me.imports.syncthing_api;
+-const Systemd = Me.imports.systemd;
++import Clutter from 'gi://Clutter';
++import Gio from 'gi://Gio';
++import GLib from 'gi://GLib';
++import St from 'gi://St';
++import GObject from 'gi://GObject';
+ 
+-function myLog(msg) {
+-    log(`[syncthingicon] ${msg}`);
+-}
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
++import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+ 
+-function getStatusIcon(iconName) {
+-    let path = Me.dir.get_path() + "/icons/hicolor/scalable/status/" + iconName + ".svg";
+-    let gicon = Gio.icon_new_for_string(path);
+-    return gicon;
+-}
++import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+ 
+-function getSyncthingIcon(iconName) {
+-    let path = Me.dir.get_path() + "/icons/hicolor/symbolic/apps/syncthing-symbolic.svg";
+-    let gicon = Gio.icon_new_for_string(path);
+-    return gicon;
+-}
++import * as Filewatcher from './filewatcher.js';
++import * as Folders from './folders.js';
++import * as SyncthingApi from './syncthing_api.js';
++import * as Systemd from './systemd.js';
+ 
++function myLog(msg) {
++    log(`[syncthingicon] ${msg}`);
++}
+ 
+ const SyncthingMenu = new GObject.registerClass(
+     class SyncthingMenu extends PanelMenu.Button {
+-        _init() {
++        _init(ext) {
+             super._init(0.0, "Syncthing", false);
+ 
++            this._ext = ext;
+             this._api = new SyncthingApi.SyncthingSession();
+-            this._settings = ExtensionUtils.getSettings();
++            this._settings = this._ext.getSettings();
+             this._systemd = new Systemd.Control(64);
+ 
+             this._initButton();
+@@ -70,7 +51,7 @@ const SyncthingMenu = new GObject.registerClass(
+             let box = new St.BoxLayout();
+             this.add_actor(box);
+ 
+-            this._syncthingIcon = new St.Icon({ gicon: getSyncthingIcon(),
++            this._syncthingIcon = new St.Icon({ gicon: this._getSyncthingIcon(),
+                 style_class: "system-status-icon" });
+             box.add_child(this._syncthingIcon);
+ 
+@@ -99,7 +80,7 @@ const SyncthingMenu = new GObject.registerClass(
+             this.menu.addMenuItem(this.separator);
+ 
+             // 4. Folder List
+-            this.folder_list = new Folders.FolderList(this, this._api);
++            this.folder_list = new Folders.FolderList(this, this._api, this._ext);
+             this.menu.addMenuItem(this.folder_list);
+         }
+ 
+@@ -164,8 +145,8 @@ const SyncthingMenu = new GObject.registerClass(
+         }
+ 
+         _openWebView() {
+-            let working_dir = Me.dir.get_path();
+-            let [ok, pid] = GLib.spawn_async(working_dir, ["gjs", "webviewer.js"], null, GLib.SpawnFlags.SEARCH_PATH, null);
++            let working_dir = this._ext.dir.get_path();
++            let [ok, pid] = GLib.spawn_async(working_dir, ["gjs", "-m", "webviewer.js"], null, GLib.SpawnFlags.SEARCH_PATH, null);
+             GLib.spawn_close_pid(pid);
+         }
+ 
+@@ -236,13 +217,25 @@ const SyncthingMenu = new GObject.registerClass(
+             } else {
+                 this._statusIcon.visible = true;
+                 if (this.systemd_state !== "inactive") {
+-                    this._statusIcon.gicon = getStatusIcon("exclamation-triangle");
++                    this._statusIcon.gicon = this._getStatusIcon("exclamation-triangle");
+                 } else {
+-                    this._statusIcon.gicon = getStatusIcon("pause");
++                    this._statusIcon.gicon = this._getStatusIcon("pause");
+                 }
+             }
+         }
+ 
++        _getStatusIcon(iconName) {
++            let path = this._ext.dir.get_path() + "/icons/hicolor/scalable/status/" + iconName + ".svg";
++            let gicon = Gio.icon_new_for_string(path);
++            return gicon;
++        }
++
++        _getSyncthingIcon() {
++            let path = this._ext.dir.get_path() + "/icons/hicolor/symbolic/apps/syncthing-symbolic.svg";
++            let gicon = Gio.icon_new_for_string(path);
++            return gicon;
++        }
++
+         notifyListChanged() {
+             this.menu._updateSeparatorVisibility(this.separator);
+         }
+@@ -261,20 +254,14 @@ const SyncthingMenu = new GObject.registerClass(
+ );
+ 
+ 
+-function init(extension) {
+-    ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
+-}
+-
+-
+-let _syncthing;
+-
+-function enable() {
+-    _syncthing = new SyncthingMenu();
+-    Main.panel.addToStatusArea("syncthing", _syncthing);
+-}
+-
++export default class SyncthingIconExtension extends Extension {
++    enable() {
++        this._syncthing = new SyncthingMenu(this);
++        Main.panel.addToStatusArea("syncthing", this._syncthing);
++    }
+ 
+-function disable() {
+-    _syncthing.destroy();
+-    _syncthing = null;
+-}
++    disable() {
++        this._syncthing.destroy();
++        this._syncthing = null;
++    }
++}
+\ No newline at end of file
+diff --git a/filewatcher.js b/filewatcher.js
+index d99b3df..4af7eb8 100644
+--- a/filewatcher.js
++++ b/filewatcher.js
+@@ -1,8 +1,8 @@
+ "use strict";
+ 
+-const Lang = imports.lang;
+-const Gio = imports.gi.Gio;
+-const GLib = imports.gi.GLib;
++import Gio from 'gi://Gio';
++import GLib from 'gi://GLib';
++import * as Saxes from './saxes.js';
+ 
+ function getCurrentDir() {
+     let stack = (new Error()).stack;
+@@ -17,13 +17,12 @@ function getCurrentDir() {
+     return file.get_parent();
+ }
+ imports.searchPath.unshift(getCurrentDir().get_path());
+-const Saxes = imports.saxes;
+ 
+ function myLog(msg) {
+     log(`[syncthingicon] ${msg}`);
+ }
+ 
+-function probeDirectories() {
++export function probeDirectories() {
+     const directories = [
+         `${GLib.get_user_config_dir()}/syncthing`,
+         `${GLib.get_home_dir()}/snap/syncthing/common/syncthing`,
+@@ -46,7 +45,7 @@ function probeDirectories() {
+     return null;
+ }
+ 
+-const ConfigParser = class {
++export const ConfigParser = class {
+     constructor(file) {
+         this.file = file;
+         this.state = "root";
+@@ -132,7 +131,7 @@ const ConfigParser = class {
+ const WARMUP_TIME = 1;
+ const COOLDOWN_TIME = 10;
+ 
+-var ConfigFileWatcher = class {
++export const ConfigFileWatcher = class {
+     /* File Watcher with 4 internal states:
+        ready -> warmup -> running -> cooldown
+          ^                              |
+diff --git a/folders.js b/folders.js
+index 53b36da..d9cd774 100644
+--- a/folders.js
++++ b/folders.js
+@@ -1,24 +1,22 @@
+ "use strict";
+ 
+-const Clutter = imports.gi.Clutter;
+-const Gio = imports.gi.Gio;
+-const GObject = imports.gi.GObject;
+-const St = imports.gi.St;
++import Clutter from 'gi://Clutter';
++import Gio from 'gi://Gio';
++import GObject from 'gi://GObject';
++import St from 'gi://St';
+ 
+ 
+-const Main = imports.ui.main;
+-const PopupMenu = imports.ui.popupMenu;
+-
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
++import * as Main from 'resource:///org/gnome/shell/ui/main.js';
++import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+ 
+ function myLog(msg) {
+     log(`[syncthingicon] ${msg}`);
+ }
+ 
+-var FolderList = class extends PopupMenu.PopupMenuSection {
+-    constructor(menu, api) {
++export const FolderList = class extends PopupMenu.PopupMenuSection {
++    constructor(menu, api, ext) {
+         super();
++        this._ext = ext;
+         this._menu = menu;
+         this._api = api;
+         this.folder_ids = [];
+@@ -32,7 +30,7 @@ var FolderList = class extends PopupMenu.PopupMenuSection {
+         let id = folder.id;
+         let position = this._sortedIndex(id);
+         this.folder_ids.splice(position, 0, id);
+-        let menuitem = new FolderMenuItem(folder);
++        let menuitem = new FolderMenuItem(folder, this._ext);
+         this.addMenuItem(menuitem, position);
+         this.folders.set(id, menuitem);
+         this._menu.notifyListChanged();
+@@ -74,16 +72,9 @@ var FolderList = class extends PopupMenu.PopupMenuSection {
+ }
+ 
+ 
+-function getFolderStatusIcon(iconName) {
+-    let path = Me.dir.get_path() + "/icons/hicolor/scalable/status/" + iconName + ".svg";
+-    let gicon = Gio.icon_new_for_string(path);
+-    return gicon;
+-}
+-
+-
+ var FolderMenuItem = GObject.registerClass(
+ class FolderMenuItem extends PopupMenu.PopupBaseMenuItem {
+-    _init(folder) {
++    _init(folder, ext) {
+         super._init();
+         this.folder = folder;
+         this._icon = new St.Icon({ gicon: this._getIcon(folder.path),
+@@ -128,6 +119,12 @@ class FolderMenuItem extends PopupMenu.PopupBaseMenuItem {
+         }
+     }
+ 
++    _getFolderStatusIcon(iconName) {
++        let path = this._ext.dir.get_path() + "/icons/hicolor/scalable/status/" + iconName + ".svg";
++        let gicon = Gio.icon_new_for_string(path);
++        return gicon;
++    }
++
+     activate(event) {
+         let path = this.folder.path;
+         if (! path)
+@@ -166,36 +163,36 @@ class FolderMenuItem extends PopupMenu.PopupBaseMenuItem {
+             case "scan-waiting":
+                 this._label_state.set_text("");
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("database");
++                this._statusIcon.gicon = _getFolderStatusIcon("database");
+                 break;
+             case "sync-waiting":
+             case "sync-preparing":
+             case "syncing":
+                 this._label_state.set_text("%d\u2009%%".format(pct));
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("cloud-down");
++                this._statusIcon.gicon = _getFolderStatusIcon("cloud-down");
+                 break;
+             case "cleaning":
+             case "clean-waiting":
+                 this._label_state.set_text("");
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("database");
++                this._statusIcon.gicon = _getFolderStatusIcon("database");
+                 break;
+             case "error":
+                 this._label_state.set_text("");
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("exclamation-triangle");
++                this._statusIcon.gicon = _getFolderStatusIcon("exclamation-triangle");
+                 break;
+             case "unknown":
+                 this._label_state.set_text("");
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("question");
++                this._statusIcon.gicon = _getFolderStatusIcon("question");
+                 break;
+             default:
+                 myLog(`unknown syncthing folder state "${state}"`);
+                 this._label_state.set_text("");
+                 this._statusIcon.visible = true;
+-                this._statusIcon.gicon = getFolderStatusIcon("question");
++                this._statusIcon.gicon = _getFolderStatusIcon("question");
+         }
+     }
+ 
+diff --git a/icons/hicolor/symbolic/apps/syncthing-symbolic.svg b/icons/hicolor/symbolic/apps/syncthing-symbolic.svg
+index 03933aa..83a3fbb 100644
+--- a/icons/hicolor/symbolic/apps/syncthing-symbolic.svg
++++ b/icons/hicolor/symbolic/apps/syncthing-symbolic.svg
+@@ -1,12 +1,47 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-9.061480784023479 -8.711829305257275 17.42365861051455 17.42365861051455" height="17.42365861051455" width="17.42365861051455">
+-    <circle cx="0" cy="0" r="7" style="fill:none;fill-opacity:0;stroke:#bebebe;stroke-width:1.5;display:inline"/>
+-    <path d="M 1.75,1.05 m -1.8,0 a 1.8,1.8 0 1 1 3.6,0 a 1.8,1.8 0 1 1 -3.6,0" style="fill:#bebebe;fill-opacity:1;stroke:none;display:inline"/>
+-    <path d="M 6.062177826491071,-3.4999999999999996 m -1.8,0 a 1.8,1.8 0 1 1 3.6,0 a 1.8,1.8 0 1 1 -3.6,0" style="fill:#bebebe;fill-opacity:1;stroke:none;display:inline"/>
+-    <line x1="6.062177826491071" y1="-3.4999999999999996" x2="1.75" y2="1.05" style="fill:none;stroke:#bebebe;stroke-width:1.2;display:inline"/>
+-    <path d="M -6.761480784023478,1.8117333157176456 m -1.8,0 a 1.8,1.8 0 1 1 3.6,0 a 1.8,1.8 0 1 1 -3.6,0" style="fill:#bebebe;fill-opacity:1;stroke:none;display:inline"/>
+-    <line x1="-6.761480784023478" y1="1.8117333157176456" x2="1.75" y2="1.05" style="fill:none;stroke:#bebebe;stroke-width:1.2;display:inline"/>
+-    <path d="M 4.499513267805774,5.362311101832847 m -1.8,0 a 1.8,1.8 0 1 1 3.6,0 a 1.8,1.8 0 1 1 -3.6,0" style="fill:#bebebe;fill-opacity:1;stroke:none;display:inline"/>
+-    <line x1="4.499513267805774" y1="5.362311101832847" x2="1.75" y2="1.05" style="fill:none;stroke:#bebebe;stroke-width:1.2;display:inline"/>
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!-- Created with Inkscape (http://www.inkscape.org/) -->
+ 
++<svg
++   width="64"
++   height="64"
++   viewBox="0 0 16.933333 16.933334"
++   version="1.1"
++   id="svg966"
++   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
++   sodipodi:docname="syncthing-symbolic.svg"
++   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
++   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
++   xmlns="http://www.w3.org/2000/svg"
++   xmlns:svg="http://www.w3.org/2000/svg">
++  <sodipodi:namedview
++     id="namedview968"
++     pagecolor="#ffffff"
++     bordercolor="#666666"
++     borderopacity="1.0"
++     inkscape:pageshadow="2"
++     inkscape:pageopacity="0.0"
++     inkscape:pagecheckerboard="0"
++     inkscape:document-units="mm"
++     showgrid="false"
++     units="px"
++     inkscape:zoom="3.0132247"
++     inkscape:cx="42.313472"
++     inkscape:cy="30.698009"
++     inkscape:window-width="1920"
++     inkscape:window-height="1020"
++     inkscape:window-x="0"
++     inkscape:window-y="0"
++     inkscape:window-maximized="1"
++     inkscape:current-layer="layer1" />
++  <defs
++     id="defs963" />
++  <g
++     inkscape:label="Layer 1"
++     inkscape:groupmode="layer"
++     id="layer1">
++    <path
++       id="path871"
++       style="color:#000000;opacity:1;fill:#bebebe;stroke-width:1.48506;-inkscape-stroke:none"
++       d="m 8.8118279,0.79374977 c -4.2287977,0 -7.672842,3.44404433 -7.672842,7.67284043 0,0.099913 0.011674,0.1968245 0.015455,0.2959841 A 1.7820798,1.7820798 0 0 0 0.33649369,10.261207 1.7820798,1.7820798 0 0 0 2.0284655,12.04018 c 1.2880817,2.434669 3.8441212,4.099404 6.7833471,4.099404 1.2628694,0 2.4536924,-0.311327 3.5057604,-0.854688 a 1.7820798,1.7820798 0 0 0 2.732294,-1.508285 1.7820798,1.7820798 0 0 0 -0.135344,-0.678708 c 0.980789,-1.288972 1.57015,-2.891291 1.57015,-4.6311633 0,-0.7922341 -0.119929,-1.5562559 -0.34418,-2.2759351 A 1.7820798,1.7820798 0 0 0 16.59684,5.001591 1.7820798,1.7820798 0 0 0 14.433052,3.2632167 C 13.030345,1.7495807 11.031879,0.79389947 8.8118432,0.79389947 Z m 0,1.48504783 c 1.7432721,0 3.3129251,0.7181829 4.4358621,1.8718106 a 1.7820798,1.7820798 0 0 0 -0.214635,0.8508332 1.7820798,1.7820798 0 0 0 0.195289,0.8101958 L 11.267596,7.8787378 A 1.7820798,1.7820798 0 0 0 8.8195551,9.064097 L 3.7378436,9.5204596 A 1.7820798,1.7820798 0 0 0 2.6279137,8.5535901 c -4.078e-4,-0.029936 -0.00374,-0.057624 -0.00374,-0.086817 0,-3.4262328 2.761567,-6.1877926 6.1877757,-6.1877926 z m 5.2770151,4.3507821 a 1.7820798,1.7820798 0 0 0 0.674855,0.1526692 c 0.150686,0.5359902 0.235927,1.0989961 0.235927,1.6842293 0,1.3545304 -0.436197,2.6026418 -1.169879,3.6198398 a 1.7820798,1.7820798 0 0 0 -0.964905,-0.0464 L 11.948278,10.605123 A 1.7820798,1.7820798 0 0 0 12.327276,9.5067996 1.7820798,1.7820798 0 0 0 12.131986,8.6946583 Z M 8.9259149,10.249457 a 1.7820798,1.7820798 0 0 0 2.0206981,0.993886 l 0.916562,1.43674 a 1.7820798,1.7820798 0 0 0 -0.377067,1.096378 1.7820798,1.7820798 0 0 0 0.01946,0.25894 c -0.814267,0.393161 -1.7261424,0.61876 -2.693614,0.61876 -2.3272059,0 -4.3439665,-1.274379 -5.4007688,-3.165424 a 1.7820798,1.7820798 0 0 0 0.4331436,-0.785051 z" />
++  </g>
+ </svg>
+diff --git a/metadata.json b/metadata.json
+index 83edeff..d104f98 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -4,9 +4,10 @@
+   "name": "Syncthing Icon",
+   "settings-schema": "org.gnome.shell.extensions.syncthing",
+   "shell-version": [
+-    "43"
++    "45"
+   ],
+   "url": "https://github.com/jaystrictor/gnome-shell-extension-syncthing",
+   "uuid": "syncthingicon@jay.strict@posteo.de",
++  "gettext-domain": "gnome-shell-extension-syncthing",
+   "version": 35
+-}
+\ No newline at end of file
++}
+diff --git a/prefs.js b/prefs.js
+index 56b27a1..9691080 100644
+--- a/prefs.js
++++ b/prefs.js
+@@ -1,21 +1,17 @@
+ "use strict";
+ 
+-const Gio = imports.gi.Gio;
+-const Gtk = imports.gi.Gtk;
+-const GObject = imports.gi.GObject;
++import Gio from 'gi://Gio';
++import Gtk from 'gi://Gtk';
++import GObject from 'gi://GObject';
++import Adw from 'gi://Adw';
+ 
+-const GETTEXT_DOMAIN = "gnome-shell-extension-syncthing";
+-const Gettext = imports.gettext.domain(GETTEXT_DOMAIN);
+-const _ = Gettext.gettext;
+-
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
++import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+ 
+ const SyncthingIconPrefsWidget = GObject.registerClass(
+ class SyncthingIconPrefsWidget extends Gtk.Grid {
+-    _init(params) {
+-        super._init(params);
+-        this._settings = ExtensionUtils.getSettings();
++    _init(settings) {
++        super._init();
++        this._settings = settings;
+ 
+         this.margin = 18;
+         this.row_spacing = this.column_spacing = 12;
+@@ -98,12 +94,15 @@ class SyncthingIconPrefsWidget extends Gtk.Grid {
+     }
+ });
+ 
+-function init(metadata) {
+-    ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
+-}
+ 
+-function buildPrefsWidget() {
+-    let widget = new SyncthingIconPrefsWidget();
++export default class SystemMonitorExtensionPreferences extends ExtensionPreferences {
++    fillPreferencesWindow(window) {
++        const page = new Adw.PreferencesPage();
++        const group = new Adw.PreferencesGroup();
++        const widget = new SyncthingIconPrefsWidget(this.getSettings());
+ 
+-    return widget;
+-}
++        group.add(widget);
++        page.add(group);
++        window.add(page);
++    }
++}
+\ No newline at end of file
+diff --git a/saxes.js b/saxes.js
+index b6d2a61..d64f855 100644
+--- a/saxes.js
++++ b/saxes.js
+@@ -439,7 +439,7 @@ ${XMLNS_NAMESPACE}.`);
+  * like.
+  */
+ 
+-var SaxesParser = class SaxesParser {
++export const SaxesParser = class SaxesParser {
+   /**
+    * @param {SaxesOptions} opt The parser options.
+    */
+diff --git a/syncthing_api.js b/syncthing_api.js
+index 3eab54d..d50896d 100644
+--- a/syncthing_api.js
++++ b/syncthing_api.js
+@@ -1,9 +1,9 @@
+ "use strict";
+ 
+-const Gio = imports.gi.Gio;
+-const GObject = imports.gi.GObject;
+-const GLib = imports.gi.GLib;
+-const Soup = imports.gi.Soup;
++import Gio from 'gi://Gio';
++import GObject from 'gi://GObject';
++import GLib from 'gi://GLib';
++import Soup from 'gi://Soup';
+ 
+ const decoder = new TextDecoder('utf-8');
+ 
+@@ -129,7 +129,7 @@ var Folder = GObject.registerClass({
+ });
+ 
+ 
+-var SyncthingSession = GObject.registerClass({
++export const SyncthingSession = GObject.registerClass({
+     Signals: {
+         "connection-state-changed": {
+             param_types: [ GObject.TYPE_STRING ],
+diff --git a/systemd.js b/systemd.js
+index 0b2e4fd..fe16a43 100644
+--- a/systemd.js
++++ b/systemd.js
+@@ -1,8 +1,8 @@
+ "use strict";
+ 
+-const Gio = imports.gi.Gio;
+-const GObject = imports.gi.GObject;
+-const GLib = imports.gi.GLib;
++import Gio from 'gi://Gio';
++import GObject from 'gi://GObject';
++import GLib from 'gi://GLib';
+ 
+ 
+ function myLog(msg) {
+@@ -10,7 +10,7 @@ function myLog(msg) {
+ }
+ 
+ 
+-var Control = GObject.registerClass({
++export const Control = GObject.registerClass({
+     Signals: {
+         "state-changed": {
+             // "systemd-not-available", "unit-not-loaded", "active", or "inactive"
+diff --git a/webviewer.js b/webviewer.js
+index f48cfd9..a79ee8d 100644
+--- a/webviewer.js
++++ b/webviewer.js
+@@ -1,18 +1,17 @@
+ "use strict";
+ 
+-imports.gi.versions.Gtk = '3.0';
+-imports.gi.versions.WebKit2 = '4.0';
+-const Gio = imports.gi.Gio;
+-const Gtk = imports.gi.Gtk;
+-const GObject = imports.gi.GObject;
+-const WebKit = imports.gi.WebKit2;
++import Gio from 'gi://Gio';
++import Gtk from 'gi://Gtk?version=3.0';
++import GObject from 'gi://GObject';
++import WebKit from 'gi://WebKit2?version=4.0';
++import * as Filewatcher from './filewatcher.js';
+ 
+ function getCurrentDir() {
+     let stack = (new Error()).stack;
+     let stackLine = stack.split("\n")[1];
+     if (!stackLine)
+         throw new Error("Could not find current file.");
+-    let match = new RegExp("@(.+):\\d+").exec(stackLine);
++    let match = new RegExp("@file://(.+):\\d+").exec(stackLine);
+     if (!match)
+         throw new Error("Could not find current file.");
+     let path = match[1];
+@@ -20,7 +19,6 @@ function getCurrentDir() {
+     return file.get_parent();
+ }
+ imports.searchPath.unshift(getCurrentDir().get_path());
+-const Filewatcher = imports.filewatcher;
+ 
+ function myLog(msg) {
+     log(`[syncthingicon-webview] ${msg}`);
