@@ -42,6 +42,9 @@ in
     ({
       programs.zsh.enable = true;
       users.users.${cfg.user}.shell = pkgs.zsh;
+
+      # Required by host-spawn
+      services.flatpak.enable = true;
     })
     (lib.mkIf cfg.wireshark.enable wiresharkConfig)
   ];

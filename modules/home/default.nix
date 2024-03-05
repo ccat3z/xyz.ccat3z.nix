@@ -40,7 +40,7 @@
     (gnome.gnome-terminal.overrideAttrs {
       patches = [ ./patches/gnome-terminal-resize.patch ];
     })
-    vscode.fhs
+    (vscode.fhsWithPackages (pkgs: with pkgs; [ host-spawn ]))
     remmina
     dconf
     moonlight-qt
@@ -49,6 +49,7 @@
     drawio
     virt-manager
     gedit
+    d-spy
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
