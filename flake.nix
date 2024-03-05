@@ -64,6 +64,8 @@
             modules = [
               ./modules/nixos
               ./secrets
+              ./modules/home/nixos.nix
+              ({ home = { user = "ccat3z"; }; })
               ({ nixpkgs.overlays = [ self.overlays.default ]; })
             ];
           };
