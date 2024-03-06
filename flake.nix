@@ -65,8 +65,11 @@
               ./modules/nixos
               ./secrets
               ./modules/home/nixos.nix
-              ({ home = { user = "ccat3z"; }; })
-              ({ nixpkgs.overlays = [ self.overlays.default ]; })
+              {
+                nixpkgs.overlays = [ self.overlays.default ];
+                home.user = "ccat3z";
+                networking.domain = "ccat3z.xyz";
+              }
             ];
           };
         in
@@ -75,10 +78,7 @@
             lib.nixosSystem (base // {
               modules = base.modules ++ [
                 hostModule
-                {
-                  networking.hostName = hostName;
-                  networking.domain = "ccat3z.xyz";
-                }
+                { networking.hostName = hostName; }
               ];
             })
           ))
