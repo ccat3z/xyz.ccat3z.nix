@@ -126,11 +126,6 @@
               gnupg
               age
             ];
-
-            shellHook = ''
-              echo -e '\033[34mIn dev shell\033[0m' >&2
-              exec $SHELL
-            '';
           };
         }
       );
