@@ -67,8 +67,14 @@
   # networking.interfaces.wlp58s0.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
 
-  virtualisation.libvirtd.enable = true;
-  virtualisation.libvirtd.qemu.swtpm.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu = {
+      swtpm.enable = true;
+      ovmf.enable = true;
+      ovmf.packages = [ pkgs.OVMFFull.fd ];
+    };
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
