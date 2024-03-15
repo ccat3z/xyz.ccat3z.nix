@@ -15,11 +15,11 @@ nixos/diff: nixos/build
 	nix-diff /run/current-system ./result
 
 nixos/gen-dconf:
-	./modules/nixos/home/dconf-gen.py
-	nix fmt ./modules/nixos/home/dconf.nix
+	./modules/home/dconf-gen.py
+	nix fmt ./modules/home/dconf.nix
 
 nixos/diff-dconf:
-	diff --color=always -u ./modules/nixos/home/dconf.ini <(dconf dump /) | less
+	diff --color=always -u ./modules/home/dconf.ini <(dconf dump /) | less
 
 nixos/history:
 	sudo nix-env \
