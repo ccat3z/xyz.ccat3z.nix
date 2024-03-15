@@ -333,7 +333,7 @@ with lib.hm.gvariant;
       enable-tiling-popup = false;
       favorite-layout = 0;
       favorite-layouts = [ "-1" "-1" ];
-      headerbar = false;
+      headerbar = with lib.gvariant; mkMaybe type.boolean "false";
       import-layout-examples = false;
       last-version-installed = 44;
       layouts-overview = [ ];
