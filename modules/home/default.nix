@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
   imports = [
     ./dconf.nix
@@ -134,5 +134,11 @@
       "--home=/mnt/syncthing/config"
       "--no-default-folder"
     ];
+  };
+
+  # Gnome terminal settings
+  dconf.settings."org/gnome/terminal/legacy" = {
+    headerbar = with lib.gvariant; mkMaybe type.boolean "false";
+    default-show-menubar = false;
   };
 }

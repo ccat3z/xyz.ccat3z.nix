@@ -39,7 +39,8 @@ if __name__ == '__main__':
         "org/gnome/shell/extensions/tiling-assistant": ['!', 'overridden-settings'],
         "org/gnome/shell/extensions/astra-monitor": True,
         "org/gnome/system/location": True,
-        "org/gnome/terminal/legacy": ['!', 'overridden-settings'],
+        "org/gnome/terminal/legacy": False,
+        "org/gnome/terminal/legacy/profiles:": True,
         "com/github/amezin/ddterm": True,
         "org/gnome/desktop/input-sources": True,
     }
