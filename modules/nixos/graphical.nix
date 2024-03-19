@@ -30,6 +30,7 @@
       source-han-serif
       noto-fonts-color-emoji
       source-han-sans-cn
+      ttf-wps-fonts
     ];
     fontconfig = {
       defaultFonts = {

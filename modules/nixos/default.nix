@@ -3,6 +3,7 @@
   imports = [
     ./users.nix
     ./graphical.nix
+    ./pinned.nix
     ../network
     ../nixsvc/options.nix
   ];

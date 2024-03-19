@@ -50,6 +50,7 @@
     virt-manager
     gedit
     d-spy
+    wpsoffice-cn
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
