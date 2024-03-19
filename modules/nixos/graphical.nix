@@ -43,4 +43,6 @@
     enabled = "ibus";
     ibus.engines = with pkgs.ibus-engines; [ rime ];
   };
+
+  services.printing.enable = true;
 }
