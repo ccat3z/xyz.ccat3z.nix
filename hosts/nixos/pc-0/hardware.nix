@@ -17,6 +17,11 @@
     options = [ "subvol=nix/rootfs" ];
   };
 
+  fileSystems."/mnt/volume" = {
+    device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
+    fsType = "btrfs";
+  };
+
   boot.initrd.luks.devices = {
     "root0".device = "/dev/disk/by-uuid/056076b1-1099-4a42-b150-cf125ff2426e";
     "root1".device = "/dev/disk/by-uuid/5ebb7404-2c04-4eb0-afde-552d0afb7c49";
