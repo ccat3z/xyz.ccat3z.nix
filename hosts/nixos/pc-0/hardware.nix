@@ -6,6 +6,7 @@
       (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
+  boot.loader.systemd-boot.enable = true;
   boot.initrd.availableKernelModules = [
     "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "uas" "sd_mod"
     # Required by luks key part

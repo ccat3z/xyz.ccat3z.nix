@@ -3,8 +3,6 @@
 {
   imports = [ ./hardware.nix ];
 
-  boot.loader.systemd-boot.enable = true;
-
   networking.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
 
