@@ -49,6 +49,12 @@
     fsType = "btrfs";
   };
 
+  fileSystems."/home/${config.home.user}/Documents" = {
+    device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
+    fsType = "btrfs";
+    options = [ "subvol=project" ];
+  };
+
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/7CB2-1143";
     fsType = "vfat";
