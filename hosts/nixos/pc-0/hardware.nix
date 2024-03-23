@@ -76,4 +76,33 @@
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   hardware.logitech-k380.enable = true;
+
+  hardware.fan2go = {
+    enable = true;
+    hwmonModules = [ "coretemp" "nct6775" ];
+    config = ''
+      maxRpmDiffForSettledFan: 20
+      fans:
+        - id: case
+          hwmon:
+            platform: nct6798-isa-0a20
+            rpmChannel: 6
+            pwmChannel: 6
+          minPwm: 80
+          maxPwm: 145
+          neverStop: true
+          curve: cpu_curve
+      sensors:
+        - id: cpu_package
+          hwmon:
+            platform: coretemp
+            index: 1
+      curves:
+        - id: cpu_curve
+          linear:
+            sensor: cpu_package
+            min: 40
+            max: 70
+    '';
+  };
 }

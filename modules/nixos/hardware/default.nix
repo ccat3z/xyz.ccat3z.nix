@@ -1,3 +1,3 @@
 {
-  imports = [ ./logitech-k380.nix ];
+  imports = [ ./logitech-k380.nix ./fan2go.nix ];
 }
