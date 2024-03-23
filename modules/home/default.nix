@@ -55,6 +55,7 @@
     gedit
     d-spy
     wpsoffice-cn
+    xclip
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
@@ -76,6 +77,9 @@
     panel-workspace-scroll
     pkgs.astra-monitor
     syncthing-indicator
+    (rounded-window-corners.overrideAttrs {
+      patches = [ ./patches/rounded-window-corners-45-hotfix.patch ];
+    })
   ]);
 
   services.gpg-agent = {

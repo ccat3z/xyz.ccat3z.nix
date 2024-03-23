@@ -1,0 +1,1644 @@
+diff --git a/dbus/client.js b/dbus/client.js
+index b2e327d..492b882 100644
+--- a/dbus/client.js
++++ b/dbus/client.js
+@@ -1,8 +1,5 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const Gio       = imports.gi.Gio
++import Gio      from 'gi://Gio'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+@@ -15,7 +12,7 @@ const obj_path = '/yi/github/RoundedCornersEffect'
+  * Call pick() of DBus service, it will open Inspector from gnome-shell to
+  * Pick actor on stage.
+  */
+-function pick () {
++export function pick () {
+   connect.call (
+     bus_name,
+     obj_path,
+@@ -33,7 +30,7 @@ function pick () {
+ /**
+  * Connect to 'picked' signal, it will be emit when window is picked
+  */
+-function on_picked (cb) {
++export function on_picked (cb) {
+   const id = connect.signal_subscribe (
+     bus_name,
+     iface_name,
+diff --git a/dbus/services.js b/dbus/services.js
+index 1459f60..43e1d8c 100644
+--- a/dbus/services.js
++++ b/dbus/services.js
+@@ -1,26 +1,21 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const Gio              = imports.gi.Gio
+-const { Variant }      = imports.gi.GLib
++import Gio      from 'gi://Gio'
++import GLib      from 'gi://GLib'
++import Meta      from 'gi://Meta'
+ 
+ // gnome modules
+-const { Inspector }    = imports.ui.lookingGlass
+-const Main             = imports.ui.main
++import { Inspector } from 'resource:///org/gnome/shell/ui/lookingGlass.js'
++import * as Main from 'resource:///org/gnome/shell/ui/main.js'
+ 
+ // local modules
+-const { _log }         = Me.imports.utils.log
+-const { load }         = Me.imports.utils.io
+-
+-// types
+-const { WindowActor }  = imports.gi.Meta
++import { _log } from '../utils/log.js'
++import { loadFile } from '../utils/io.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-const iface = load (`${Me.path}/dbus/iface.xml`)
++const iface = loadFile (import.meta.url, 'iface.xml')
+ 
+-var Services = class Services {
++export class Services {
+   constructor () {
+     this.DBusImpl = Gio.DBusExportedObject.wrapJSObject (iface, this)
+   }
+@@ -31,7 +26,7 @@ var Services = class Services {
+     const _send_wm_class_instance = (wm_instance_class) => {
+       this.DBusImpl.emit_signal (
+         'picked',
+-        new Variant ('(s)', [wm_instance_class])
++        new GLib.Variant ('(s)', [wm_instance_class])
+       )
+     }
+ 
+@@ -63,12 +58,12 @@ var Services = class Services {
+       // User will pick to a Meta.SurfaceActor in most time, let's find the
+       // associate Meta.WindowActor
+       for (let i = 0; i < 2; i++) {
+-        if (actor == null || actor instanceof WindowActor) break
++        if (actor == null || actor instanceof Meta.WindowActor) break
+         // If picked actor is not a Meta.WindowActor, search it's parent
+         actor = actor.get_parent ()
+       }
+ 
+-      if (!(actor instanceof WindowActor)) {
++      if (!(actor instanceof Meta.WindowActor)) {
+         _send_wm_class_instance ('window-not-found')
+         return
+       }
+diff --git a/effect/clip_shadow_effect.js b/effect/clip_shadow_effect.js
+index 1b7a4f3..cc93339 100644
+--- a/effect/clip_shadow_effect.js
++++ b/effect/clip_shadow_effect.js
+@@ -1,27 +1,22 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject                      = imports.gi.GObject
+-const { SnippetHook, GLSLEffect }  = imports.gi.Shell
++import GObject      from 'gi://GObject'
++import Shell      from 'gi://Shell'
+ 
+ // local modules
+-const { loadShader }               = Me.imports.utils.io
+-
+-// types
+-
++import { loadShader } from '../utils/io.js'
+ 
+ // ------------------------------------------------------------------- [imports]
+ 
+ const { declarations, code } = loadShader (
+-  `${Me.path}/effect/shader/clip_shadow.frag`
++  import.meta.url,
++  'shader/clip_shadow.frag'
+ )
+ 
+-var ClipShadowEffect = GObject.registerClass (
++export const ClipShadowEffect = GObject.registerClass (
+   {},
+-  class extends GLSLEffect {
++  class extends Shell.GLSLEffect {
+     vfunc_build_pipeline () {
+-      const hook = SnippetHook.FRAGMENT
++      const hook = Shell.SnippetHook.FRAGMENT
+       this.add_glsl_snippet (hook, declarations, code, false)
+     }
+ 
+diff --git a/effect/linear_filter_effect.js b/effect/linear_filter_effect.js
+index 2d9a69d..f4c64d9 100644
+--- a/effect/linear_filter_effect.js
++++ b/effect/linear_filter_effect.js
+@@ -1,22 +1,19 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
++import Cogl      from 'gi://Cogl'
++import GObject      from 'gi://GObject'
++import Shell      from 'gi://Shell'
+ 
+-const { PipelineFilter }           = imports.gi.Cogl
+-const { registerClass }            = imports.gi.GObject
+-const { GLSLEffect, SnippetHook }  = imports.gi.Shell
+-
+-var LinearFilterEffect = registerClass (
++export const LinearFilterEffect = GObject.registerClass (
+   {},
+-  class extends GLSLEffect {
++  class extends Shell.GLSLEffect {
+     vfunc_build_pipeline () {
+-      this.add_glsl_snippet (SnippetHook.FRAGMENT, '', '', false)
++      this.add_glsl_snippet (Shell.SnippetHook.FRAGMENT, '', '', false)
+     }
+ 
+     vfunc_paint_target (node, ctx) {
+       this.get_pipeline ()?.set_layer_filters (
+         0,
+-        PipelineFilter.LINEAR_MIPMAP_LINEAR,
+-        PipelineFilter.NEAREST
++        Cogl.PipelineFilter.LINEAR_MIPMAP_LINEAR,
++        Cogl.PipelineFilter.NEAREST
+       )
+       super.vfunc_paint_target (node, ctx)
+     }
+diff --git a/effect/rounded_corners_effect.js b/effect/rounded_corners_effect.js
+index dd5722b..8f20a64 100644
+--- a/effect/rounded_corners_effect.js
++++ b/effect/rounded_corners_effect.js
+@@ -1,24 +1,19 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ var _a
+ // imports.gi
+-const { registerClass }            = imports.gi.GObject
+-const { GLSLEffect, SnippetHook }  = imports.gi.Shell
++import GObject      from 'gi://GObject'
++import Meta      from 'gi://Meta'
++import Shell      from 'gi://Shell'
+ 
+ // local modules
+-const { loadShader }               = Me.imports.utils.io
+-
+-// types
+-
+-const { shell_version }            = Me.imports.utils.ui
+-const { WindowActor }              = imports.gi.Meta
++import { loadShader } from '../utils/io.js'
++import { shell_version } from '../utils/ui.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+ // Load fragment shader of rounded corners effect.
+ const { declarations, code } = loadShader (
+-  `${Me.path}/effect/shader/rounded_corners.frag`
++  import.meta.url,
++  'shader/rounded_corners.frag'
+ )
+ 
+ /** Location of uniform variants of rounded corners effect */
+@@ -35,9 +30,9 @@ class Uniforms {
+   }
+ }
+ 
+-var RoundedCornersEffect = registerClass (
++export const RoundedCornersEffect = GObject.registerClass (
+   {},
+-  ((_a = class Effect extends GLSLEffect {
++  ((_a = class Effect extends Shell.GLSLEffect {
+     /**
+      * Collect location of uniform variants, only used when added shader
+      * snippet to effect.
+@@ -60,7 +55,7 @@ var RoundedCornersEffect = registerClass (
+     }
+ 
+     vfunc_build_pipeline () {
+-      const type = SnippetHook.FRAGMENT
++      const type = Shell.SnippetHook.FRAGMENT
+       this.add_glsl_snippet (type, declarations, code, false)
+       this._init_uniforms ()
+     }
+@@ -119,7 +114,7 @@ var RoundedCornersEffect = registerClass (
+         // offers correct one.
+         if (
+           shell_version () >= 43.1 &&
+-          actor instanceof WindowActor &&
++          actor instanceof Meta.WindowActor &&
+           actor.first_child?.first_child
+         ) {
+           const { width, height } = actor.first_child.first_child
+diff --git a/extension.js b/extension.js
+index ee4bd67..7bb122c 100644
+--- a/extension.js
++++ b/extension.js
+@@ -1,47 +1,42 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const { Point }                 = imports.gi.Graphene
+-const Clutter                   = imports.gi.Clutter
+-const { WindowClientType }      = imports.gi.Meta
++import Graphene      from 'gi://Graphene'
++import Clutter      from 'gi://Clutter'
++import Meta      from 'gi://Meta'
++import GObject      from 'gi://GObject'
+ 
+ // gnome-shell modules
+-const { WindowPreview }         = imports.ui.windowPreview
+-const { WorkspaceGroup }        = imports.ui.workspaceAnimation
+-const BackgroundMenu            = imports.ui.backgroundMenu
+-const { layoutManager }         = imports.ui.main
+-const { overview }              = imports.ui.main
++import { WindowPreview } from 'resource:///org/gnome/shell/ui/windowPreview.js'
++import { overview, layoutManager } from 'resource:///org/gnome/shell/ui/main.js'
++import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js'
+ 
+ // local modules
+-const { constants }             = Me.imports.utils.constants
+-const { stackMsg, _log }        = Me.imports.utils.log
+-const UI                        = Me.imports.utils.ui
+-const { connections }           = Me.imports.utils.connections
+-const { settings }              = Me.imports.utils.settings
+-const { Services }              = Me.imports.dbus.services
+-const { LinearFilterEffect }    = Me.imports.effect.linear_filter_effect
+-const { RoundedCornersEffect }  = Me.imports.effect.rounded_corners_effect
+-const { init_translations }     = Me.imports.utils.i18n
+-const { WindowActorTracker }    = Me.imports.manager.effect_manager
+-
+-const { registerClass }         = imports.gi.GObject
++import { constants } from './utils/constants.js'
++import { stackMsg, _log } from './utils/log.js'
++import * as UI from './utils/ui.js'
++import { connections } from './utils/connections.js'
++import { init_settings, settings } from './utils/settings.js'
++import { Services } from './dbus/services.js'
++import { LinearFilterEffect } from './effect/linear_filter_effect.js'
++import { RoundedCornersEffect } from './effect/rounded_corners_effect.js'
++import { WindowActorTracker } from './manager/effect_manager.js'
++
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var Extension = class Extension {
++export default class RoundedWindowCorners extends Extension {
+   constructor () {
++    super (...arguments)
++
+     this._services = null
+     this._window_actor_tracker = null
+   }
+ 
+   enable () {
++    init_settings (this.getSettings ())
++
+     // Restore original methods, those methods will be restore when
+     // extensions is disabled
+     this._orig_add_window = WindowPreview.prototype._addWindow
+-    this._orig_create_windows = WorkspaceGroup.prototype._createWindows
+-    this._orig_sync_stacking = WorkspaceGroup.prototype._syncStacking
+-    this._add_background_menu = BackgroundMenu.addBackgroundMenu
+ 
+     this._services = new Services ()
+     this._window_actor_tracker = new WindowActorTracker ()
+@@ -56,10 +51,16 @@ var Extension = class Extension {
+     if (layoutManager._startingUp) {
+       const id = layoutManager.connect ('startup-complete', () => {
+         this._window_actor_tracker?.enable ()
++        if (settings ().enable_preferences_entry) {
++          UI.SetupBackgroundMenu ()
++        }
+         layoutManager.disconnect (id)
+       })
+     } else {
+       this._window_actor_tracker?.enable ()
++      if (settings ().enable_preferences_entry) {
++        UI.SetupBackgroundMenu ()
++      }
+     }
+ 
+     const self = this
+@@ -134,7 +135,7 @@ var Extension = class Extension {
+         rounded_effect_of_window_actor?.set_enabled (false)
+ 
+         // Add rounded corners effect to preview window actor
+-        first_child.add_effect_with_name (name, new RoundedCornersEffect ())
++        first_child?.add_effect_with_name (name, new RoundedCornersEffect ())
+ 
+         // Update uniform variables of rounded corners effect when size of
+         // preview windows in overview changed.
+@@ -157,7 +158,7 @@ var Extension = class Extension {
+           let pixel_step = undefined
+           if (
+             UI.shell_version () >= 43.1 &&
+-            window.get_client_type () == WindowClientType.WAYLAND
++            window.get_client_type () == Meta.WindowClientType.WAYLAND
+           ) {
+             const surface = window.get_compositor_private ().first_child
+             pixel_step = [
+@@ -191,76 +192,6 @@ var Extension = class Extension {
+       })
+     }
+ 
+-    // Just Like the monkey patch when enter overview, need to add shadow
+-    // actor and blur actor into WorkspaceGroup to see them when switching
+-    // workspace
+-    WorkspaceGroup.prototype._createWindows = function () {
+-      self._orig_create_windows.apply (this)
+-
+-      this._windowRecords.forEach (({ windowActor: actor, clone }) => {
+-        const win = actor.meta_window
+-        const frame_rect = win.get_frame_rect ()
+-        const cfg = UI.ChoiceRoundedCornersCfg (
+-          settings ().global_rounded_corner_settings,
+-          settings ().custom_rounded_corner_settings,
+-          win
+-        )
+-        const maximized =
+-          win.maximized_horizontally ||
+-          win.maximized_vertically ||
+-          win.fullscreen
+-        const has_rounded_corners = cfg.keep_rounded_corners || !maximized
+-
+-        const shadow = actor.__rwc_rounded_window_info?.shadow
+-        if (shadow && has_rounded_corners) {
+-          // Only create shadow actor when window should have rounded
+-          // corners when switching workspace
+-
+-          // Copy shadow actor to workspace group, so that to see
+-          // shadow when switching workspace
+-          const shadow_clone = new Clutter.Clone ({ source: shadow })
+-          const paddings = constants.SHADOW_PADDING * UI.WindowScaleFactor (win)
+-
+-          shadow_clone.width = frame_rect.width + paddings * 2
+-          shadow_clone.height = frame_rect.height + paddings * 2
+-          shadow_clone.x = clone.x + frame_rect.x - actor.x - paddings
+-          shadow_clone.y = clone.y + frame_rect.y - actor.y - paddings
+-
+-          clone.connect (
+-            'notify::translation-z',
+-            () => (shadow_clone.translation_z = clone.translation_z + 0.006)
+-          )
+-          clone._shadow_clone = shadow_clone
+-          clone.bind_property ('visible', shadow_clone, 'visible', 0)
+-          this.insert_child_below (shadow_clone, clone)
+-        }
+-      })
+-    }
+-
+-    // Let shadow actor always behind the window clone actor when we
+-    // switch workspace by Ctrl+Alt+Left/Right
+-    //
+-    // Fix #55
+-    WorkspaceGroup.prototype._syncStacking = function () {
+-      self._orig_sync_stacking.apply (this, [])
+-      for (const { clone } of this._windowRecords) {
+-        const shadow_clone = clone._shadow_clone
+-        if (shadow_clone && shadow_clone.visible) {
+-          this.set_child_below_sibling (shadow_clone, clone)
+-        }
+-      }
+-    }
+-
+-    if (settings ().enable_preferences_entry) {
+-      UI.SetupBackgroundMenu ()
+-    }
+-    BackgroundMenu.addBackgroundMenu = (actor, layout) => {
+-      this._add_background_menu (actor, layout)
+-      if (settings ().enable_preferences_entry) {
+-        UI.AddBackgroundMenuItem (actor._backgroundMenu)
+-      }
+-    }
+-
+     const c = connections.get ()
+ 
+     // Gnome-shell will not disable extensions when _logout/shutdown/restart
+@@ -290,9 +221,6 @@ var Extension = class Extension {
+   disable () {
+     // Restore patched methods
+     WindowPreview.prototype._addWindow = this._orig_add_window
+-    WorkspaceGroup.prototype._createWindows = this._orig_create_windows
+-    WorkspaceGroup.prototype._syncStacking = this._orig_sync_stacking
+-    BackgroundMenu.addBackgroundMenu = this._add_background_menu
+ 
+     // Remove the item to open preferences page in background menu
+     UI.RestoreBackgroundMenu ()
+@@ -312,16 +240,11 @@ var Extension = class Extension {
+   }
+ }
+ 
+-function init () {
+-  init_translations ()
+-  return new Extension ()
+-}
+-
+ /**
+  * Copy shadow of rounded corners window and show it in overview.
+  * This actor will be created when window preview has created for overview
+  */
+-const OverviewShadowActor = registerClass (
++const OverviewShadowActor = GObject.registerClass (
+   {},
+   class extends Clutter.Clone {
+     /**
+@@ -333,7 +256,7 @@ const OverviewShadowActor = registerClass (
+       super._init ({
+         source,
+         name: constants.OVERVIEW_SHADOW_ACTOR,
+-        pivot_point: new Point ({ x: 0.5, y: 0.5 }),
++        pivot_point: new Graphene.Point ({ x: 0.5, y: 0.5 }),
+       })
+ 
+       this._window_preview = window_preview
+diff --git a/locale/cs/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/cs/LC_MESSAGES/rounded-window-corners@yilozt.mo
+new file mode 100644
+index 0000000..193de07
+Binary files /dev/null and b/locale/cs/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/de/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/de/LC_MESSAGES/rounded-window-corners@yilozt.mo
+index 94c88f1..bc55d5e 100644
+Binary files a/locale/de/LC_MESSAGES/rounded-window-corners@yilozt.mo and b/locale/de/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/fr/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/fr/LC_MESSAGES/rounded-window-corners@yilozt.mo
+index 8f8b3ab..3db8059 100644
+Binary files a/locale/fr/LC_MESSAGES/rounded-window-corners@yilozt.mo and b/locale/fr/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/hu/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/hu/LC_MESSAGES/rounded-window-corners@yilozt.mo
+new file mode 100644
+index 0000000..8d26375
+Binary files /dev/null and b/locale/hu/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/id/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/id/LC_MESSAGES/rounded-window-corners@yilozt.mo
+index 1bdf493..3959d4b 100644
+Binary files a/locale/id/LC_MESSAGES/rounded-window-corners@yilozt.mo and b/locale/id/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/ja/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/ja/LC_MESSAGES/rounded-window-corners@yilozt.mo
+index fa519b6..2a8dfb6 100644
+Binary files a/locale/ja/LC_MESSAGES/rounded-window-corners@yilozt.mo and b/locale/ja/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/pl/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/pl/LC_MESSAGES/rounded-window-corners@yilozt.mo
+new file mode 100644
+index 0000000..ed2b559
+Binary files /dev/null and b/locale/pl/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/pt_BR/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/pt_BR/LC_MESSAGES/rounded-window-corners@yilozt.mo
+new file mode 100644
+index 0000000..2f3b373
+Binary files /dev/null and b/locale/pt_BR/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/tr/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/tr/LC_MESSAGES/rounded-window-corners@yilozt.mo
+index 7abb835..bb60cb3 100644
+Binary files a/locale/tr/LC_MESSAGES/rounded-window-corners@yilozt.mo and b/locale/tr/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/locale/uk/LC_MESSAGES/rounded-window-corners@yilozt.mo b/locale/uk/LC_MESSAGES/rounded-window-corners@yilozt.mo
+new file mode 100644
+index 0000000..91ea9f1
+Binary files /dev/null and b/locale/uk/LC_MESSAGES/rounded-window-corners@yilozt.mo differ
+diff --git a/manager/effect_manager.js b/manager/effect_manager.js
+index f7ce4d8..aa53aa4 100644
+--- a/manager/effect_manager.js
++++ b/manager/effect_manager.js
+@@ -1,19 +1,16 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+-const Graphene                   = imports.gi.Graphene
++import Graphene      from 'gi://Graphene'
+ 
+ // local modules
+-const { _log }                   = Me.imports.utils.log
+-const { settings }               = Me.imports.utils.settings
+-const { Connections }            = Me.imports.utils.connections
+-const { RoundedCornersManager }  = Me.imports.manager.rounded_corners_manager
++import { _log } from '../utils/log.js'
++import { settings } from '../utils/settings.js'
++import { Connections } from '../utils/connections.js'
++import { RoundedCornersManager } from '../manager/rounded_corners_manager.js'
+ 
+-const { shell_version }          = Me.imports.utils.ui
++import { shell_version } from '../utils/ui.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var WindowActorTracker = class WindowActorTracker {
++export class WindowActorTracker {
+   constructor () {
+     this.effect_managers = []
+ 
+diff --git a/manager/rounded_corners_manager.js b/manager/rounded_corners_manager.js
+index e0db008..a426c97 100644
+--- a/manager/rounded_corners_manager.js
++++ b/manager/rounded_corners_manager.js
+@@ -1,28 +1,23 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const Clutter                     = imports.gi.Clutter
+-const GLib                        = imports.gi.GLib
+-const { ShadowMode, WindowType }  = imports.gi.Meta
+-const { WindowClientType }        = imports.gi.Meta
+-const { Bin }                     = imports.gi.St
+-const { BindingFlags }            = imports.gi.GObject
+-const { ThemeContext }            = imports.gi.St
++import Clutter      from 'gi://Clutter'
++import GLib      from 'gi://GLib'
++import Meta      from 'gi://Meta'
++import St      from 'gi://St'
++import GObject      from 'gi://GObject'
+ 
+ // local modules
+-const UI                          = Me.imports.utils.ui
+-const { _log }                    = Me.imports.utils.log
+-const { constants }               = Me.imports.utils.constants
+-const { ClipShadowEffect }        = Me.imports.effect.clip_shadow_effect
+-const types                       = Me.imports.utils.types
+-const { settings }                = Me.imports.utils.settings
+-const { RoundedCornersEffect }    = Me.imports.effect.rounded_corners_effect
++import * as UI from '../utils/ui.js'
++import { _log } from '../utils/log.js'
++import { constants } from '../utils/constants.js'
++import { ClipShadowEffect } from '../effect/clip_shadow_effect.js'
++import * as types from '../utils/types.js'
++import { settings } from '../utils/settings.js'
++import { RoundedCornersEffect } from '../effect/rounded_corners_effect.js'
+ 
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var RoundedCornersManager = class RoundedCornersManager {
++export class RoundedCornersManager {
+   constructor () {
+     this.enabled = true
+ 
+@@ -54,12 +49,12 @@ var RoundedCornersManager = class RoundedCornersManager {
+     // - For csd client, shadow is drew by application itself, it has been cut
+     //   out by rounded corners effect
+     if (actor.shadow_mode !== undefined) {
+-      actor.shadow_mode = ShadowMode.FORCED_OFF
++      actor.shadow_mode = Meta.ShadowMode.FORCED_OFF
+     }
+     // So we have to create an shadow actor for rounded corners shadows
+     const shadow = this._create_shadow (actor)
+     // Bind properties between shadow and window
+-    const flag = BindingFlags.SYNC_CREATE
++    const flag = GObject.BindingFlags.SYNC_CREATE
+     for (const prop of [
+       'pivot-point',
+       'translation-x',
+@@ -89,7 +84,7 @@ var RoundedCornersManager = class RoundedCornersManager {
+ 
+     // Restore shadow for x11 windows
+     if (actor.shadow_mode) {
+-      actor.shadow_mode = ShadowMode.AUTO
++      actor.shadow_mode = Meta.ShadowMode.AUTO
+     }
+ 
+     // Remove shadow actor
+@@ -260,7 +255,7 @@ var RoundedCornersManager = class RoundedCornersManager {
+       return
+     }
+     const prop = 'visible'
+-    const flag = BindingFlags.SYNC_CREATE
++    const flag = GObject.BindingFlags.SYNC_CREATE
+     info.visible_binding = actor.bind_property (prop, info.shadow, prop, flag)
+   }
+ 
+@@ -290,9 +285,9 @@ var RoundedCornersManager = class RoundedCornersManager {
+     // Check type of window, only need to add rounded corners to normal
+     // window and dialog.
+     const normal_type = [
+-      WindowType.NORMAL,
+-      WindowType.DIALOG,
+-      WindowType.MODAL_DIALOG,
++      Meta.WindowType.NORMAL,
++      Meta.WindowType.DIALOG,
++      Meta.WindowType.MODAL_DIALOG,
+     ].includes (win.window_type)
+     if (!normal_type) {
+       return false
+@@ -321,7 +316,7 @@ var RoundedCornersManager = class RoundedCornersManager {
+    */
+   _actor_to_rounded (actor) {
+     const type = actor.meta_window.get_client_type ()
+-    return type == WindowClientType.X11 ? actor.get_first_child () : actor
++    return type == Meta.WindowClientType.X11 ? actor.get_first_child () : actor
+   }
+ 
+   /**
+@@ -329,9 +324,9 @@ var RoundedCornersManager = class RoundedCornersManager {
+    * @param actor -  window actor which has been setup rounded corners effect
+    */
+   _create_shadow (actor) {
+-    const shadow = new Bin ({
++    const shadow = new St.Bin ({
+       name: 'Shadow Actor',
+-      child: new Bin ({
++      child: new St.Bin ({
+         x_expand: true,
+         y_expand: true,
+       }),
+@@ -385,7 +380,7 @@ var RoundedCornersManager = class RoundedCornersManager {
+     // Kitty draw it's window decoration by itself, we need recompute the
+     // outer bounds for kitty.
+     if (settings ().tweak_kitty_terminal) {
+-      const type = WindowClientType.WAYLAND
++      const type = Meta.WindowClientType.WAYLAND
+       if (
+         actor.meta_window.get_client_type () == type &&
+         actor.meta_window.get_wm_class_instance () === 'kitty'
+@@ -445,7 +440,9 @@ var RoundedCornersManager = class RoundedCornersManager {
+     //
+     // So, we have to adjustment this different
+ 
+-    const original_scale = ThemeContext.get_for_stage (global.stage).scale_factor
++    const original_scale = St.ThemeContext.get_for_stage (
++      global.stage
++    ).scale_factor
+     const win_scale = UI.WindowScaleFactor (win)
+ 
+     // Now scale factor for shadow actor should be correct.
+diff --git a/metadata.json b/metadata.json
+index 0c1cb5d..32f9e63 100644
+--- a/metadata.json
++++ b/metadata.json
+@@ -1,15 +1,10 @@
+ {
+-  "_generated": "Generated by SweetTooth, do not edit",
+-  "description": "Add rounded corners for all windows",
+   "name": "Rounded Window Corners",
+-  "shell-version": [
+-    "40",
+-    "41",
+-    "42",
+-    "43",
+-    "44"
+-  ],
+-  "url": "https://github.com/yilozt/rounded-window-corners",
++  "description": "Add rounded corners for all windows",
+   "uuid": "rounded-window-corners@yilozt",
+-  "version": 11
+-}
+\ No newline at end of file
++  "version": "11",
++  "url": "https://github.com/yilozt/rounded-window-corners",
++  "gettext-domain": "rounded-window-corners@yilozt",
++  "settings-schema": "org.gnome.shell.extensions.rounded-window-corners",
++  "shell-version": ["45"]
++}
+diff --git a/preferences/index.js b/preferences/index.js
+index bccb9a7..64322be 100644
+--- a/preferences/index.js
++++ b/preferences/index.js
+@@ -1,12 +1,9 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
++import { General } from '../preferences/pages/general.js'
++import { BlackList } from '../preferences/pages/blacklist.js'
++import { Custom } from '../preferences/pages/custom.js'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+ 
+-const { General }    = Me.imports.preferences.pages.general
+-const { BlackList }  = Me.imports.preferences.pages.blacklist
+-const { Custom }     = Me.imports.preferences.pages.custom
+-const { _ }          = Me.imports.utils.i18n
+-
+-var pages = () => [
++export const pages = () => [
+   {
+     title: _ ('General'),
+     icon_name: 'emblem-system-symbolic',
+diff --git a/preferences/pages/blacklist.js b/preferences/pages/blacklist.js
+index 3ec4d85..ff6e0b0 100644
+--- a/preferences/pages/blacklist.js
++++ b/preferences/pages/blacklist.js
+@@ -1,26 +1,22 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject           = imports.gi.GObject
++import GObject      from 'gi://GObject'
+ 
+ // Local Modules
+-const { show_err_msg }  = Me.imports.utils.prefs
+-const { settings }      = Me.imports.utils.settings
+-const { constants }     = Me.imports.utils.constants
+-const { connections }   = Me.imports.utils.connections
+-const { AppRow }        = Me.imports.preferences.widgets.app_row
+-
++import { show_err_msg, TIPS_EMPTY } from '../../utils/prefs.js'
++import { settings } from '../../utils/settings.js'
++import { connections } from '../../utils/connections.js'
++import { AppRow } from '../../preferences/widgets/app_row.js'
+ 
+-const Gtk               = imports.gi.Gtk
+-const { _ }             = Me.imports.utils.i18n
++import Gtk      from 'gi://Gtk'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
++import { uri } from '../../utils/io.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+ /** Black list Preferences Page */
+-var BlackList = GObject.registerClass (
++export const BlackList = GObject.registerClass (
+   {
+-    Template: `file://${Me.path}/preferences/pages/blacklist.ui`,
++    Template: uri (import.meta.url, 'blacklist.ui'),
+     GTypeName: 'RoundedWindowCornersPrefsBlacklist',
+     InternalChildren: ['black_list_group', 'add_row_btn'],
+   },
+@@ -76,7 +72,7 @@ var BlackList = GObject.registerClass (
+       row.title = title
+ 
+       if (!title) {
+-        row.description = constants.TIPS_EMPTY ()
++        row.description = TIPS_EMPTY ()
+       }
+ 
+       this._black_list_group.append (row)
+diff --git a/preferences/pages/custom.js b/preferences/pages/custom.js
+index c9246c6..0aaff10 100644
+--- a/preferences/pages/custom.js
++++ b/preferences/pages/custom.js
+@@ -1,28 +1,22 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject                          = imports.gi.GObject
+-const Gtk                              = imports.gi.Gtk
++import GObject      from 'gi://GObject'
++import Gtk      from 'gi://Gtk'
+ 
+ // local modules
+-const { list_children, show_err_msg }  = Me.imports.utils.prefs
+-const { constants }                    = Me.imports.utils.constants
+-const { settings }                     = Me.imports.utils.settings
+-const { connections }                  = Me.imports.utils.connections
+-const { _ }                            = Me.imports.utils.i18n
+-const { AppRow }                       = Me.imports.preferences.widgets.app_row
+-const { RoundedCornersItem }           = Me.imports.preferences.widgets.rounded_corners_item
+-
+-// types
+-const { Align, Switch }                = imports.gi.Gtk
+-
++import { list_children, show_err_msg, TIPS_EMPTY } from '../../utils/prefs.js'
++import { constants } from '../../utils/constants.js'
++import { settings } from '../../utils/settings.js'
++import { connections } from '../../utils/connections.js'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
++import { AppRow } from '../widgets/app_row.js'
++import { RoundedCornersItem } from '../widgets/rounded_corners_item.js'
++import { uri } from '../../utils/io.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var Custom = GObject.registerClass (
++export const Custom = GObject.registerClass (
+   {
+-    Template: `file://${Me.path}/preferences/pages/custom.ui`,
++    Template: uri (import.meta.url, 'custom.ui'),
+     GTypeName: 'RoundedWindowCornersPrefsCustomPage',
+     InternalChildren: ['custom_group', 'add_row_btn'],
+   },
+@@ -53,8 +47,8 @@ var Custom = GObject.registerClass (
+     add_row (title, cfg) {
+       let rounded_corners_item = new RoundedCornersItem ()
+ 
+-      const enabled_switch = new Switch ({
+-        valign: Align.CENTER,
++      const enabled_switch = new Gtk.Switch ({
++        valign: Gtk.Align.CENTER,
+         active: true,
+         visible: true,
+       })
+@@ -133,7 +127,7 @@ var Custom = GObject.registerClass (
+       expanded_row.activatable = false
+ 
+       if (title == '') {
+-        expanded_row.description = constants.TIPS_EMPTY ()
++        expanded_row.description = TIPS_EMPTY ()
+       }
+ 
+       this._custom_group.append (expanded_row)
+diff --git a/preferences/pages/general.js b/preferences/pages/general.js
+index cf2af21..78f37e1 100644
+--- a/preferences/pages/general.js
++++ b/preferences/pages/general.js
+@@ -1,29 +1,26 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject                 = imports.gi.GObject
+-const Gdk                     = imports.gi.Gdk
+-const Gio                     = imports.gi.Gio
++import GObject      from 'gi://GObject'
++import Gdk      from 'gi://Gdk'
++import Gio      from 'gi://Gio'
+ 
+ // local modules
+-const { settings }            = Me.imports.utils.settings
+-const { connections }         = Me.imports.utils.connections
+-const { list_children }       = Me.imports.utils.prefs
+-const { _log }                = Me.imports.utils.log
+-const { RoundedCornersItem }  = Me.imports.preferences.widgets.rounded_corners_item
+-const { EditShadowWindow }    = Me.imports.preferences.widgets.edit_shadow_window
+-const { ResetDialog }         = Me.imports.preferences.widgets.reset_dialog
++import { settings } from '../../utils/settings.js'
++import { connections } from '../../utils/connections.js'
++import { list_children } from '../../utils/prefs.js'
++import { _log } from '../../utils/log.js'
++import { RoundedCornersItem } from '../widgets/rounded_corners_item.js'
++import { EditShadowWindow } from '../widgets/edit_shadow_window.js'
++import { ResetDialog } from '../widgets/reset_dialog.js'
+ 
+ // types
+-const Gtk                     = imports.gi.Gtk
+-
++import Gtk      from 'gi://Gtk'
++import { uri } from '../../utils/io.js'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var General = GObject.registerClass (
++export const General = GObject.registerClass (
+   {
+-    Template: `file://${Me.path}/preferences/pages/general.ui`,
++    Template: uri (import.meta.url, 'general.ui'),
+     GTypeName: 'RoundedWindowCornersPrefsGeneral',
+ 
+     // Widgets export from template ui
+diff --git a/preferences/widgets/app_row.js b/preferences/widgets/app_row.js
+index 86d88ca..7581bb5 100644
+--- a/preferences/widgets/app_row.js
++++ b/preferences/widgets/app_row.js
+@@ -1,25 +1,21 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject              = imports.gi.GObject
+-const Gtk                  = imports.gi.Gtk
++import GObject      from 'gi://GObject'
++import Gtk      from 'gi://Gtk'
+ 
+ // local Modules
+-const { show_err_msg }     = Me.imports.utils.prefs
+-const { connections }      = Me.imports.utils.connections
+-const { constants }        = Me.imports.utils.constants
+-const { on_picked, pick }  = Me.imports.dbus.client
+-const { _ }                = Me.imports.utils.i18n
++import { show_err_msg, TIPS_EMPTY } from '../../utils/prefs.js'
++import { connections } from '../../utils/connections.js'
++import { on_picked, pick } from '../../dbus/client.js'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
++import { uri } from '../../utils/io.js'
+ 
+ // types
+ 
+-
+ // ----------------------------------------------------------------- end imports
+ 
+-var AppRow = GObject.registerClass (
++export const AppRow = GObject.registerClass (
+   {
+-    Template: `file://${Me.path}/preferences/widgets/app-row.ui`,
++    Template: uri (import.meta.url, 'app-row.ui'),
+     GTypeName: 'AppRow',
+     InternalChildren: [
+       'wm_class_instance_entry',
+@@ -128,7 +124,7 @@ var AppRow = GObject.registerClass (
+         this.description = ''
+       } else {
+         if (this.title == '') {
+-          this.description = constants.TIPS_EMPTY ()
++          this.description = TIPS_EMPTY ()
+         }
+       }
+     }
+diff --git a/preferences/widgets/edit_shadow_window.js b/preferences/widgets/edit_shadow_window.js
+index c2b7c12..12d8664 100644
+--- a/preferences/widgets/edit_shadow_window.js
++++ b/preferences/widgets/edit_shadow_window.js
+@@ -1,15 +1,13 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const Gtk                 = imports.gi.Gtk
+-const { registerClass }   = imports.gi.GObject
++import Gtk      from 'gi://Gtk'
++import GObject      from 'gi://GObject'
+ 
+ // local modules
+-const { box_shadow_css }  = Me.imports.utils.types
+-const { settings }        = Me.imports.utils.settings
+-const { _ }               = Me.imports.utils.i18n
++import { box_shadow_css } from '../../utils/types.js'
++import { settings } from '../../utils/settings.js'
+ 
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
++import { uri } from '../../utils/io.js'
+ // ----------------------------------------------------------------- end imports
+ 
+ /**
+@@ -18,9 +16,9 @@ const { _ }               = Me.imports.utils.i18n
+  * This widget used to edit shadow of windows which use rounded corners
+  * effects.
+  */
+-var EditShadowWindow = registerClass (
++export const EditShadowWindow = GObject.registerClass (
+   {
+-    Template: `file://${Me.path}/preferences/widgets/edit-shadow-window.ui`,
++    Template: uri (import.meta.url, 'edit-shadow-window.ui'),
+     GTypeName: 'EditShadowWindow',
+     InternalChildren: [
+       'opacity_scale',
+@@ -116,12 +114,33 @@ var EditShadowWindow = registerClass (
+            ${box_shadow_css (hover)};
+          }`
+ 
+-      this.unfocus_provider.load_from_data (
+-        gen_style (this.unfocused_shadow, this.focused_shadow)
+-      )
+-      this.focus_provider.load_from_data (
+-        gen_style (this.focused_shadow, this.unfocused_shadow)
+-      )
++      if (Gtk.MAJOR_VERSION >= 4 && Gtk.MINOR_VERSION >= 12) {
++        this.unfocus_provider.load_from_string (
++          gen_style (this.unfocused_shadow, this.focused_shadow)
++        )
++        this.focus_provider.load_from_string (
++          gen_style (this.focused_shadow, this.unfocused_shadow)
++        )
++      } else {
++        const funcs = this.unfocus_provider.load_from_data
++        if (funcs.length == 1) {
++          this.unfocus_provider.load_from_data (
++            gen_style (this.unfocused_shadow, this.focused_shadow)
++          )
++          this.focus_provider.load_from_data (
++            gen_style (this.focused_shadow, this.unfocused_shadow)
++          )
++        } else {
++          this.unfocus_provider.load_from_data (
++            gen_style (this.unfocused_shadow, this.focused_shadow),
++            -1
++          )
++          this.focus_provider.load_from_data (
++            gen_style (this.focused_shadow, this.unfocused_shadow),
++            -1
++          )
++        }
++      }
+     }
+ 
+     // signal handles
+diff --git a/preferences/widgets/reset_dialog.js b/preferences/widgets/reset_dialog.js
+index 9cdda19..89d6303 100644
+--- a/preferences/widgets/reset_dialog.js
++++ b/preferences/widgets/reset_dialog.js
+@@ -1,11 +1,8 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+-const GObject       = imports.gi.GObject
+-const Gtk           = imports.gi.Gtk
+-const { _ }         = Me.imports.utils.i18n
+-const { _log }      = Me.imports.utils.log
+-const { settings }  = Me.imports.utils.settings
++import GObject      from 'gi://GObject'
++import Gtk      from 'gi://Gtk'
++import { _log } from '../../utils/log.js'
++import { settings } from '../../utils/settings.js'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+ 
+ class Cfg {
+   constructor (description) {
+@@ -14,7 +11,7 @@ class Cfg {
+   }
+ }
+ 
+-var ResetDialog = GObject.registerClass (
++export const ResetDialog = GObject.registerClass (
+   {},
+   class extends Gtk.Dialog {
+     _init () {
+diff --git a/preferences/widgets/rounded_corners_item.js b/preferences/widgets/rounded_corners_item.js
+index adebddb..7b24d3f 100644
+--- a/preferences/widgets/rounded_corners_item.js
++++ b/preferences/widgets/rounded_corners_item.js
+@@ -1,20 +1,15 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GObject          = imports.gi.GObject
+-const Gtk              = imports.gi.Gtk
+-const { connections }  = Me.imports.utils.connections
++import GObject      from 'gi://GObject'
++import Gtk      from 'gi://Gtk'
++import { connections } from '../../utils/connections.js'
++import { uri } from '../../utils/io.js'
+ 
+ // types
+-
+ // ------------------------------------------------------------------ end import
+ 
+-const Template = `file://${Me.path}/preferences/widgets/rounded-corners-item.ui`
+-
+-var RoundedCornersItem = GObject.registerClass (
++export const RoundedCornersItem = GObject.registerClass (
+   {
+-    Template,
++    Template: uri (import.meta.url, 'rounded-corners-item.ui'),
+     GTypeName: 'RoundedCornersItem',
+     InternalChildren: [
+       'rounded_in_maximized_switch',
+diff --git a/prefs.js b/prefs.js
+index 3cb839f..1f14f41 100644
+--- a/prefs.js
++++ b/prefs.js
+@@ -1,70 +1,44 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+-const Gtk                          = imports.gi.Gtk
+-const Gdk                          = imports.gi.Gdk
+-const { getCurrentExtension }      = imports.misc.extensionUtils
+-
+-const { pages }                    = Me.imports.preferences.index
+-const { init_translations_prefs }  = Me.imports.utils.i18n
+-
+-
+-
+-function load_css () {
+-  const display = Gdk.Display.get_default ()
+-  if (display) {
+-    const css = new Gtk.CssProvider ()
+-    const path = `${getCurrentExtension ().path}/stylesheet-prefs.css`
+-    css.load_from_path (path)
+-    Gtk.StyleContext.add_provider_for_display (display, css, 0)
++import Gtk      from 'gi://Gtk'
++import Gdk      from 'gi://Gdk'
++import Adw      from 'gi://Adw'
++
++import { init_settings } from './utils/settings.js'
++import { pages } from './preferences/index.js'
++import * as Utils from './utils/io.js'
++import { ExtensionPreferences } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
++export default class RoundedWindowCornresPrefs extends ExtensionPreferences {
++  constructor (metadata) {
++    super (metadata)
++
++    // Classical GTK4 template ui need this to make translatable string works
++    imports.gettext.textdomain (this.uuid)
++    this.initTranslations (this.uuid)
+   }
+-}
+-
+-function init () {
+-  init_translations_prefs ()
+-}
+ 
+-// Load preferences Pages for Gnome 40 / Gnome 41
+-function buildPrefsWidget () {
+-  const scrolled_win = new Gtk.ScrolledWindow ()
+-  const stack = new Gtk.Stack ({ css_classes: ['page'] })
+-  const switcher = new Gtk.StackSwitcher ({ stack })
+-
+-  scrolled_win.set_child (stack)
+-
+-  // Add StackSwitcher into HeaderBar
+-  scrolled_win.connect ('realize', () => {
+-    const win = scrolled_win.root
+-    win.width_request = 550
+-    const title_bar = win.get_titlebar ()
+-    title_bar?.set_title_widget (switcher)
+-  })
+-
+-  // Load pages
+-  for (const page of pages ()) {
+-    stack.add_titled (page.widget, page.title, page.title)
++  _load_css () {
++    const display = Gdk.Display.get_default ()
++    if (display) {
++      const css = new Gtk.CssProvider ()
++      const path = Utils.path (import.meta.url, 'stylesheet-prefs.css')
++      css.load_from_path (path)
++      Gtk.StyleContext.add_provider_for_display (display, css, 0)
++    }
+   }
+ 
+-  // Load css
+-  load_css ()
+-
+-  return scrolled_win
+-}
+-
+-// Load ui for Gnome 42+
+-function fillPreferencesWindow (win) {
+-  const Adw = imports.gi.Adw
+-
+-  for (const page of pages ()) {
+-    const pref_page = new Adw.PreferencesPage ({
+-      title: page.title,
+-      icon_name: page.icon_name,
+-    })
+-    const group = new Adw.PreferencesGroup ()
+-    pref_page.add (group)
+-    group.add (page.widget)
+-    win.add (pref_page)
++  fillPreferencesWindow (win) {
++    init_settings (this.getSettings ())
++
++    for (const page of pages ()) {
++      const pref_page = new Adw.PreferencesPage ({
++        title: page.title,
++        icon_name: page.icon_name,
++      })
++      const group = new Adw.PreferencesGroup ()
++      pref_page.add (group)
++      group.add (page.widget)
++      win.add (pref_page)
++    }
++
++    this._load_css ()
+   }
+-
+-  load_css ()
+ }
+diff --git a/utils/connections.js b/utils/connections.js
+index 19ab3f0..4a74038 100644
+--- a/utils/connections.js
++++ b/utils/connections.js
+@@ -1,12 +1,9 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // ---------------------------------------------------------------- [end import]
+ 
+ /**
+  * This class is used to manager signal and handles of a object
+  */
+-var Connections = class Connections {
++export class Connections {
+   constructor () {
+     // -------------------------------------------------------- [public methods]
+ 
+@@ -98,7 +95,7 @@ var Connections = class Connections {
+ /** A singleton of connections */
+ let _connections = null
+ 
+-var connections = {
++export const connections = {
+   get: () => {
+     if (_connections === null) {
+       _connections = new Connections ()
+diff --git a/utils/constants.js b/utils/constants.js
+index e6b1d2c..0ed46fb 100644
+--- a/utils/constants.js
++++ b/utils/constants.js
+@@ -1,11 +1,6 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // This files use for store const variants will used by other modules.
+ 
+-const { _ }  = Me.imports.utils.i18n
+-
+-var constants = {
++export const constants = {
+   /** Name of shadow actors */
+   SHADOW_ACTOR_NAME: 'Rounded Window Shadow Actor',
+   /** Name of rounded corners effects */
+@@ -16,12 +11,8 @@ var constants = {
+   BLUR_EFFECT: 'Patched Blur Effect',
+   /** Padding of shadow actors */
+   SHADOW_PADDING: 80,
+-  /** Tips when add new items in preferences Page */
+-  TIPS_EMPTY: () => _ ('Expand this row to pick a window.'),
+   /** Used to mark widget in preferences/page/custom.ts */
+   DON_T_CONFIG: 'Don\'t Configuration in Custom Page',
+-  /** Item label for background menu  */
+-  ITEM_LABEL: () => _ ('Rounded Corners Settings...'),
+   /** Name of shadow actor to be added in overview */
+   OVERVIEW_SHADOW_ACTOR: 'Shadow Actor (Overview)',
+ }
+diff --git a/utils/i18n.js b/utils/i18n.js
+index 52d0884..8b13789 100644
+--- a/utils/i18n.js
++++ b/utils/i18n.js
+@@ -1,17 +1 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+ 
+-const extUtils       = imports.misc.extensionUtils
+-
+-const { uuid } = extUtils.getCurrentExtension ()
+-
+-var init_translations = () => {
+-  extUtils.initTranslations (uuid)
+-}
+-var init_translations_prefs = () => {
+-  imports.gettext.textdomain (uuid)
+-  extUtils.initTranslations (uuid)
+-}
+-
+-var _ = imports.gettext.domain (uuid).gettext
+-var ngettext = imports.gettext.domain (uuid).ngettext
+diff --git a/utils/io.js b/utils/io.js
+index b1619d6..b0c53de 100644
+--- a/utils/io.js
++++ b/utils/io.js
+@@ -1,31 +1,37 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+-const Gio        = imports.gi.Gio
+-const GLib       = imports.gi.GLib
+-const ByteArray  = imports.byteArray
++import Gio      from 'gi://Gio'
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var load = (path) => {
+-  const [, buffer] = GLib.file_get_contents (path)
+-  const contents = ByteArray.toString (buffer)
+-  GLib.free (buffer)
+-  return contents
++export const load = (path) => {
++  const file = Gio.File.new_for_path (path)
++
++  const [, contents] = file.load_contents (null)
++
++  const decoder = new TextDecoder ('utf-8')
++  return decoder.decode (contents)
+ }
+ 
+-var path = (mod_url, relative_path) => {
++export const path = (mod_url, relative_path) => {
+   const parent = Gio.File.new_for_uri (mod_url).get_parent ()
+ 
+   const mod_dir = parent?.get_path ()
+-  return Gio.File.new_for_path (`${mod_dir}/${relative_path}`).get_path ()
++  return Gio.File.new_for_path (`${mod_dir}/${relative_path}`).get_path () ?? ''
++}
++
++export const uri = (mod_url, relative_path) => {
++  const parent = Gio.File.new_for_uri (mod_url).get_parent ()
++
++  const mod_uri = parent?.get_uri ()
++  return `${mod_uri}/${relative_path}`
+ }
+ 
+-var loadFile = (mod_url, relative_path) =>
++export const loadFile = (mod_url, relative_path) =>
+   load (path (mod_url, relative_path) ?? '')
+ 
+-var loadShader = (path) => {
+-  let [declarations, main] = load (path).split (/^.*?main\(\s?\)\s?/m)
++export const loadShader = (mod_url, relative_path) => {
++  let [declarations, main] = load (path (mod_url, relative_path) ?? '').split (
++    /^.*?main\(\s?\)\s?/m
++  )
+ 
+   declarations = declarations.trim ()
+   main = main.trim ().replace (/^[{}]/gm, '').trim ()
+diff --git a/utils/log.js b/utils/log.js
+index d5f9e84..4e9eaff 100644
+--- a/utils/log.js
++++ b/utils/log.js
+@@ -1,7 +1,4 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+-const { settings }       = Me.imports.utils.settings
++import { settings } from './settings.js'
+ 
+ 
+ // --------------------------------------------------------------- [end imports]
+@@ -9,14 +6,14 @@ const { settings }       = Me.imports.utils.settings
+ /**
+  * Log message Only when debug_mode of settings () is enabled
+  */
+-var _log = (...args) => {
++export const _log = (...args) => {
+   if (settings ().debug_mode) {
+     log (`[RoundedCornersEffect] ${args}`)
+   }
+ }
+ 
+ /** Always log error message  */
+-var _logError = (err) => {
++export const _logError = (err) => {
+   log (`[Rounded Corners Effect] Error occurs: ${err.message}`)
+   logError (err)
+ }
+@@ -26,7 +23,7 @@ var _logError = (err) => {
+  * will be used when monkey patch the code of gnome-shell to skip some
+  * function invocations.
+  */
+-var stackMsg = () => {
++export const stackMsg = () => {
+   try {
+     throw Error ()
+   } catch (e) {
+diff --git a/utils/prefs.js b/utils/prefs.js
+index 5f321e8..f8267d3 100644
+--- a/utils/prefs.js
++++ b/utils/prefs.js
+@@ -1,10 +1,8 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
++import Gio      from 'gi://Gio'
++import GLib      from 'gi://GLib'
++import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+ 
+-const { DBus, DBusCallFlags }  = imports.gi.Gio
+-const { Variant }              = imports.gi.GLib
+-
+-var list_children = (widget) => {
++export const list_children = (widget) => {
+   const children = []
+   for (
+     let child = widget.get_first_child ();
+@@ -16,18 +14,18 @@ var list_children = (widget) => {
+   return children
+ }
+ 
+-var show_err_msg = (info) => {
++export const show_err_msg = (info) => {
+   // Show error message with notifications
+   // by call DBus method of org.freedesktop.Notifications
+   //
+   // Ref: https://gjs.guide/guides/gio/dbus.html#direct-calls
+ 
+-  DBus.session.call (
++  Gio.DBus.session.call (
+     'org.freedesktop.Notifications',
+     '/org/freedesktop/Notifications',
+     'org.freedesktop.Notifications',
+     'Notify',
+-    new Variant ('(susssasa{sv}i)', [
++    new GLib.Variant ('(susssasa{sv}i)', [
+       '',
+       0,
+       '',
+@@ -38,9 +36,12 @@ var show_err_msg = (info) => {
+       3000,
+     ]),
+     null,
+-    DBusCallFlags.NONE,
++    Gio.DBusCallFlags.NONE,
+     -1,
+     null,
+     null
+   )
+ }
++
++/** Tips when add new items in preferences Page */
++export const TIPS_EMPTY = () => _ ('Expand this row to pick a window.')
+diff --git a/utils/settings.js b/utils/settings.js
+index ae1ab70..0c1777a 100644
+--- a/utils/settings.js
++++ b/utils/settings.js
+@@ -1,11 +1,5 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const GLib             = imports.gi.GLib
+-
+-// gnome modules
+-const { getSettings }  = imports.misc.extensionUtils
++import GLib      from 'gi://GLib'
+ 
+ 
+ // --------------------------------------------------------------- [end imports]
+@@ -17,12 +11,10 @@ const type_of_keys = {}
+  * Simple wrapper of Gio.Settings, we will use this class to store and
+  * load settings for this gnome-shell extensions.
+  */
+-class Settings {
+-  constructor () {
+-    /** GSettings, which used to store and load settings */
+-    this.g_settings = getSettings (
+-      'org.gnome.shell.extensions.rounded-window-corners'
+-    )
++export class Settings {
++  constructor (g_settings) {
++    this.g_settings = g_settings
++
+     // Define getter and setter for properties in class for keys in
+     // schemas
+     this.g_settings.list_keys ().forEach ((key) => {
+@@ -156,13 +148,13 @@ class Settings {
+ }
+ 
+ /** A singleton instance of Settings */
+-let _settings = null
++let _settings
++
++export const init_settings = (g_settings) => {
++  _settings = new Settings (g_settings)
++}
+ 
+ /** Access _settings by this method */
+-var settings = () => {
+-  if (_settings != null) {
+-    return _settings
+-  }
+-  _settings = new Settings ()
++export const settings = () => {
+   return _settings
+ }
+diff --git a/utils/types.js b/utils/types.js
+index fb9f267..bf62416 100644
+--- a/utils/types.js
++++ b/utils/types.js
+@@ -1,8 +1,5 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ /** Bounds of rounded corners  */
+-var Bounds = class Bounds {
++export class Bounds {
+   constructor () {
+     this.x1 = 0
+     this.y1 = 0
+@@ -11,7 +8,7 @@ var Bounds = class Bounds {
+   }
+ }
+ 
+-var Padding = class Padding {
++export class Padding {
+   constructor () {
+     this.left = 0
+     this.right = 0
+@@ -20,7 +17,7 @@ var Padding = class Padding {
+   }
+ }
+ 
+-var box_shadow_css = (box_shadow, scale = 1) => {
++export const box_shadow_css = (box_shadow, scale = 1) => {
+   return `box-shadow: ${box_shadow.horizontal_offset * scale}px
+           ${box_shadow.vertical_offset * scale}px
+           ${box_shadow.blur_offset * scale}px
+diff --git a/utils/ui.js b/utils/ui.js
+index 4eec466..8bf75c0 100644
+--- a/utils/ui.js
++++ b/utils/ui.js
+@@ -1,26 +1,25 @@
+-const ExtensionUtils = imports.misc.extensionUtils;
+-const Me = ExtensionUtils.getCurrentExtension();
+-
+ // imports.gi
+-const Meta                 = imports.gi.Meta
+-const { Settings }         = imports.gi.Gio
++import Meta      from 'gi://Meta'
++import Gio      from 'gi://Gio'
+ 
+ // gnome modules
+-const { openPrefs }        = imports.misc.extensionUtils
+-const { PACKAGE_VERSION }  = imports.misc.config
++import {
++  Extension,
++  gettext as _,
++} from 'resource:///org/gnome/shell/extensions/extension.js'
++import { PACKAGE_VERSION } from 'resource:///org/gnome/shell/misc/config.js'
+ 
+ // local modules
+-const { load }             = Me.imports.utils.io
+-const { _log, _logError }  = Me.imports.utils.log
+-const { constants }        = Me.imports.utils.constants
+-const { _ }                = Me.imports.utils.i18n
++import { load } from './io.js'
++import { _log, _logError } from './log.js'
++import { constants } from './constants.js'
+ 
+ // types
+ 
+ 
+ // --------------------------------------------------------------- [end imports]
+ 
+-var computeWindowContentsOffset = (meta_window) => {
++export const computeWindowContentsOffset = (meta_window) => {
+   const bufferRect = meta_window.get_buffer_rect ()
+   const frameRect = meta_window.get_frame_rect ()
+   return [
+@@ -31,7 +30,7 @@ var computeWindowContentsOffset = (meta_window) => {
+   ]
+ }
+ 
+-var AppType
++export var AppType
+ ;(function (AppType) {
+   AppType[(AppType['LibHandy'] = 0)] = 'LibHandy'
+   AppType[(AppType['LibAdwaita'] = 1)] = 'LibAdwaita'
+@@ -43,7 +42,7 @@ var AppType
+  * corners effect to some window.
+  * @returns Application Type: LibHandy | LibAdwaita | Other
+  */
+-var getAppType = (meta_window) => {
++export const getAppType = (meta_window) => {
+   try {
+     // May cause Permission error
+     const contents = load (`/proc/${meta_window.get_pid ()}/maps`)
+@@ -64,8 +63,8 @@ var getAppType = (meta_window) => {
+  * Get scale factor of a Meta.window, if win is undefined, return
+  * scale factor of current monitor
+  */
+-var WindowScaleFactor = (win) => {
+-  const features = Settings.new ('org.gnome.mutter').get_strv (
++export const WindowScaleFactor = (win) => {
++  const features = Gio.Settings.new ('org.gnome.mutter').get_strv (
+     'experimental-features'
+   )
+ 
+@@ -88,36 +87,39 @@ var WindowScaleFactor = (win) => {
+  * click in background
+  * @param menu - BackgroundMenu to add
+  */
+-var AddBackgroundMenuItem = (menu) => {
++export const AddBackgroundMenuItem = (menu) => {
++  const openprefs_item = _ ('Rounded Corners Settings...')
+   for (const item of menu._getMenuItems ()) {
+-    if (item.label?.text === _ (constants.ITEM_LABEL ())) {
++    if (item.label?.text === openprefs_item) {
+       return
+     }
+   }
+ 
+-  menu.addAction (_ (constants.ITEM_LABEL ()), () => {
++  menu.addAction (openprefs_item, () => {
++    const extension = Extension.lookupByURL (import.meta.url)
+     try {
+-      openPrefs ()
++      extension.openPreferences ()
+     } catch (err) {
+-      openPrefs ()
++      extension.openPreferences ()
+     }
+   })
+ }
+ 
+ /** Find all Background menu, then add extra item to it */
+-var SetupBackgroundMenu = () => {
++export const SetupBackgroundMenu = () => {
+   for (const _bg of global.window_group.first_child.get_children ()) {
++    _log ('Found Desktop Background obj', _bg)
+     const menu = _bg._backgroundMenu
+     AddBackgroundMenuItem (menu)
+   }
+ }
+ 
+-var RestoreBackgroundMenu = () => {
++export const RestoreBackgroundMenu = () => {
+   const remove_menu_item = (menu) => {
+     const items = menu._getMenuItems ()
+-
++    const openprefs_item = _ ('Rounded Corners Settings...')
+     for (const i of items) {
+-      if (i?.label?.text === _ (constants.ITEM_LABEL ())) {
++      if (i?.label?.text === openprefs_item) {
+         i.destroy ()
+         break
+       }
+@@ -132,7 +134,7 @@ var RestoreBackgroundMenu = () => {
+ }
+ 
+ /** Choice Rounded Corners Settings for window  */
+-var ChoiceRoundedCornersCfg = (global_cfg, custom_cfg_list, win) => {
++export const ChoiceRoundedCornersCfg = (global_cfg, custom_cfg_list, win) => {
+   const k = win.get_wm_class_instance ()
+   if (k == null || !custom_cfg_list[k] || !custom_cfg_list[k].enabled) {
+     return global_cfg
+@@ -148,7 +150,7 @@ var ChoiceRoundedCornersCfg = (global_cfg, custom_cfg_list, win) => {
+  * Decide whether windows should have rounded corners when it has been
+  * maximized & fullscreen according to RoundedCornersCfg
+  */
+-function ShouldHasRoundedCorners (win, cfg) {
++export function ShouldHasRoundedCorners (win, cfg) {
+   let should_has_rounded_corners = false
+ 
+   const maximized = win.maximized_horizontally || win.maximized_vertically
+@@ -165,14 +167,14 @@ function ShouldHasRoundedCorners (win, cfg) {
+ /**
+  * @returns Current version of gnome shell
+  */
+-function shell_version () {
++export function shell_version () {
+   return Number.parseFloat (PACKAGE_VERSION)
+ }
+ 
+ /**
+  * Get Rounded corners effect from a window actor
+  */
+-function get_rounded_corners_effect (actor) {
++export function get_rounded_corners_effect (actor) {
+   const win = actor.meta_window
+   const name = constants.ROUNDED_CORNERS_EFFECT
+   return win.get_client_type () === Meta.WindowClientType.X11
