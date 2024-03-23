@@ -7,6 +7,7 @@
     ../network
     ../nixsvc/options.nix
     ./volume
+    ./hardware
   ];
 
   time.timeZone = "Asia/Shanghai";
