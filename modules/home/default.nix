@@ -33,6 +33,7 @@
     ]))
     dconf2nix
     nix-diff
+    efibootmgr
 
     # Graphical Tools
     firefox
