@@ -51,6 +51,9 @@
 
       packages = forAllSystems (sys: import ./pkgs { nixpkgs = nixpkgs.legacyPackages.${sys}; });
 
+      # Export all pkgs
+      legacyPackages = forAllSystems (sys: import "${nixpkgs}" { system = sys; });
+
       overlays.default = import ./pkgs/overlay.nix;
 
       nixosConfigurations = (
