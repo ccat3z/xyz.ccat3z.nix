@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./hardware.nix ];
+  imports = [ ./hardware.nix ./nvidia.nix ];
 
   networking.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
