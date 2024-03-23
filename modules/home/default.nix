@@ -34,9 +34,12 @@
     dconf2nix
     nix-diff
     efibootmgr
+    gopass
 
     # Graphical Tools
-    firefox
+    (firefox.override {
+      nativeMessagingHosts = [ browserpass ];
+    })
     gnome.gnome-tweaks
     (gnome.gnome-terminal.overrideAttrs {
       patches = [ ./patches/gnome-terminal-resize.patch ];
