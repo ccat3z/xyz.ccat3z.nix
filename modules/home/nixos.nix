@@ -36,6 +36,10 @@ in
       type = lib.types.bool;
       default = true;
     };
+    module = lib.mkOption {
+      type = lib.types.anything;
+      default = { };
+    };
   };
 
   config = lib.mkMerge [
@@ -45,6 +49,9 @@ in
 
       # Required by host-spawn
       services.flatpak.enable = true;
+
+      # Define home modules out of home/. Useful for host specfic options.
+      home-manager.users.${user} = cfg.module;
     })
     (lib.mkIf cfg.wireshark.enable wiresharkConfig)
   ];

@@ -1,0 +1,75 @@
+#! /usr/bin/env python3
+
+import os
+import textwrap
+import time
+import glob
+import subprocess
+
+def read_file(path):
+    with open(path, 'r') as f:
+        return f.read().strip()
+
+
+def is_vfio_loaded():
+    driver = read_file('/sys/class/pci_bus/0000:01/device/0000:01:00.0/driver_override')
+    return driver == 'vfio-pci'
+
+
+def read_hwmon(data):
+    hwmon_coretemp = glob.glob("/sys/devices/platform/coretemp.0/hwmon/hwmon*")[0]
+    package_temp = -1
+    max_core_temp = -1
+    for file in os.listdir(hwmon_coretemp):
+        if file.startswith('temp') and file.endswith('_input'):
+            temp_id = int(file[4:-6])
+            temp = int(read_file(os.path.join(hwmon_coretemp, file))) / 1000.0
+            if temp_id == 1:
+                data['package_temp'] = temp
+            else:
+                data['max_core_temp'] = max(temp, data.get('max_core_temp', -1))
+
+    hwmon_nct6775 = glob.glob("/sys/devices/platform/nct6775.2592/hwmon/hwmon*")[0]
+    data['cpu_fan'] = float(read_file(f'{hwmon_nct6775}/fan2_input'))
+    data['case_fan'] = float(read_file(f'{hwmon_nct6775}/fan6_input'))
+
+
+def read_nvidia(data):
+    if is_vfio_loaded():
+        data['gpu_temp'] = -1
+        data['gpu_fan'] = -1
+        return
+
+    it = map(int, subprocess.check_output([
+        "nvidia-smi",
+        "--query-gpu=temperature.gpu,fan.speed",
+        "--format=csv,noheader,nounits"
+    ]).decode('UTF-8').split(', '))
+    data['gpu_temp'] = next(it)
+    data['gpu_fan'] = next(it)
+
+
+current_date = time.strftime("%H:%M:%S")
+data = {}
+read_hwmon(data)
+read_nvidia(data)
+
+title_temp = int(max(data['package_temp'], data['max_core_temp']))
+title = f"{os.getloadavg()[0]:.2f}, {title_temp} ℃ |"
+if data['case_fan'] > 1400:
+    title += " iconName=fan-fast-symbolic"
+elif data['case_fan'] > 1100:
+    title += " iconName=fan-normal-symbolic"
+else:
+    title += " iconName=fan-stop-symbolic"
+print(title)
+print(textwrap.dedent(f"""\
+    ---
+    Now: {current_date}
+    Package Temp: {data['package_temp']}
+    Max Core Temp: {data['max_core_temp']}
+    CPU Fan: {data['cpu_fan']}
+    Case Fan: {data['case_fan']}
+    GPU Temp: {data['gpu_temp']}
+    GPU Fan: {data['gpu_fan']}"""))
+

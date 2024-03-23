@@ -3,6 +3,7 @@
   imports = [
     ./dconf.nix
     ./rime
+    ./argos
   ];
 
   home.stateVersion = "23.11";
