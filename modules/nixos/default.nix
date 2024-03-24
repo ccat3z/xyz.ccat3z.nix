@@ -40,4 +40,7 @@
 
   # Support unpatched dynamic binaries like vscode remote server
   programs.nix-ld.enable = true;
+
+  # Disable configure.nix man
+  documentation.nixos.enable = false;
 }
