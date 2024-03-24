@@ -25,7 +25,7 @@ in
 
       home-manager.users.${user} = import ./.;
     }
-    (lib.mkAliasOptionModule ["my"] ["home-manager" "users" user])
+    (lib.mkAliasOptionModule [ "my" ] [ "home-manager" "users" user ])
     wiresharkConfig
   ];
 
