@@ -1,6 +1,6 @@
 { lib, config, ... }:
 {
-  imports = [ ./btrbk.nix ];
+  imports = [ ./btrbk.nix ./luks.nix ];
   options =
     let
       inherit (lib) mkOption types mkIf;

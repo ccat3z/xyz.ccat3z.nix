@@ -59,6 +59,19 @@
     fsType = "btrfs";
   };
 
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-uuid/27228342-55d9-4497-bcbe-437e48393746";
+    fsType = "btrfs";
+    options = [ "ssd" "nofail" ];
+    encrypted = {
+      enableStage2 = true;
+      blkDev = "/dev/disk/by-uuid/aad38218-8ecd-4a69-8843-b50af8ce553e";
+      label = "backup";
+      keyFile = "/etc/cryptsetup-keys.d/backup-981.key";
+      options = [ "discard" "nofail" ];
+    };
+  };
+
   fileSystems."/home/${config.myUser}/Documents" = {
     device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
     fsType = "btrfs";
