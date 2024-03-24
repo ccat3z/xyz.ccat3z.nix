@@ -59,7 +59,7 @@
     fsType = "btrfs";
   };
 
-  fileSystems."/home/${config.home.user}/Documents" = {
+  fileSystems."/home/${config.myUser}/Documents" = {
     device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
     fsType = "btrfs";
     options = [ "subvol=project" ];

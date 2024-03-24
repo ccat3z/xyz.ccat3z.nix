@@ -70,7 +70,6 @@
               ./modules/home/nixos.nix
               {
                 nixpkgs.overlays = [ self.overlays.default ];
-                home.user = "ccat3z";
                 networking.domain = "ccat3z.xyz";
               }
             ];

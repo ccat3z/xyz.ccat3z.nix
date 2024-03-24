@@ -1,8 +1,7 @@
 # NixOS Module for home
 { pkgs, lib, config, home-manager, ... }:
 let
-  cfg = config.home;
-  user = cfg.user;
+  user = config.myUser;
 
   wiresharkConfig = {
     users.users.${user}.extraGroups = [ "wireshark" ];
@@ -26,33 +25,13 @@ in
 
       home-manager.users.${user} = import ./.;
     }
+    (lib.mkAliasOptionModule ["my"] ["home-manager" "users" user])
+    wiresharkConfig
   ];
 
-  options.home = {
-    user = lib.mkOption {
-      type = lib.types.str;
-    };
-    wireshark.enable = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-    };
-    module = lib.mkOption {
-      type = lib.types.anything;
-      default = { };
-    };
-  };
+  programs.zsh.enable = true;
+  users.users.${user}.shell = pkgs.zsh;
 
-  config = lib.mkMerge [
-    ({
-      programs.zsh.enable = true;
-      users.users.${cfg.user}.shell = pkgs.zsh;
-
-      # Required by host-spawn
-      services.flatpak.enable = true;
-
-      # Define home modules out of home/. Useful for host specfic options.
-      home-manager.users.${user} = cfg.module;
-    })
-    (lib.mkIf cfg.wireshark.enable wiresharkConfig)
-  ];
+  # Required by host-spawn
+  services.flatpak.enable = true;
 }

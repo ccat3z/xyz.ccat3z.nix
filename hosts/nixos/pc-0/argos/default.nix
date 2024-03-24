@@ -9,5 +9,5 @@ let
 in
 {
   environment.systemPackages = [ argos-top ];
-  home.module.programs.argos.scripts."top.5s.py" = "${argos-top}/bin/argos-top";
+  my.programs.argos.scripts."top.5s.py" = "${argos-top}/bin/argos-top";
 }
