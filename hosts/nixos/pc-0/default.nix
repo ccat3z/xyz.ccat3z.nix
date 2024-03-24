@@ -6,5 +6,7 @@
   networking.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
 
+  services.xserver.displayManager.gdm.autoSuspend = false;
+
   system.stateVersion = "23.11";
 }
