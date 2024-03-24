@@ -17,6 +17,8 @@
     pkgs.gnome-tour
     gnome-contacts
   ];
+  services.gnome.tracker-miners.enable = false;
+  services.gnome.tracker.enable = false;
 
   environment.systemPackages = [
     pkgs.gnome.eog
