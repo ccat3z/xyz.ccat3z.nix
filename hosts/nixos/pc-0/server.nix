@@ -73,4 +73,5 @@ in
 
   # gateway
   services.nginx.enable = true;
+  services.nginx.virtualHosts."gallery.ccat3z.xyz".locations."/".proxyPass = "http://127.0.0.1:3012";
 }
