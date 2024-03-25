@@ -10,6 +10,8 @@
   # Required by remote btrbk
   environment.systemPackages = [ pkgs.lz4 ];
 
+  my.home.packages = [ pkgs.gocryptfs ];
+
   services.xserver.displayManager.gdm.autoSuspend = false;
 
   system.stateVersion = "23.11";
