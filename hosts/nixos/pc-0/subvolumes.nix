@@ -5,7 +5,7 @@ let
 
   volumeDir = "/mnt/volume";
   snapshotDir = "/mnt/volume/.snapshots-nixos";
-  backupDir = "/mnt/volume/.snapshots-nixos";
+  backupDir = "/mnt/backup/.snapshots-nixos";
 in
 {
   # Subvol in rootfs
@@ -40,7 +40,14 @@ in
     lib.listToAttrs (lib.mapAttrsToList mkFsCfg subvols);
 
   # Backup
-  services.btrbk.instances.default = {
+  services.btrbk.instances.default =
+  let
+    snapshotOnly = {
+      target_preserve_min = "no";
+      target_preserve = "no";
+    };
+  in
+  {
     onCalendar = "daily";
     settings = {
 
@@ -48,21 +55,19 @@ in
       snapshot_preserve = "3d";
       snapshot_dir = snapshotDir;
 
-      target_preserve_min = "no";
-      target_preserve = "no";
       target = backupDir;
 
       volume."/mnt/volume" = {
         subvolume = {
-          "nix/rootfs" = { };
-          "project" = { };
-          "database" = { };
+          "nix/rootfs" = snapshotOnly;
+          "project" = snapshotOnly;
+          "database" = snapshotOnly;
         };
       };
       subvolume = {
-        "/var/lib/syncthing" = { };
-        "/var/lib/docker" = { };
-        "/var/lib/libvirt" = { };
+        "/var/lib/syncthing" = snapshotOnly;
+        "/var/lib/docker" = snapshotOnly;
+        "/va/lib/libvirt" = snapshotOnly;
         "/var/backup/postgresql" = {
           target_preserve_min = "latest";
           target_preserve = "2w 3d";
