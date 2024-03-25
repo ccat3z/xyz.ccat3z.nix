@@ -7,6 +7,9 @@
   services.proxy.enable = true;
   services.syncthing.enable = true;
 
+  # Required by remote btrbk
+  environment.systemPackages = [ pkgs.lz4 ];
+
   services.xserver.displayManager.gdm.autoSuspend = false;
 
   system.stateVersion = "23.11";
