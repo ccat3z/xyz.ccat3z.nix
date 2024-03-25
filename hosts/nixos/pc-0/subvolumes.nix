@@ -3,25 +3,11 @@ let
   inherit (config) myUser;
   myGroup = config.users.users.${myUser}.group;
 
-  device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
-  subvolOutOfRoot = {
-    "/mnt/volume" = "/";
-    "/home/${myUser}/Documents" = "project";
-    "/home/${myUser}/Database" = "database";
-  };
-
-  mkFsCfg = path: subvol: {
-    name = path;
-    value = {
-      inherit device;
-      fsType = "btrfs";
-      options = [ "rw" "relatime" "ssd" "space_cache=v2" "subvol=${subvol}" "nofail" ];
-    };
-  };
+  volumeDir = "/mnt/volume";
+  snapshotDir = "/mnt/volume/.snapshots-nixos";
+  backupDir = "/mnt/volume/.snapshots-nixos";
 in
 {
-  fileSystems = lib.listToAttrs (lib.mapAttrsToList mkFsCfg subvolOutOfRoot);
-
   # Subvol in rootfs
   systemd.tmpfiles.rules = [
     "v /home/${myUser}/.cache    0755 ${myUser} ${myGroup}"
@@ -30,4 +16,52 @@ in
     "v /var/lib/docker           0700 root root"
     "v /var/lib/libvirt          0700 root root"
   ];
+
+  # Subvol out of rootfs
+  fileSystems =
+    let
+      device = config.fileSystems."/".device;
+      subvols = {
+        "${volumeDir}" = "/";
+        "/home/${myUser}/Documents" = "project";
+        "/home/${myUser}/Database" = "database";
+      };
+      mkFsCfg = path: subvol: {
+        name = path;
+        value = {
+          inherit device;
+          fsType = "btrfs";
+          options = [ "rw" "relatime" "ssd" "space_cache=v2" "subvol=${subvol}" "nofail" ];
+        };
+      };
+    in
+    lib.listToAttrs (lib.mapAttrsToList mkFsCfg subvols);
+
+  # Backup
+  services.btrbk.instances.default = {
+    onCalendar = "daily";
+    settings = {
+
+      snapshot_preserve_min = "latest";
+      snapshot_preserve = "3d";
+      snapshot_dir = snapshotDir;
+
+      target_preserve_min = "no";
+      target_preserve = "no";
+      target = backupDir;
+
+      volume."/mnt/volume" = {
+        subvolume = {
+          "nix/rootfs" = { };
+          "project" = { };
+          "database" = { };
+        };
+      };
+      subvolume = {
+        "/var/lib/syncthing" = { };
+        "/var/lib/docker" = { };
+        "/var/lib/libvirt" = { };
+      };
+    };
+  };
 }

@@ -55,11 +55,6 @@
     options = [ "subvol=nix/rootfs" ];
   };
 
-  fileSystems."/mnt/volume" = {
-    device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
-    fsType = "btrfs";
-  };
-
   fileSystems."/mnt/backup" = {
     device = "/dev/disk/by-uuid/27228342-55d9-4497-bcbe-437e48393746";
     fsType = "btrfs";
