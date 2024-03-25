@@ -6,8 +6,8 @@
     ./pinned.nix
     ../network
     ../nixsvc/options.nix
-    ./volume
     ./hardware
+    ./crypttab.nix
   ];
 
   time.timeZone = "Asia/Shanghai";

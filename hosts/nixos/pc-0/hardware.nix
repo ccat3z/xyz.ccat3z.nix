@@ -4,6 +4,7 @@
   imports =
     [
       (modulesPath + "/installer/scan/not-detected.nix")
+      ./subvolumes.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
@@ -70,12 +71,6 @@
       keyFile = "/etc/cryptsetup-keys.d/backup-981.key";
       options = [ "discard" "nofail" ];
     };
-  };
-
-  fileSystems."/home/${config.myUser}/Documents" = {
-    device = "/dev/disk/by-uuid/562eab94-9110-469b-9ff6-21ac246a4748";
-    fsType = "btrfs";
-    options = [ "subvol=project" ];
   };
 
   fileSystems."/boot" = {
