@@ -73,11 +73,13 @@
     tiling-assistant
     wireshark
     (syncthing-icon.overrideAttrs {
-      patches = [ ./patches/syncthing-icon-45-hotfix.patch ];
+      patches = [
+        ./patches/syncthing-icon-45-hotfix.patch
+        ./patches/syncthing-icon-default-dir.patch
+      ];
     })
     panel-workspace-scroll
     pkgs.astra-monitor
-    syncthing-indicator
     (rounded-window-corners.overrideAttrs {
       patches = [ ./patches/rounded-window-corners-45-hotfix.patch ];
     })
@@ -135,14 +137,6 @@
       {
         path = ./gitconfig.ini;
       }
-    ];
-  };
-
-  services.syncthing = {
-    enable = true;
-    extraOptions = [
-      "--home=/mnt/syncthing/config"
-      "--no-default-folder"
     ];
   };
 

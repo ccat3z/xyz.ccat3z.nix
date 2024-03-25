@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   imports = [
     ./users.nix
@@ -37,6 +37,13 @@
 
   # Docker
   virtualisation.docker.enable = true;
+
+  # Syncthing
+  services.syncthing = {
+    user = "${config.myUser}";
+    group = "${config.users.users.${config.myUser}.group}";
+    extraFlags = [ "--no-default-folder" ];
+  };
 
   # Support unpatched dynamic binaries like vscode remote server
   programs.nix-ld.enable = true;

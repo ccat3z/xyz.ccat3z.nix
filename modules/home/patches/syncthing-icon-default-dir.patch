@@ -1,0 +1,11 @@
+diff --color -ur a/filewatcher.js b/filewatcher.js
+--- a/filewatcher.js	2024-03-25 14:56:14.826711127 +0800
++++ b/filewatcher.js	2024-03-25 14:56:39.237809655 +0800
+@@ -28,6 +28,7 @@
+         `${GLib.get_user_config_dir()}/syncthing`,
+         `${GLib.get_home_dir()}/snap/syncthing/common/syncthing`,
+         `${GLib.get_home_dir()}/.var/app/me.kozec.syncthingtk/config/syncthing`,
++        `/var/lib/syncthing/.config/syncthing`
+     ];
+     for (let dir of directories) {
+         let configfile = Gio.File.new_for_path(`${dir}/config.xml`);
