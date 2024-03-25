@@ -12,7 +12,7 @@ nixos/build:
 	nixos-rebuild build --flake .
 
 nixos/diff: nixos/build
-	nix-diff /run/current-system ./result
+	nix-diff --color=always /run/current-system ./result
 
 nixos/gen-dconf:
 	./modules/home/dconf-gen.py
