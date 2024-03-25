@@ -13,8 +13,10 @@ in
     "v /home/${myUser}/.cache    0755 ${myUser} ${myGroup}"
     "v /home/${myUser}/Downloads 0755 ${myUser} ${myGroup}"
     "v /var/lib/syncthing        0755 ${myUser} ${myGroup}"
-    "v /var/lib/docker           0700 root root"
-    "v /var/lib/libvirt          0700 root root"
+    "v /var/lib/docker           0700 :root :root"
+    "v /var/lib/libvirt          0700 :root :root"
+    "v /var/lib/postgresql       0700 :root :root"
+    "v /var/backup/postgresql    0700 :root :root"
   ];
 
   # Subvol out of rootfs
@@ -61,6 +63,10 @@ in
         "/var/lib/syncthing" = { };
         "/var/lib/docker" = { };
         "/var/lib/libvirt" = { };
+        "/var/backup/postgresql" = {
+          target_preserve_min = "latest";
+          target_preserve = "2w 3d";
+        };
       };
     };
   };
