@@ -41,38 +41,38 @@ in
 
   # Backup
   services.btrbk.instances.default =
-  let
-    snapshotOnly = {
-      target_preserve_min = "no";
-      target_preserve = "no";
-    };
-  in
-  {
-    onCalendar = "daily";
-    settings = {
+    let
+      snapshotOnly = {
+        target_preserve_min = "no";
+        target_preserve = "no";
+      };
+    in
+    {
+      onCalendar = "daily";
+      settings = {
 
-      snapshot_preserve_min = "latest";
-      snapshot_preserve = "3d";
-      snapshot_dir = snapshotDir;
+        snapshot_preserve_min = "latest";
+        snapshot_preserve = "3d";
+        snapshot_dir = snapshotDir;
 
-      target = backupDir;
+        target = backupDir;
 
-      volume."/mnt/volume" = {
+        volume."/mnt/volume" = {
+          subvolume = {
+            "nix/rootfs" = snapshotOnly;
+            "project" = snapshotOnly;
+            "database" = snapshotOnly;
+          };
+        };
         subvolume = {
-          "nix/rootfs" = snapshotOnly;
-          "project" = snapshotOnly;
-          "database" = snapshotOnly;
-        };
-      };
-      subvolume = {
-        "/var/lib/syncthing" = snapshotOnly;
-        "/var/lib/docker" = snapshotOnly;
-        "/va/lib/libvirt" = snapshotOnly;
-        "/var/backup/postgresql" = {
-          target_preserve_min = "latest";
-          target_preserve = "2w 3d";
+          "/var/lib/syncthing" = snapshotOnly;
+          "/var/lib/docker" = snapshotOnly;
+          "/va/lib/libvirt" = snapshotOnly;
+          "/var/backup/postgresql" = {
+            target_preserve_min = "latest";
+            target_preserve = "2w 3d";
+          };
         };
       };
     };
-  };
 }
