@@ -16,4 +16,16 @@ in
       ACTION=="add", KERNEL=="nvidia", DRIVER=="nvidia", RUN+="${nvidia-modprobe}/bin/nvidia-modprobe", \
       RUN+="${nvidia-modprobe}/bin/nvidia-modprobe -c 0 -u"
     '';
+
+  systemd.services."nvidia-persistenced" = {
+    description = "NVIDIA Persistence Daemon";
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "forking";
+      Restart = "always";
+      PIDFile = "/var/run/nvidia-persistenced/nvidia-persistenced.pid";
+      ExecStart = "${lib.getExe nvidiaPackage.persistenced} --verbose";
+      ExecStopPost = "${pkgs.coreutils}/bin/rm -rf /var/run/nvidia-persistenced";
+    };
+  };
 }
