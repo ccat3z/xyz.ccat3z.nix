@@ -37,6 +37,7 @@
     efibootmgr
     gopass
     pciutils
+    usbutils
 
     # Graphical Tools
     (firefox.override {
