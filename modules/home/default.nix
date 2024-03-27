@@ -36,6 +36,7 @@
     nix-diff
     efibootmgr
     gopass
+    pciutils
 
     # Graphical Tools
     (firefox.override {

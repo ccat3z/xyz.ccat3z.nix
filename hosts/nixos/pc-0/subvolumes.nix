@@ -67,7 +67,7 @@ in
         subvolume = {
           "/var/lib/syncthing" = snapshotOnly;
           "/var/lib/docker" = snapshotOnly;
-          "/va/lib/libvirt" = snapshotOnly;
+          "/var/lib/libvirt" = snapshotOnly;
           "/var/backup/postgresql" = {
             target_preserve_min = "latest";
             target_preserve = "2w 3d";
