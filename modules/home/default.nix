@@ -59,6 +59,7 @@
     d-spy
     wpsoffice-cn
     xclip
+    evolution
   ] ++ (with gnomeExtensions; [
     # Gnome Extensions
     caffeine
