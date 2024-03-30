@@ -24,6 +24,8 @@ lib.mkMerge [
 
     # See https://www.reddit.com/r/VFIO/comments/zi70zn/usb_passthrough_a_xbox_controller/
     boot.blacklistedKernelModules = [ "xpad" ];
+
+    environment.variables.LIBVIRT_DEFAULT_URI = "qemu:///system";
   }
   (lib.mkIf (lib.length pciIds > 0)
     {
