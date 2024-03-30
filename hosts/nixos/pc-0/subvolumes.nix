@@ -40,7 +40,7 @@ in
     lib.listToAttrs (lib.mapAttrsToList mkFsCfg subvols);
 
   # Backup
-  services.btrbk.instances.default =
+  services.btrbk.instances.btrbk =
     let
       snapshotOnly = {
         target_preserve_min = "no";
