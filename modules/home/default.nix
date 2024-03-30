@@ -86,6 +86,7 @@
     (rounded-window-corners.overrideAttrs {
       patches = [ ./patches/rounded-window-corners-45-hotfix.patch ];
     })
+    pkgs.translate-label
   ]);
 
   services.gpg-agent = {

@@ -1,0 +1,9 @@
+{
+  "name": "Translate Label",
+  "description": "Translate context in clipboard",
+  "uuid": "translate-label@ccat3z.xyz",
+  "shell-version": [
+    "45"
+  ],
+  "version": 2
+}

@@ -1,11 +1,11 @@
-{ stdenv, fetchFromGitHub, gnum4, version ? "545.29.02" , ... }:
+{ stdenv, fetchFromGitHub, gnum4, version ? "545.29.02", ... }:
 stdenv.mkDerivation {
   pname = "nvidia-modprobe";
   inherit version;
 
   buildInputs = [ gnum4 ];
 
-  makeFlags = [ "PREFIX=$(out) "];
+  makeFlags = [ "PREFIX=$(out) " ];
 
   src = fetchFromGitHub {
     owner = "NVIDIA";
