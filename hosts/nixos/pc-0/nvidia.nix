@@ -13,7 +13,9 @@ in
 
   services.udev.extraRules =
     ''
-      ACTION=="add", KERNEL=="nvidia", DRIVER=="nvidia", RUN+="${nvidia-modprobe}/bin/nvidia-modprobe", \
-      RUN+="${nvidia-modprobe}/bin/nvidia-modprobe -c 0 -u"
+      ACTION=="add", DEVPATH=="/bus/pci/drivers/nvidia", \
+        RUN+="${pkgs.runtimeShell} -c 'mknod -m 666 /dev/nvidiactl c 195 255'", \
+        RUN+="${nvidia-modprobe}/bin/nvidia-modprobe -c 0", \
+        RUN+="${nvidia-modprobe}/bin/nvidia-modprobe -c 0 -u"
     '';
 }
