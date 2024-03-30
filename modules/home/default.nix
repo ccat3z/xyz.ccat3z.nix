@@ -44,9 +44,6 @@
       nativeMessagingHosts = [ browserpass ];
     })
     gnome.gnome-tweaks
-    (gnome.gnome-terminal.overrideAttrs {
-      patches = [ ./patches/gnome-terminal-resize.patch ];
-    })
     (vscode.fhsWithPackages (pkgs: with pkgs; [ host-spawn ]))
     remmina
     dconf

@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   imports = [ ./printer.nix ];
   services.xserver.enable = true;
@@ -20,9 +20,19 @@
   services.gnome.tracker-miners.enable = false;
   services.gnome.tracker.enable = false;
 
-  environment.systemPackages = [
-    pkgs.gnome.eog
+  environment.systemPackages = with pkgs; [
+    gnome.eog
+    gnome.nautilus-python
+    (gnome.gnome-terminal.overrideAttrs {
+      patches = [ ./patches/gnome-terminal-resize.patch ];
+    })
   ];
+
+  # FIXME: All non-python nautilus extensions must be placed in systemPackages to work.
+  # This will only take effect after re-login.
+  environment.sessionVariables = {
+    NAUTILUS_4_EXTENSION_DIR = "${config.system.path}/lib/nautilus/extensions-4";
+  };
 
   fonts = {
     enableDefaultPackages = true;
