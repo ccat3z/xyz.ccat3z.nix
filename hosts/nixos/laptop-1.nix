@@ -30,28 +30,23 @@
       fsType = "btrfs";
     };
 
-  fileSystems."/mnt/syncthing" =
-    {
-      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
-      fsType = "btrfs";
-      options = [ "subvol=syncthing" ];
-    };
-  system.activationScripts.chownSyncthing = ''
-    chown ccat3z:${config.users.users.ccat3z.group} /mnt/syncthing
-  '';
-
-  fileSystems."/var/lib/libvirt" =
-    {
-      device = "/dev/disk/by-uuid/f81b422e-2ac8-4184-a1e4-50b36daeb85a";
-      fsType = "btrfs";
-      options = [ "subvol=libvirt" ];
-    };
-
   fileSystems."/boot" =
     {
       device = "/dev/disk/by-uuid/D05D-5377";
       fsType = "vfat";
     };
+
+  # Subvol in rootfs
+  systemd.tmpfiles.rules =
+    let
+      inherit (config) myUser;
+      myGroup = config.users.users.${myUser}.group;
+    in
+    [
+      "v /var/lib/syncthing        0755 ${myUser} ${myGroup}"
+      "v /var/lib/libvirt          0700 :root :root"
+      "v /home/${myUser}/Database  0755 ${myUser} ${myGroup}"
+    ];
 
   swapDevices = [
     {
@@ -75,6 +70,8 @@
       ovmf.packages = [ pkgs.OVMFFull.fd ];
     };
   };
+
+  services.syncthing.enable = true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
