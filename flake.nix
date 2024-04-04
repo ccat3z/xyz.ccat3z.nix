@@ -71,6 +71,16 @@
               {
                 nixpkgs.overlays = [ self.overlays.default ];
                 networking.domain = "ccat3z.xyz";
+
+                # Add this flake to system registry
+                nix.channel.enable = false;
+                nix.registry = {
+                  nixpkgs.flake = nixpkgs;
+                  ccat3z.to = {
+                    type = "path";
+                    path = ./.;
+                  };
+                };
               }
             ];
           };
