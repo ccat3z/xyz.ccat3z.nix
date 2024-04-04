@@ -122,6 +122,12 @@ with lib.hm.gvariant;
       titlebar-font = "Sans 11";
     };
 
+    "org/gnome/mutter" = {
+      dynamic-workspaces = true;
+      edge-tiling = false;
+      workspaces-only-on-primary = true;
+    };
+
     "org/gnome/settings-daemon/plugins/media-keys" = {
       custom-keybindings = [ "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/" ];
     };

@@ -43,6 +43,8 @@ if __name__ == '__main__':
         "org/gnome/terminal/legacy/profiles:": True,
         "com/github/amezin/ddterm": True,
         "org/gnome/desktop/input-sources": True,
+        "org/gnome/mutter": True,
+        "org/gnome/mutter/keybindings": False,
     }
 
     config = get_dconf_dump()
