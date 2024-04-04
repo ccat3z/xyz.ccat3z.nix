@@ -43,6 +43,8 @@ in
             };
           };
 
+        sops.secrets.${cfg.configSops}.restartUnits = [ "v2ray.service" ];
+
         # Fix tproxy in docker
         # FIXME
         networking.firewall.enable = false;
