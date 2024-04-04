@@ -38,6 +38,7 @@
     gopass
     pciutils
     usbutils
+    (unzip.override { enableNLS = true; })
 
     # Graphical Tools
     (firefox.override {
