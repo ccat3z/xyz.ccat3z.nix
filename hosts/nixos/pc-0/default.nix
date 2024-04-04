@@ -11,6 +11,11 @@
   environment.systemPackages = [ pkgs.lz4 ];
 
   my.home.packages = [ pkgs.gocryptfs ];
+  my.programs.zsh.initExtra = ''
+    if [ -f ~/.projects_profile ]; then
+      . ~/.projects_profile
+    fi
+  '';
 
   services.xserver.displayManager.gdm.autoSuspend = false;
 
