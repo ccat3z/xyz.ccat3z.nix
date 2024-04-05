@@ -50,6 +50,11 @@ in
         hostPath = config.sops.secrets."miniflux/env".path;
         isReadOnly = true;
       };
+      # https://discourse.nixos.org/t/dns-in-declarative-container/1529
+      "/etc/resolv.conf" = {
+        hostPath = "/etc/resolv.conf";
+        isReadOnly = true;
+      };  
     };
     autoStart = true;
   };
