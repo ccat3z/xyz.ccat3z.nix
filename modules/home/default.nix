@@ -31,6 +31,7 @@
     neovim
     (python3.withPackages (ps: with ps; [
       pynvim
+      requests
     ]))
     dconf2nix
     nix-diff
