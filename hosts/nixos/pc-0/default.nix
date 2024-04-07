@@ -10,7 +10,14 @@
   # Required by remote btrbk
   environment.systemPackages = [ pkgs.lz4 ];
 
-  my.home.packages = with pkgs; [ gocryptfs hledger hledger-web git-remote-gcrypt bc ];
+  my.home.packages = with pkgs; [
+    gocryptfs
+    hledger
+    hledger-web
+    git-remote-gcrypt
+    bc
+    android-tools
+  ];
   my.home.sessionVariables = {
     LEDGER_FILE = "${config.my.home.homeDirectory}/Documents/ledger/main.journal";
   };
