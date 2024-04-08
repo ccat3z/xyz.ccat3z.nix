@@ -54,7 +54,7 @@ in
       "/etc/resolv.conf" = {
         hostPath = "/etc/resolv.conf";
         isReadOnly = true;
-      };  
+      };
     };
     autoStart = true;
   };
