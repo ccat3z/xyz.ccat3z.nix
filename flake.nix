@@ -45,14 +45,25 @@
             value = (./hosts + "/${type}/${x}");
           })
           (attrNames (readDir ./hosts/${type})));
+
+      nixpkgConfig = {
+        allowUnfree = true;
+      };
+
+      origPkgsInstances = forAllSystems (sys: import "${nixpkgs}" {
+        system = sys;
+        config = nixpkgConfig;
+      });
     in
     {
       inherit inputs;
 
-      packages = forAllSystems (sys: import ./pkgs { nixpkgs = nixpkgs.legacyPackages.${sys}; });
+      packages = forAllSystems (sys: import ./pkgs {
+        nixpkgs = origPkgsInstances.${sys};
+      });
 
       # Export all pkgs
-      legacyPackages = forAllSystems (sys: import "${nixpkgs}" { system = sys; });
+      legacyPackages = origPkgsInstances;
 
       overlays.default = import ./pkgs/overlay.nix;
 
@@ -81,6 +92,9 @@
                     path = ./.;
                   };
                 };
+
+                # Nixpkg config
+                nixpkgs.config = nixpkgConfig;
               }
             ];
           };

@@ -14,7 +14,6 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" "repl-flake" ];
   environment.systemPackages = with pkgs; [ git vim wget ];
-  nixpkgs.config.allowUnfree = true;
 
   # Openssh
   services.openssh.enable = true;
