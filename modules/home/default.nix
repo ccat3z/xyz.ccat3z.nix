@@ -40,6 +40,7 @@
     pciutils
     usbutils
     (unzip.override { enableNLS = true; })
+    pipenv
 
     # Graphical Tools
     (firefox.override {
