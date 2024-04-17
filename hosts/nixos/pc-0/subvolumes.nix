@@ -61,7 +61,10 @@ in
           subvolume = {
             "nix/rootfs" = snapshotOnly;
             "project" = snapshotOnly;
-            "database" = snapshotOnly;
+            "database" = {
+              target_preserve_min = "latest";
+              target_preserve = "2w 7d";
+            };
           };
         };
         subvolume = {
