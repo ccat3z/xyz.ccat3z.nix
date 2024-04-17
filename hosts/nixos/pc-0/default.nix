@@ -18,6 +18,7 @@
     bc
     android-tools
     iopaint
+    a1111-webui-env
   ];
   my.home.sessionVariables = {
     LEDGER_FILE = "${config.my.home.homeDirectory}/Documents/ledger/main.journal";
