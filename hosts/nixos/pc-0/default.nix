@@ -17,6 +17,7 @@
     git-remote-gcrypt
     bc
     android-tools
+    iopaint
   ];
   my.home.sessionVariables = {
     LEDGER_FILE = "${config.my.home.homeDirectory}/Documents/ledger/main.journal";

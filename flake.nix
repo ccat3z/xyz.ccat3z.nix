@@ -9,6 +9,10 @@
       url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dream2nix = {
+      url = "github:nix-community/dream2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -24,7 +28,7 @@
     ];
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs, dream2nix, ... }@inputs:
     let
       systems = [ "x86_64-linux" ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
@@ -58,14 +62,19 @@
     {
       inherit inputs;
 
-      packages = forAllSystems (sys: import ./pkgs {
-        nixpkgs = origPkgsInstances.${sys};
-      });
+      packages = forAllSystems (sys:
+        (import ./pkgs {
+          nixpkgs = origPkgsInstances.${sys};
+          inherit dream2nix;
+        })
+      );
 
       # Export all pkgs
       legacyPackages = origPkgsInstances;
 
-      overlays.default = import ./pkgs/overlay.nix;
+      overlays.default = import ./pkgs/overlay.nix {
+        inherit dream2nix;
+      };
 
       nixosConfigurations = (
         let

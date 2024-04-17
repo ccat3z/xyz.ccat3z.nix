@@ -1,18 +1,26 @@
-{ nixpkgs, ... }:
+{ nixpkgs, dream2nix, ... }:
 let
   lib = nixpkgs.lib;
-  pkgsNames = with lib.attrsets; attrNames (
+
+  callPackage = lib.callPackageWith (nixpkgs // mypkgs // {
+    super = nixpkgs;
+    misc = import ../misc {
+      inherit dream2nix nixpkgs;
+    };
+  });
+
+  mypkgsNames = with lib.attrsets; attrNames (
     filterAttrs
       (n: v: v == "directory")
       (builtins.readDir ./.)
   );
-  callPackage = lib.callPackageWith (nixpkgs // pkgs // { super = nixpkgs; });
-  pkgs = with builtins; listToAttrs (map
+
+  mypkgs = with builtins; listToAttrs (map
     (n: {
       name = n;
       value = callPackage ./${n} { };
     })
-    pkgsNames
+    mypkgsNames
   );
 in
-pkgs
+mypkgs

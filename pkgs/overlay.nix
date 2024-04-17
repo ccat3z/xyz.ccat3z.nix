@@ -1,1 +1,1 @@
-self: super: import ./. { nixpkgs = super; }
+args: self: super: import ./. ({ nixpkgs = super; } // args)

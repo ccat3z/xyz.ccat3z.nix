@@ -74,4 +74,12 @@ in
     '';
 
   my.home.packages = [ a1111-webui-env ];
+
+  hardware.opengl = {
+    extraPackages = [ nvidiaPackage.out ];
+    extraPackages32 = [ nvidiaPackage.lib32 ];
+  };
+  environment.variables = {
+    __EGL_VENDOR_LIBRARY_FILENAMES = "/run/opengl-driver/share/glvnd/egl_vendor.d/50_mesa.json";
+  };
 }
