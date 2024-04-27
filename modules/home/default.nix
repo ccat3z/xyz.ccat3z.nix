@@ -41,6 +41,7 @@
     usbutils
     (unzip.override { enableNLS = true; })
     pipenv
+    devenv
 
     # Graphical Tools
     (firefox.override {
