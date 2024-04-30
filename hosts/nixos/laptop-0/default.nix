@@ -4,6 +4,7 @@
   imports =
     [
       ./hardware.nix
+      ./subvolumes.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
