@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./hardware.nix ./nvidia.nix ./argos ./server.nix ./libvirtd.nix ];
+  imports = [ ./hardware.nix ./nvidia.nix ./argos ./server.nix ./libvirtd.nix ./nebula.nix ];
 
   networking.useDHCP = lib.mkDefault true;
   services.proxy.enable = true;
