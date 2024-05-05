@@ -39,6 +39,11 @@
 
   networking.useDHCP = lib.mkDefault true;
 
+  systemd.tmpfiles.rules = [
+    # Disable nvidia gpu
+    "w /sys/bus/pci/devices/0000:01:00.0/remove - - - - 1"
+  ];
+
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
