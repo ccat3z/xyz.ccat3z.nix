@@ -18,5 +18,11 @@
     powertop
   ];
 
+  my.programs.zsh.initExtra = ''
+    if [ -f ~/.projects_profile ]; then
+      . ~/.projects_profile
+    fi
+  '';
+
   system.stateVersion = "23.11";
 }
