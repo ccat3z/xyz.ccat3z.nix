@@ -69,6 +69,7 @@ with lib.hm.gvariant;
       font-hinting = "slight";
       font-name = "Sans 11";
       monospace-font-name = "Monospace 14";
+      show-battery-percentage = true;
       toolkit-accessibility = false;
     };
 
@@ -158,6 +159,7 @@ with lib.hm.gvariant;
       network-header-tooltip = false;
       network-indicators-order = "[\"icon\",\"IO bar\",\"IO graph\",\"IO speed\"]";
       panel-box-order = -2;
+      processor-header-bars-breakdown = true;
       processor-header-icon = false;
       processor-header-tooltip = false;
       processor-indicators-order = "[\"icon\",\"bar\",\"graph\",\"percentage\"]";
