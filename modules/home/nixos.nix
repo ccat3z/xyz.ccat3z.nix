@@ -34,4 +34,7 @@ in
 
   # Required by host-spawn
   services.flatpak.enable = true;
+
+  # Spice
+  virtualisation.spiceUSBRedirection.enable = true;
 }
