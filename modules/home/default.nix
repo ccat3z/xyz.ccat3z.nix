@@ -41,6 +41,7 @@
     usbutils
     (unzip.override { enableNLS = true; })
     pipenv
+    tree
     devenv
 
     # Graphical Tools
