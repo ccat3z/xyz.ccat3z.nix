@@ -1,7 +1,7 @@
 { pkgs, config, ... }:
 {
   imports = [
-    ./printer.nix 
+    ./printer.nix
   ];
   services.xserver.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
