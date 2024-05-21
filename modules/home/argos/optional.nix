@@ -1,6 +1,6 @@
-{ pkgs, ... }:
-{
-  my.programs.argos.scripts."pc-0-top.5s.sh" = pkgs.writeScript "pc-0-top" ''
+{ pkgs, config, lib, ... }:
+let
+  pc-0-top = pkgs.writeScript "pc-0-top" ''
     #! ${pkgs.bash}/bin/bash
 
     mkdir -p ~/.ssh/sockets
@@ -20,5 +20,10 @@
         echo "$status"
     fi
   '';
+in
+{
+  programs.argos.scripts."pc-0-top.5s.sh" = lib.mkIf (config.hostName != "pc-0") pc-0-top;
 }
+
+
 

@@ -4,6 +4,7 @@
     ./dconf.nix
     ./rime
     ./argos
+    ./options.nix
   ];
 
   home.stateVersion = "23.11";

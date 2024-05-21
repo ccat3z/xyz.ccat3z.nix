@@ -26,6 +26,10 @@ in
     };
   };
 
+  imports = [
+    ./optional.nix
+  ];
+
   config = {
     home.packages = [
       (pkgs.gnomeExtensions.argos.overrideAttrs { patches = [ ./argos.patch ]; })

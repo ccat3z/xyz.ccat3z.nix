@@ -5,7 +5,6 @@
     [
       ./hardware.nix
       ./subvolumes.nix
-      ./argos
     ];
 
   boot.loader.systemd-boot.enable = true;

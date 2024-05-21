@@ -37,4 +37,6 @@ in
 
   # Spice
   virtualisation.spiceUSBRedirection.enable = true;
+
+  my.hostName = config.networking.hostName;
 }
