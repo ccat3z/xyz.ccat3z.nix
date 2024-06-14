@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, config, ... }:
 let
   inherit (lib) filterAttrs hasSuffix nameValuePair mapAttrs';
   inherit (builtins) attrNames readDir map baseNameOf listToAttrs;
@@ -20,6 +20,7 @@ let
 
   rimeTargetDir = ".config/ibus/rime";
 in
+lib.mkIf config.linuxGraphical.enable
 {
   home.file = mapAttrs'
     (n: v: nameValuePair "${rimeTargetDir}/${n}" { source = v; })

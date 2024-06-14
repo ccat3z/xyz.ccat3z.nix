@@ -1,8 +1,7 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
-{ lib, ... }:
-
+{ lib, config, ... }:
 with lib.hm.gvariant;
-
+lib.mkIf config.linuxGraphical.enable
 {
   dconf.settings = {
     "com/github/amezin/ddterm" = {

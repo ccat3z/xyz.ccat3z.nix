@@ -13,6 +13,11 @@
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
   };
 
   nixConfig = {
@@ -28,9 +33,9 @@
     ];
   };
 
-  outputs = { self, nixpkgs, dream2nix, ... }@inputs:
+  outputs = { self, nixpkgs, dream2nix, nix-darwin, ... }@inputs:
     let
-      systems = [ "x86_64-linux" ];
+      systems = [ "x86_64-linux" "x86_64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
       hostsModules =
@@ -119,6 +124,33 @@
           ))
           (hostsModules "nixos")
       );
+
+      darwinConfigurations =
+        let
+          inherit (nixpkgs) lib;
+          inherit (builtins) mapAttrs;
+        in
+        mapAttrs
+          (hostName: hostModule: (
+            nix-darwin.lib.darwinSystem {
+              modules = [
+                {
+                  config = {
+                    networking.hostName = hostName;
+                    nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
+                  };
+                }
+                # ./secrets
+                ./modules/darwin
+                ./modules/home/darwin.nix
+                hostModule
+              ];
+              specialArgs = {
+                inherit (inputs) sops-nix home-manager nixpkgs-unstable;
+              };
+            }
+          ))
+          (hostsModules "darwin");
 
       nixsvcProfiles =
         let

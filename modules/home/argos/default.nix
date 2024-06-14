@@ -30,7 +30,7 @@ in
     ./optional.nix
   ];
 
-  config = {
+  config = lib.mkIf config.linuxGraphical.enable {
     home.packages = [
       (pkgs.gnomeExtensions.argos.overrideAttrs { patches = [ ./argos.patch ]; })
     ];
