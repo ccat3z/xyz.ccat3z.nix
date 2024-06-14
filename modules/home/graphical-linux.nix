@@ -78,61 +78,6 @@
       pkgs.translate-label
     ]);
 
-    services.gpg-agent = {
-      enable = true;
-      sshKeys = [
-        "820B065395559FC5024BE32BB27AC53E147B969B"
-      ];
-    };
-
-    programs.zsh = {
-      enable = true;
-      oh-my-zsh = {
-        enable = true;
-        theme = "fishy";
-      };
-    };
-
-    programs.vim =
-      let
-        inherit (pkgs.vimPlugins) vim-plug;
-      in
-      {
-        enable = true;
-        defaultEditor = true;
-        plugins = [ vim-plug ];
-        extraConfig = ''
-          source ${vim-plug}/plug.vim
-          
-          ${builtins.readFile ./init.vim}
-        '';
-      };
-
-    programs.ssh = {
-      enable = true;
-      matchBlocks = {
-        "pc-0.ccat3z.xyz" = {
-          hostname = "10.55.12.2";
-          user = "ccat3z";
-        };
-      };
-    };
-    # Fix ssh config permission
-    # https://github.com/nix-community/home-manager/issues/322#issuecomment-1856128020
-    home.file.".ssh/config" = {
-      target = ".ssh/config_source";
-      onChange = ''rm -f ~/.ssh/config && cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config'';
-    };
-
-    programs.git = {
-      enable = true;
-      includes = [
-        {
-          path = ./gitconfig.ini;
-        }
-      ];
-    };
-
     # Gnome terminal settings
     dconf.settings."org/gnome/terminal/legacy" = {
       headerbar = with lib.gvariant; mkMaybe type.boolean "false";
