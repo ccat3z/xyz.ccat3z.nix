@@ -1,7 +1,8 @@
 # Generated via dconf2nix: https://github.com/gvolpe/dconf2nix
-{ lib, config, ... }:
+{ lib, ... }:
+
 with lib.hm.gvariant;
-lib.mkIf config.linuxGraphical.enable
+
 {
   dconf.settings = {
     "com/github/amezin/ddterm" = {
@@ -257,7 +258,7 @@ lib.mkIf config.linuxGraphical.enable
       favorite-layout = 0;
       favorite-layouts = [ "-1" "-1" ];
       import-layout-examples = false;
-      last-version-installed = 44;
+      last-version-installed = 47;
       layouts-overview = [ ];
       maximize-with-gap = false;
       move-favorite-layout-mod = "Alt";

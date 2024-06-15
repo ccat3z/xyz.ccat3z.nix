@@ -1,7 +1,9 @@
 { config, pkgs, lib, ... }:
 {
   imports = [
-    ./dconf.nix
+    {
+      config = lib.mkIf config.linuxGraphical.enable (import ./dconf.nix { inherit lib; });
+    }
     ./rime
     ./argos
   ];
@@ -23,10 +25,10 @@
         src = pkgs.fetchFromGitHub {
           owner = "ccat3z";
           repo = "Graphite-gtk-theme";
-          rev = "d2c94965d22de519e3d677b6bb4e90e9ae31d9c5";
-          hash = "sha256-Y0TLg+HqXTLZsMsazlReVo8GgvN8dl4YHSdE69qeE7c=";
+          rev = "bfb24e59fe84b2fdba0e8a69ff530df97346327a";
+          hash = "sha256-7AoAgRLxpPBgNyhpf6YTImFsnHpXn/yeIakI0OHDoBM=";
         };
-      }))
+    }))
 
       # Font
       sarasa-gothic
@@ -64,12 +66,14 @@
       clipboard-indicator
       tiling-assistant
       wireshark
+      /*
       (syncthing-icon.overrideAttrs {
         patches = [
           ./patches/syncthing-icon-45-hotfix.patch
           ./patches/syncthing-icon-default-dir.patch
         ];
-      })
+        })
+      */
       panel-workspace-scroll
       pkgs.astra-monitor
       (rounded-window-corners.overrideAttrs {
