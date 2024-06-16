@@ -140,7 +140,7 @@ with lib.hm.gvariant;
     };
 
     "org/gnome/shell" = {
-      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" "ddterm@amezin.github.com" "clipboard-indicator@tudmotu.com" "tiling-assistant@leleat-on-github" "gestureImprovements@gestures" "monitor@astraext.github.io" "panel-workspace-scroll@polymeilex.github.io" "syncthingicon@jay.strict@posteo.de" "rounded-window-corners@yilozt" "argos@pew.worldwidemann.com" "translate-label@ccat3z.xyz" ];
+      enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "caffeine@patapon.info" "nightthemeswitcher@romainvigier.fr" "gsconnect@andyholmes.github.io" "just-perfection-desktop@just-perfection" "ddterm@amezin.github.com" "clipboard-indicator@tudmotu.com" "tiling-assistant@leleat-on-github" "gestureImprovements@gestures" "monitor@astraext.github.io" "panel-workspace-scroll@polymeilex.github.io" "syncthingicon@jay.strict@posteo.de" "rounded-window-corners@fxgn" "argos@pew.worldwidemann.com" "translate-label@ccat3z.xyz" ];
       favorite-apps = [ "org.gnome.Nautilus.desktop" "firefox.desktop" ];
     };
 

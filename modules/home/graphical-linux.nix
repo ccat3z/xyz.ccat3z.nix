@@ -69,9 +69,7 @@
       syncthing-icon
       panel-workspace-scroll
       pkgs.astra-monitor
-      (rounded-window-corners.overrideAttrs {
-        patches = [ ./patches/rounded-window-corners-45-hotfix.patch ];
-      })
+      pkgs.rounded-window-corners
       pkgs.translate-label
     ]);
 
