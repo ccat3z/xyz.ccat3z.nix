@@ -1,7 +1,8 @@
-diff --color -ur a/filewatcher.js b/filewatcher.js
---- a/filewatcher.js	2024-03-25 14:56:14.826711127 +0800
-+++ b/filewatcher.js	2024-03-25 14:56:39.237809655 +0800
-@@ -28,6 +28,7 @@
+diff --git a/src/filewatcher.js b/src/filewatcher.js
+index 4af7eb8..caa734f 100644
+--- a/src/filewatcher.js
++++ b/src/filewatcher.js
+@@ -27,6 +27,7 @@ export function probeDirectories() {
          `${GLib.get_user_config_dir()}/syncthing`,
          `${GLib.get_home_dir()}/snap/syncthing/common/syncthing`,
          `${GLib.get_home_dir()}/.var/app/me.kozec.syncthingtk/config/syncthing`,

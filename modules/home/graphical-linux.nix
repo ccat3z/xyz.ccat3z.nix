@@ -28,7 +28,7 @@
           rev = "bfb24e59fe84b2fdba0e8a69ff530df97346327a";
           hash = "sha256-7AoAgRLxpPBgNyhpf6YTImFsnHpXn/yeIakI0OHDoBM=";
         };
-    }))
+      }))
 
       # Font
       sarasa-gothic
@@ -66,14 +66,7 @@
       clipboard-indicator
       tiling-assistant
       wireshark
-      /*
-      (syncthing-icon.overrideAttrs {
-        patches = [
-          ./patches/syncthing-icon-45-hotfix.patch
-          ./patches/syncthing-icon-default-dir.patch
-        ];
-        })
-      */
+      syncthing-icon
       panel-workspace-scroll
       pkgs.astra-monitor
       (rounded-window-corners.overrideAttrs {
