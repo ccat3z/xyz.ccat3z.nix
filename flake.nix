@@ -58,24 +58,16 @@
       nixpkgConfig = {
         allowUnfree = true;
       };
-
-      origPkgsInstances = forAllSystems (sys: import "${nixpkgs}" {
-        system = sys;
-        config = nixpkgConfig;
-      });
     in
     {
       inherit inputs;
 
-      packages = forAllSystems (sys:
-        (import ./pkgs {
-          nixpkgs = origPkgsInstances.${sys};
-          inherit dream2nix;
-        })
-      );
-
       # Export all pkgs
-      legacyPackages = origPkgsInstances;
+      legacyPackages = forAllSystems (sys: import "${nixpkgs}" {
+        system = sys;
+        config = nixpkgConfig;
+        overlays = [ self.overlays.default ];
+      });
 
       overlays.default = import ./pkgs/overlay.nix {
         inherit dream2nix;
