@@ -31,5 +31,5 @@ let
     );
 in
 {
-  nixpkgs.overlays = [ (self: super: use nixpkgs-unstable [ "wpsoffice-cn" "devenv" "android-studio" ]) ];
+  nixpkgs.overlays = [ (self: super: use nixpkgs-unstable [ "wpsoffice-cn" "android-studio" ]) ];
 }
