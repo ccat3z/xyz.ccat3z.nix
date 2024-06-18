@@ -60,7 +60,7 @@
       ddterm
       just-perfection
       (gesture-improvements.overrideAttrs {
-        patches = [ ./patches/gesture-improvement-45-hotfix.patch ];
+        patches = [ ./patches/gesture-improvements-hotfix.patch ];
         patchFlags = [ "-p4" ];
       })
       clipboard-indicator
