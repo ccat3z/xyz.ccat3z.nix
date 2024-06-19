@@ -17,6 +17,7 @@ in
     "v /var/lib/libvirt          0700 :root :root"
     "v /var/lib/postgresql       0700 :root :root"
     "v /var/backup/postgresql    0700 :root :root"
+    "v ${config.services.immich.storagePath} 0750 immich immich"
   ];
 
   # Subvol out of rootfs
@@ -75,6 +76,7 @@ in
             target_preserve_min = "latest";
             target_preserve = "2w 3d";
           };
+          "${config.services.immich.storagePath}" = snapshotOnly;
         };
       };
     };
