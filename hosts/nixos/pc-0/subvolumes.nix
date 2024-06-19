@@ -76,7 +76,10 @@ in
             target_preserve_min = "latest";
             target_preserve = "2w 3d";
           };
-          "${config.services.immich.storagePath}" = snapshotOnly;
+          "${config.services.immich.storagePath}" = {
+            target_preserve_min = "latest";
+            target_preserve = "2w 3d";
+          };
         };
       };
     };
