@@ -45,6 +45,9 @@
     extraFlags = [ "--no-default-folder" ];
   };
 
+  # Fuse
+  programs.fuse.userAllowOther = true;
+
   # Support unpatched dynamic binaries like vscode remote server
   programs.nix-ld.enable = true;
 
