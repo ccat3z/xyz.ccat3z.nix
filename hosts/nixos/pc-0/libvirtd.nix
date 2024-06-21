@@ -26,6 +26,63 @@ lib.mkMerge [
     boot.blacklistedKernelModules = [ "xpad" ];
 
     environment.variables.LIBVIRT_DEFAULT_URI = "qemu:///system";
+
+    environment.systemPackages = [
+      (pkgs.writeScriptBin "libvirt-win11-inputs" ''
+        #! /usr/bin/env sh
+
+        set -e
+
+        if [ "$UID" != 0 ]; then
+            echo "Root is required." >&2
+            exit 1
+        fi
+
+        domain=win11
+
+        # attach_usb vendor product
+        attach_usb () {
+            virsh attach-device "$domain" --file <(
+                cat <<EOF
+        <hostdev mode="subsystem" type="usb">
+          <source>
+            <vendor id="0x$1"/>
+            <product id="0x$2"/>
+          </source>
+        </hostdev>
+        EOF
+        )
+        }
+
+        # detach_usb vendor product
+        detach_usb () {
+            virsh detach-device "$domain" --file <(
+                cat <<EOF
+        <hostdev mode="subsystem" type="usb">
+          <source>
+            <vendor id="0x$1"/>
+            <product id="0x$2"/>
+          </source>
+        </hostdev>
+        EOF
+        )
+        }
+
+        case "$1" in
+            attach)
+                attach_usb 413c 301c # Mouse
+                attach_usb 1a81 1202 # Keyboard
+                ;;
+            detach)
+                detach_usb 413c 301c # Mouse
+                detach_usb 1a81 1202 # Keyboard
+                ;;
+            *)
+                echo "usage: $0 attach|detach" >&2
+                ;;
+        esac
+      '')
+    ];
   }
   (lib.mkIf (lib.length pciIds > 0)
     {
