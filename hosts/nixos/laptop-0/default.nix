@@ -5,6 +5,7 @@
     [
       ./hardware.nix
       ./subvolumes.nix
+      ./libvirt.nix
     ];
 
   boot.loader.systemd-boot.enable = true;
