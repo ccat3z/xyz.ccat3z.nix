@@ -64,7 +64,7 @@ in
             "project" = snapshotOnly;
             "database" = {
               target_preserve_min = "latest";
-              target_preserve = "2w 7d";
+              target_preserve = "2w"; # FIXME: 2w 7d. Disable daily backup temporarily due to lack of disk space.
             };
           };
         };
