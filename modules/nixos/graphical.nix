@@ -59,4 +59,12 @@
     enabled = "ibus";
     ibus.engines = with pkgs.ibus-engines; [ rime ];
   };
+
+  hardware.pulseaudio.enable = false;
+  services.pipewire = {
+    audio.enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
 }
