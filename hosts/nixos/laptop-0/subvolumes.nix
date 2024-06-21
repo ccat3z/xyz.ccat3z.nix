@@ -5,7 +5,7 @@ let
 
   volumeDir = "/mnt/volume";
   snapshotDir = "/mnt/volume/.snapshots-nixos";
-  backupDir = "/mnt/backup/backup_${config.networking.hostName}";
+  backupDir = "/media/backup/backup_${config.networking.hostName}";
 in
 {
   # Subvol in rootfs
@@ -62,8 +62,8 @@ in
         volume."/mnt/volume" = {
           subvolume = {
             "nixos/rootfs" = snapshotOnly;
-            "projects" = snapshotOnly;
-            "database" = twoWeek;
+            "projects" = twoWeek;
+            "database" = snapshotOnly;
           };
         };
         subvolume = {
