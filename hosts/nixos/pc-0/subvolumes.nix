@@ -5,7 +5,7 @@ let
 
   volumeDir = "/mnt/volume";
   snapshotDir = "/mnt/volume/.snapshots-nixos";
-  backupDir = "/mnt/backup/.snapshots-nixos";
+  backupDir = "/mnt/backup/btrbk_${config.networking.hostName}";
 in
 {
   # Subvol in rootfs
@@ -43,9 +43,15 @@ in
   # Backup
   services.btrbk.instances.btrbk =
     let
-      snapshotOnly = {
-        target_preserve_min = "no";
-        target_preserve = "no";
+      targetPolicy = {
+        no = {
+          target_preserve_min = "no";
+          target_preserve = "no";
+        };
+        two_week = {
+          target_preserve_min = "latest";
+          target_preserve = "2w 3d";
+        };
       };
     in
     {
@@ -60,8 +66,8 @@ in
 
         volume."/mnt/volume" = {
           subvolume = {
-            "nix/rootfs" = snapshotOnly;
-            "project" = snapshotOnly;
+            "nix/rootfs" = targetPolicy.no;
+            "project" = targetPolicy.no;
             "database" = {
               target_preserve_min = "latest";
               target_preserve = "2w"; # FIXME: 2w 7d. Disable daily backup temporarily due to lack of disk space.
@@ -69,17 +75,11 @@ in
           };
         };
         subvolume = {
-          "/var/lib/syncthing" = snapshotOnly;
-          "/var/lib/docker" = snapshotOnly;
-          "/var/lib/libvirt" = snapshotOnly;
-          "/var/backup/postgresql" = {
-            target_preserve_min = "latest";
-            target_preserve = "2w 3d";
-          };
-          "${config.services.immich.storagePath}" = {
-            target_preserve_min = "latest";
-            target_preserve = "2w 3d";
-          };
+          "/var/lib/syncthing" = targetPolicy.two_week;
+          "/var/lib/docker" = targetPolicy.no;
+          "/var/lib/libvirt" = targetPolicy.two_week;
+          "/var/backup/postgresql" = targetPolicy.two_week;
+          "${config.services.immich.storagePath}" = targetPolicy.two_week;
         };
       };
     };
