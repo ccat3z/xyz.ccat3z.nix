@@ -11,7 +11,7 @@
   };
   services.postgresqlBackup = {
     enable = true;
-    databases = [ "miniflux" ];
+    databases = [ "miniflux" "immich" ];
     startAt = "*-*-* 23:00:00";
   };
 
