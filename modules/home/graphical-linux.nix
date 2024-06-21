@@ -55,7 +55,7 @@
       # Gnome Extensions
       caffeine
       gsconnect
-      night-theme-switcher
+      pkgs.night-theme-switcher
       user-themes
       ddterm
       just-perfection
