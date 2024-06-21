@@ -17,7 +17,7 @@ in
     "v /var/lib/libvirt          0700 :root :root"
     "v /var/lib/postgresql       0700 :root :root"
     "v /var/backup/postgresql    0700 :root :root"
-    "v ${config.services.immich.storagePath} 0750 immich immich"
+    "v ${config.services.immich.storagePath} 0755 immich immich"
   ];
 
   # Subvol out of rootfs
