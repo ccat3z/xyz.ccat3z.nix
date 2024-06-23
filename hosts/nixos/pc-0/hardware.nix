@@ -55,15 +55,28 @@
     options = [ "subvol=nix/rootfs" ];
   };
 
-  fileSystems."/mnt/backup" = {
+  fileSystems."/mnt/backup-981" = {
     device = "/dev/disk/by-uuid/27228342-55d9-4497-bcbe-437e48393746";
     fsType = "btrfs";
     options = [ "ssd" "nofail" ];
     encrypted = {
       enableStage2 = true;
       blkDev = "/dev/disk/by-uuid/aad38218-8ecd-4a69-8843-b50af8ce553e";
-      label = "backup";
+      label = "backup-981";
       keyFile = "/etc/cryptsetup-keys.d/backup-981.key";
+      options = [ "discard" "nofail" ];
+    };
+  };
+
+  fileSystems."/mnt/backup" = {
+    device = "/dev/disk/by-uuid/1ace2ee7-9f67-4e1f-96ff-c9dede0c865e";
+    fsType = "btrfs";
+    options = [ "ssd" "nofail" ];
+    encrypted = {
+      enableStage2 = true;
+      blkDev = "/dev/disk/by-uuid/0eaf8243-9291-4b85-ba17-4922019f490e";
+      label = "backup-movespeed";
+      keyFile = "/etc/cryptsetup-keys.d/backup-movespeed.key";
       options = [ "discard" "nofail" ];
     };
   };

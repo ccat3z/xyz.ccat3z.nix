@@ -67,11 +67,8 @@ in
         volume."/mnt/volume" = {
           subvolume = {
             "nix/rootfs" = targetPolicy.no;
-            "project" = targetPolicy.no;
-            "database" = {
-              target_preserve_min = "latest";
-              target_preserve = "2w"; # FIXME: 2w 7d. Disable daily backup temporarily due to lack of disk space.
-            };
+            "project" = targetPolicy.two_week;
+            "database" = targetPolicy.two_week;
           };
         };
         subvolume = {
