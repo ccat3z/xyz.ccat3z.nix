@@ -79,6 +79,10 @@
     enable = true;
     extraConfig = {
       commit.gpgsign = pkgs.hostPlatform.isLinux;
+      user = lib.mkDefault {
+        name = "ccat3z";
+        email = "fzhang.chn@outlook.com";
+      };
     };
     includes = [
       {
