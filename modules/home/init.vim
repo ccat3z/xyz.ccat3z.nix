@@ -42,27 +42,12 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
 
-" deoplete
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
 " linter
 Plug 'w0rp/ale'
 
 " language
-" clang
-Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] } " NOTE required clang
-
 " fish
 Plug 'dag/vim-fish', { 'for': 'fish' }
-
-" go
-" Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' } " NOTE required gocode
 
 " haskell
 " Plug 'eagletmt/neco-ghc' " NOTE required ghc-mod
@@ -85,9 +70,7 @@ Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': 'pandoc.markdown' }
 
 " python
-Plug 'zchee/deoplete-jedi', { 'for': 'python' } " NOTE required python-jedi
 Plug 'google/yapf', { 'rtp': 'plugins/vim', 'for': 'python' } " NOTE required python-yapf
-Plug 'davidhalter/jedi-vim', { 'for': 'python' } " NOTE required python-jedi
 Plug 'vim-python/python-syntax', { 'for': 'python' }
 
 " viml
@@ -202,22 +185,6 @@ let g:localvimrc_ask = 0
 let g:indentLine_char = '┆'
 let g:indentLine_enable = 1
 
-" deoplete
-let g:deoplete#enable_at_startup = 1
-set completeopt+=noselect
-" call deoplete#custom#option('omni_patterns', {
-" \ 'ledger': ['[^:]*:.*'],
-" \})
-
-" jedi-vim
-let g:jedi#completions_enabled = 0 " provide by deoplete-jedi
-let g:jedi#goto_command = '<leader>d'
-let g:jedi#goto_assignments_comman = '<leader>g'
-let g:jedi#documentation_command = '<leader>do'
-let g:jedi#rename_command = '<leader>r'
-let g:jedi#usages_command = '<leader>u'
-let g:jedi#use_splits_not_buffers = "top"
-
 " python-syntax
 let g:python_highlight_all = 1
 
@@ -235,9 +202,6 @@ let g:ale_haskell_ghc_options = '-fno-code -v0 -dynamic'
 
 " vimtex
 let g:tex_flavor = 'plain'
-" call deoplete#custom#var('omni', 'input_patterns', {
-"     \ 'tex': g:vimtex#re#deoplete
-"     \})
 let g:vimtex_compiler_latexmk = {
     \ 'callback' : 0,
     \}
