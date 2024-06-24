@@ -10,6 +10,17 @@
 
   myUser = "ccat3z";
 
+  homebrew = {
+    enable = true;
+    casks = [
+      "wechat"
+    ];
+  };
+
+  my.programs.zsh.initExtra = ''
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  '';
+
   environment.systemPackages = [
     pkgs.vscode
   ];
