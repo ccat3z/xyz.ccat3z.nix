@@ -35,7 +35,7 @@
 
   outputs = { self, nixpkgs, dream2nix, nix-darwin, ... }@inputs:
     let
-      systems = [ "x86_64-linux" "x86_64-darwin" ];
+      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
 
       hostsModules =
@@ -128,7 +128,6 @@
               modules = [
                 {
                   config = {
-                    networking.hostName = hostName;
                     nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
                   };
                 }
