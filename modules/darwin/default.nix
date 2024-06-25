@@ -4,6 +4,7 @@
     ./pinned.nix
   ];
 
+  nix.settings.trusted-users = [ config.myUser ];
   nixpkgs.config.allowUnfree = true;
   environment.systemPackages =
     [
