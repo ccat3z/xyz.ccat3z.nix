@@ -22,8 +22,8 @@
   # in spotlight, and when launched through the dock they come with a terminal window. This is a workaround.
   # Upstream issue: https://github.com/LnL7/nix-darwin/issues/214
   system.activationScripts.applications.text = lib.mkForce ''
-    echo "setting up ~/Applications..." >&2
-    applications="/Users/${config.myUser}/Applications"
+    echo "setting up /Applications..." >&2
+    applications="/Applications"
     nix_apps="$applications/Nix Apps"
 
     # Delete the directory to remove old links
