@@ -73,4 +73,5 @@ in
         };
       };
     };
+  systemd.services."btrbk-btrbk".unitConfig.RequiresMountsFor = "/mnt/backup";
 }
