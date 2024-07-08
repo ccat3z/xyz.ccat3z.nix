@@ -129,6 +129,11 @@
                 {
                   config = {
                     nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
+                    nix.settings.flake-registry = "";
+                    nix.registry.ccat3z.to = {
+                      type = "path";
+                      path = "${./.}";
+                    };
                   };
                 }
                 # ./secrets
