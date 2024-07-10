@@ -27,6 +27,11 @@ in
         mode = "0444";
         path = "/etc/nebula/ssh_host_ed25519_key";
       };
+      "laptop-0_ssh_config" = {
+        sopsFile = ./laptop-0_ssh_config.enc;
+        format = "binary";
+        mode = "0444";
+      };
     };
 
     age = {

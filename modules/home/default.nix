@@ -70,10 +70,23 @@
   };
   # Fix ssh config permission
   # https://github.com/nix-community/home-manager/issues/322#issuecomment-1856128020
-  home.file.".ssh/config" = {
-    target = ".ssh/config_source";
-    onChange = ''rm -f ~/.ssh/config && cat ~/.ssh/config_source > ~/.ssh/config && chmod 400 ~/.ssh/config'';
-  };
+  home.file.".ssh/config".target = ".ssh/config_source";
+  home.activation.setupSSHConfig =
+    let
+      inherit (config.programs.ssh) extraConfigPath;
+    in
+    lib.hm.dag.entryAfter [ "onFilesChange" ] ''
+      rm -f ~/.ssh/config
+      touch ~/.ssh/config
+
+      if [ -n "${extraConfigPath}" ] && [ -f "${extraConfigPath}" ]; then
+        cat "${extraConfigPath}" >> ~/.ssh/config
+        echo >> ~/.ssh/config
+      fi
+
+      cat ~/.ssh/config_source >> ~/.ssh/config
+      chmod 400 ~/.ssh/config
+    '';
 
   programs.git = {
     enable = true;

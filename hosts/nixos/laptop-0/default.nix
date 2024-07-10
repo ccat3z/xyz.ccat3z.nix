@@ -24,6 +24,16 @@
     fi
   '';
 
+  my.programs.ssh = {
+    matchBlocks = {
+      "win11.local" = {
+        hostname = "192.168.122.11";
+        user = "fzhan";
+      };
+    };
+    extraConfigPath = config.sops.secrets."laptop-0_ssh_config".path;
+  };
+
   services.udev.extraRules = ''
     # UDISKS_FILESYSTEM_SHARED
     # ==1: mount filesystem to a shared directory (/media/VolumeName)
