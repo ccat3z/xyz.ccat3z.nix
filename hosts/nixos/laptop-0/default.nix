@@ -16,7 +16,15 @@
 
   my.home.packages = with pkgs; [
     powertop
+    gocryptfs
+    hledger
+    hledger-web
+    git-remote-gcrypt
   ];
+
+  my.home.sessionVariables = {
+    LEDGER_FILE = "${config.my.home.homeDirectory}/Documents/ledger/main.journal";
+  };
 
   my.programs.zsh.initExtra = ''
     if [ -f ~/.projects_profile ]; then
