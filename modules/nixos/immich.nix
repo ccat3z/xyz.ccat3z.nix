@@ -29,14 +29,14 @@ in
           serverAndMicroservices = {
             imageName = "ghcr.io/immich-app/immich-server";
             imageDigest =
-              "sha256:d39cb7ecbcc9924f2c51a3e0deb8a469075996c6ba9e1384eb2ddb550984848e"; # v1.106.4
-            sha256 = "sha256-yt0/neyBIiyr+zpX9jB2UjsBHxLKyZSbnjSa32OchNA=";
+              "sha256:9ef9d53759126ec884689d4f554096dd5f6f6e0189fda3d43a264f8a40996987"; # v1.108.0
+            sha256 = "sha256-bsXuWRxJKsL5pHUN0aEduzyLissg7w3Orx30/cnM8yI=";
           };
           machineLearning = {
             imageName = "ghcr.io/immich-app/immich-machine-learning";
             imageDigest =
-              "sha256:9db20e5c2033bef01fa2be50fa0a2c3d62e43f069aedde4d49a65e65a436d40b"; # v1.106.4
-            sha256 = "sha256-CB+do2YQ/HTYf40NxyM2WdpD0NAsqvCu+xG95hl5GUI=";
+              "sha256:bcbfad794b8a9a8a6154b08d3dd42bf399bf3096767b93e08a3a0c15bf612b0a"; # v1.108.0
+            sha256 = "sha256-x8qTfiS+x3I/un0OtDq05RT+sHqBYY+06N0OoXSvDNw=";
           };
         };
         dbUsername = user;
