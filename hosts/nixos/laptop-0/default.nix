@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, home-manager, ... }:
 
 {
   imports =
@@ -41,6 +41,9 @@
     };
     extraConfigPath = config.sops.secrets."laptop-0_ssh_config".path;
   };
+  my.home.activation.triggerSSHExtraConfig = home-manager.lib.hm.dag.entryBefore [ "setupSSHConfig" ] ''
+    # Ref ${config.sops.secrets."laptop-0_ssh_config".sopsFile}
+  '';
 
   services.udev.extraRules = ''
     # UDISKS_FILESYSTEM_SHARED
