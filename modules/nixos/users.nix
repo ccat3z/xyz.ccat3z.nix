@@ -11,6 +11,7 @@ in
   };
 
   config = {
+    nix.settings.trusted-users = [ config.myUser ];
     users.mutableUsers = false;
     users.users = {
       root = {
