@@ -39,6 +39,11 @@
     fi
   '';
 
+  sops.secrets.ssh_config = {
+    sopsFile = ./ssh_config.enc;
+    format = "binary";
+    mode = "0444";
+  };
   my.programs.ssh = {
     matchBlocks = {
       "win11.local" = {
@@ -46,10 +51,10 @@
         user = "fzhan";
       };
     };
-    extraConfigPath = config.sops.secrets."laptop-0_ssh_config".path;
+    extraConfigPath = config.sops.secrets.ssh_config.path;
   };
   my.home.activation.triggerSSHExtraConfig = home-manager.lib.hm.dag.entryBefore [ "setupSSHConfig" ] ''
-    # Ref ${config.sops.secrets."laptop-0_ssh_config".sopsFile}
+    # Ref ${config.sops.secrets.ssh_config.sopsFile}
   '';
 
   services.udev.extraRules = ''

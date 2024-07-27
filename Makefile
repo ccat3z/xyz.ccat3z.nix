@@ -30,3 +30,6 @@ nixos/gc:
 	sudo nix-env \
 		--profile /nix/var/nix/profiles/system \
 		--delete-generations 3d
+
+secrets/updatekeys:
+	nix run .#sops-updatekeys

@@ -1,0 +1,26 @@
+{
+	"data": "ENC[AES256_GCM,data:JZ+IseZ2J3iwMxGdgHuLpfACeJ5jAvK9g4WoeXRBaxpLEQ1/erOd+B3H9snI/7tK5VmpAo8ytqAcVOOX+ej18N9fjsmTjooxuY5yqCfMgbEgtsTnGgqqjQk5beEyVSPVpPBVZh5clxKSfNBi+SR2LetDikbL1tdKXVo6fkmiYIwRPDwCNYrJh8r2tAJeY8Lz/s/wR6M081H9vIdtIzwIo+6UccpD5wiyzILa8y+9TgBNKEp/Nz/rSqD/Q19/YYOblbXt+ZwUI9Oz6/1Y+Sl74xTzxdqYHbh876LPVZBt9h6Vjn9p9LfrSj1u+bBmpYkRZl4=,iv:fFxWbE17DaTivvhWJ4PAN1KknOYTv+VFcZXUpQSZKxg=,tag:vPnF8k7iEBrGMOTRM3JkJQ==,type:str]",
+	"sops": {
+		"kms": null,
+		"gcp_kms": null,
+		"azure_kv": null,
+		"hc_vault": null,
+		"age": [
+			{
+				"recipient": "age1r57j4k3lgyzs73vklxu3vkf4w06f3q6h5f5f5zk2qx26mw0q2dps4shanr",
+				"enc": "-----BEGIN AGE ENCRYPTED FILE-----\nYWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtL3lKZ3lxZmU5aXJVSTZx\nQzNady92YzdwWkFhL29HemY3QW8xdTlmczNBCnZQY0JGZDlDRTJwWE0vaG0yQUR1\nVDc2WkI2S0wzWEJvSkdPblo5ckl4bncKLS0tIGxRQ1JPSGpBdklYZlBBZkUrWEMy\ndmp0ZHhacTNSNCtydnBtYjk5dkRKT0kKQef8ewtn5a1j8ZEDbrolYa1pxKrWufk3\nCxaZmx/r/KlIjIbnb2omHPOK3CygzFWN0OKlb1P6GME67fvli5C3rQ==\n-----END AGE ENCRYPTED FILE-----\n"
+			}
+		],
+		"lastmodified": "2024-07-23T15:35:33Z",
+		"mac": "ENC[AES256_GCM,data:QuhU0N6H0OtHNZIcohb1UxIwNDt0LY/+g9Nze4leWEoOsrxt3oGRJ7r4pVPNX99rhw0lGc3yWmnPg1LcE/Dhhhw81XkDC+a2kH7sDhViuIrIOHnrh6/IQ7GFezCE0vlpdvCvOjuwlztEW/deUw5BSwW4wta7tnEJFGmFHQfed1M=,iv:xis7WD13iGOha9hVEBKA5HX1E092oDGiG6bXv5yKmOc=,tag:ERHv2hhwr119hrYFF+32jg==,type:str]",
+		"pgp": [
+			{
+				"created_at": "2024-07-27T13:18:06Z",
+				"enc": "-----BEGIN PGP MESSAGE-----\n\nhQEMA9Xz9e7smekIAQf9ErXa/WhSalQZtPpteV4jyuCR/aQCFm2HMdApP1DKOT5J\nDn0GglmIPHY/fCdsgswL+jMVnaDQ1RK8YnuaH5TMvxxoNVPZnR+2gA4M1jUvkdFs\nfV1DJdUKltOLScLB54PU7WfSXHXT+oLTCC6aEbP76YGmp2KDhVnRX3geffVPn+yC\ngIw5Y4y36FswFFOFG0vMXtRaM+nhY2wdChwf5RXNrnRs8EanDOTcHzDo6rwQOppc\n/Ak9DD478mkaPyIZWN3vaVLSaHPlEchH89MDjKtpk3FeqpTlHw2lMTuQ76mZjACn\n7WewIDQ+M/KNhQ9CGnW51kwVGukJacMNg7KscDfBodJcAXpWwyQXBaDyQ21kQCJk\nTV7T1/UPWh81EtseSu8XbawkMN9+KfO6ahbI5fgQ9RnwDRLuzrpp21xmEZK9gQ7F\nTns1ti3nidcXCAuuBQJWSGYUsU2cLmem2eoxapQ=\n=LGT9\n-----END PGP MESSAGE-----",
+				"fp": "A784DBF88D718B5FA46CF254040BD409F274BE67"
+			}
+		],
+		"unencrypted_suffix": "_unencrypted",
+		"version": "3.8.1"
+	}
+}

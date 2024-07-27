@@ -39,6 +39,12 @@ let
   '';
 in
 {
+  sops.secrets."nebula.yaml" = {
+    sopsFile = ./nebula.yaml.enc;
+    format = "binary";
+    mode = "0444";
+    restartUnits = [ "nebula.service" ];
+  };
   systemd.services.nebula = {
     serviceConfig = {
       ExecStartPre = "${ctl} up";

@@ -150,6 +150,20 @@
 
       formatter = forAllSystems (sys: nixpkgs.legacyPackages.${sys}.nixpkgs-fmt);
 
+      apps = forAllSystems (sys:
+        let
+          pkgs = nixpkgs.legacyPackages.${sys};
+          appsList = builtins.map
+            (d: {
+              name = d.name;
+              value = { type = "app"; program = "${d}/bin/${d.name}"; };
+            })
+            [
+              (import ./secrets/updatekeys.nix { inherit pkgs; inherit (self) nixosConfigurations; })
+            ];
+        in
+        builtins.listToAttrs appsList);
+
       devShells = forAllSystems (
         sys:
         let
