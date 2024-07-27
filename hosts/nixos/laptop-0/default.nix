@@ -14,6 +14,12 @@
   services.proxy.enable = true;
   services.syncthing.enable = true;
 
+  services.xserver.displayManager.gdm.autoSuspend = false;
+  my.dconf.settings = {
+    "org/gnome/desktop/notifications".show-in-lock-screen = false;
+    "org/gnome/settings-daemon/plugins/power".sleep-inactive-ac-type = "nothing";
+  };
+
   my.home.packages = with pkgs; [
     powertop
     gocryptfs
