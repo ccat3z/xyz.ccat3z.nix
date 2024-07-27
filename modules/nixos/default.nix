@@ -4,8 +4,7 @@
     ./users.nix
     ./graphical.nix
     ./pinned.nix
-    ../network
-    ../nixsvc/options.nix
+    ./network
     ./hardware
     ./crypttab.nix
     ./immich.nix

@@ -148,33 +148,6 @@
           ))
           (hostsModules "darwin");
 
-      nixsvcProfiles =
-        let
-          inherit (nixpkgs) lib;
-          inherit (builtins) mapAttrs;
-        in
-        mapAttrs
-          (hostName: hostModule: (
-            nixpkgs.lib.evalModules {
-              modules = [
-                {
-                  config = {
-                    networking.hostName = hostName;
-                    networking.domain = "ccat3z.xyz";
-                  };
-                }
-                ./secrets
-                ./modules/nixsvc
-                hostModule
-                ({ nixpkgs.overlays = [ self.overlays.default ]; })
-              ];
-              specialArgs = {
-                inherit (inputs) sops-nix nixpkgs;
-              };
-            }
-          ))
-          (hostsModules "nixsvc");
-
       formatter = forAllSystems (sys: nixpkgs.legacyPackages.${sys}.nixpkgs-fmt);
 
       devShells = forAllSystems (
