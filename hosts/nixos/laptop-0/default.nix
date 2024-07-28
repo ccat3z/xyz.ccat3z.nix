@@ -57,6 +57,9 @@
     # Ref ${config.sops.secrets.ssh_config.sopsFile}
   '';
 
+  programs.adb.enable = true;
+  users.users.${config.myUser}.extraGroups = ["adbusers"];
+
   services.udev.extraRules = ''
     # UDISKS_FILESYSTEM_SHARED
     # ==1: mount filesystem to a shared directory (/media/VolumeName)
