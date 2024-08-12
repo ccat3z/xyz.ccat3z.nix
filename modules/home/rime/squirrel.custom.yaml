@@ -1,0 +1,10 @@
+# https://github.com/rime/squirrel/blob/master/data/squirrel.yaml
+patch:
+  style:
+    candidate_list_layout: linear
+    text_orientation: horizontal
+    inline_preedit: false
+    corner_radius: 6
+    spacing: 10
+    color_scheme: ink
+    translucency: true

@@ -18,12 +18,34 @@ let
         };
       };
 
-  rimeTargetDir = ".config/ibus/rime";
+  schema.pinyin-simp =
+    let
+      pkg = pkgs.fetchFromGitHub {
+        owner = "rime";
+        repo = "rime-pinyin-simp";
+        rev = "52b9c75f085479799553f2499c4f4c611d618cdf";
+        sha256 = "1zi9yqgijb4r3q5ah89hdwbli5xhlmg19xj8sq1grnpfbw2hbdbj";
+      };
+    in
+    lib.optionals pkgs.hostPlatform.isDarwin {
+      "pinyin_simp.dict.yaml" = "${pkg}/pinyin_simp.dict.yaml";
+      "pinyin_simp.schema.yaml" = "${pkg}/pinyin_simp.schema.yaml";
+    };
+
+  rimeTargetDir = if pkgs.hostPlatform.isDarwin then "Library/Rime" else ".config/ibus/rime";
 in
-lib.mkIf config.linuxGraphical.enable
 {
-  home.file = mapAttrs'
-    (n: v: nameValuePair "${rimeTargetDir}/${n}" { source = v; })
-    (rimeConfigs // onlineDicts)
-  ;
+  options = {
+    programs.rime.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = config.linuxGraphical.enable;
+    };
+  };
+
+  config = lib.mkIf config.programs.rime.enable {
+    home.file = mapAttrs'
+      (n: v: nameValuePair "${rimeTargetDir}/${n}" { source = v; })
+      (rimeConfigs // onlineDicts // schema.pinyin-simp)
+    ;
+  };
 }
