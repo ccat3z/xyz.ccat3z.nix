@@ -10,7 +10,6 @@
     # Common Tools
     gnumake
     cmake
-    gcc13
     neovim
     (python3.withPackages (ps: with ps; [
       pynvim
@@ -27,6 +26,7 @@
     efibootmgr
     pciutils
     usbutils
+    gcc13
   ]);
 
   services.gpg-agent = lib.mkIf pkgs.hostPlatform.isLinux {
