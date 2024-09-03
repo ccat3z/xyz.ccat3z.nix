@@ -73,49 +73,42 @@
         inherit dream2nix;
       };
 
-      nixosConfigurations = (
-        let
-          inherit (nixpkgs) lib;
-          inherit (builtins) mapAttrs;
-          base = {
-            specialArgs = {
-              inherit (inputs) sops-nix home-manager nixpkgs-unstable;
-            };
-            modules = [
-              ./modules/nixos
-              ./secrets
-              ./modules/home/nixos.nix
-              {
-                nixpkgs.overlays = [ self.overlays.default ];
-                networking.domain = "ccat3z.xyz";
-
-                # Add this flake to system registry
-                nix.channel.enable = false;
-                nix.registry = {
-                  nixpkgs.flake = nixpkgs;
-                  ccat3z.to = {
-                    type = "path";
-                    path = ./.;
-                  };
-                };
-
-                # Nixpkg config
-                nixpkgs.config = nixpkgConfig;
-              }
-            ];
-          };
-        in
-        mapAttrs
+      nixosConfigurations =
+        builtins.mapAttrs
           (hostName: hostModule: (
-            lib.nixosSystem (base // {
-              modules = base.modules ++ [
+            nixpkgs.lib.nixosSystem ({
+              specialArgs = {
+                inherit (inputs) sops-nix home-manager nixpkgs-unstable;
+              };
+              modules = [
+                ./modules/nixos
+                ./secrets
+                ./modules/home/nixos.nix
+                {
+                  nixpkgs.overlays = [ self.overlays.default ];
+                  networking.domain = "ccat3z.xyz";
+
+                  # Add this flake to system registry
+                  nix.channel.enable = false;
+                  nix.registry = {
+                    nixpkgs.flake = nixpkgs;
+                    ccat3z.to = {
+                      type = "path";
+                      path = ./.;
+                    };
+                  };
+
+                  # Nixpkg config
+                  nixpkgs.config = nixpkgConfig;
+
+                  networking.hostName = hostName;
+                }
                 hostModule
-                { networking.hostName = hostName; }
               ];
             })
           ))
           (hostsModules "nixos")
-      );
+      ;
 
       darwinConfigurations =
         let
