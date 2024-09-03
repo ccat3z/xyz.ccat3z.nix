@@ -21,6 +21,7 @@
     "org/gnome/settings-daemon/plugins/power".sleep-inactive-ac-type = "nothing";
   };
 
+  environment.systemPackages = [ pkgs.gparted ];
   my.home.packages = with pkgs; [
     powertop
     gocryptfs
