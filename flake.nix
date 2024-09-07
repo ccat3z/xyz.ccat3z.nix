@@ -20,7 +20,7 @@
     };
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
     jovian-nixos = {
-      url = "github:Jovian-Experiments/Jovian-NixOS";
+      url = "github:Jovian-Experiments/Jovian-NixOS/d8048d0fae71adcbc3a097f27ad7f8f043150d04";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

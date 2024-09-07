@@ -2,8 +2,6 @@
   imports = [
     jovian-nixos.nixosModules.default
     ./hardware.nix
-    ./compat.nix
-    ./unstable-pkgs.nix
     ./backport.nix
     ./nebula.nix
   ];
@@ -13,7 +11,7 @@
     enable = true;
     autoStart = true;
     user = config.myUser;
-    desktopSession = "gnome-xorg";
+    desktopSession = "gnome";
   };
 
   my.slim = true;
