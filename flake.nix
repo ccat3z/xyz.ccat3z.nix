@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-sd.url = "github:NixOS/nixpkgs/8a3354191c0d7144db9756a74755672387b702ba";
     sops-nix.url = "github:Mic92/sops-nix";
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
@@ -18,6 +19,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
+    jovian-nixos = {
+      url = "github:Jovian-Experiments/Jovian-NixOS";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   nixConfig = {
@@ -78,7 +83,9 @@
           (hostName: hostModule: (
             nixpkgs.lib.nixosSystem ({
               specialArgs = {
-                inherit (inputs) sops-nix home-manager nixpkgs-unstable;
+                inherit (inputs)
+                  sops-nix home-manager nixpkgs-unstable
+                  jovian-nixos nixpkgs-sd;
               };
               modules = [
                 ./modules/nixos
