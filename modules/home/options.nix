@@ -9,5 +9,10 @@
       type = lib.types.str;
       default = "";
     };
+
+    slim = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+    };
   };
 }
