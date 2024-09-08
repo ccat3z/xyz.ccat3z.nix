@@ -5,6 +5,7 @@ keys:
   - &laptop-0 age1r57j4k3lgyzs73vklxu3vkf4w06f3q6h5f5f5zk2qx26mw0q2dps4shanr
   - &pc-0 age107awdyvh40y48gjzsvnf63ev4hzj0sgpl8x4ryfzw582qkznx53smffxdd
   - &steamdeck-live age13gp49pwusq9lz7sld67ha02486vzn2w7wzfusapsspyuzzpureaqdmu7mu
+  - &steamdeck-0 age1tym3j2xchud36creyrxd94rfd0uunfm859p5vzmu5ztq23mkl9sq7nfe38
 creation_rules:
 - path_regex: hosts/.*/laptop-0/.*
   key_groups:
@@ -18,7 +19,11 @@ creation_rules:
   key_groups:
   - pgp: [ *ccat3z ]
     age: [ *steamdeck-live ]
+- path_regex: hosts/.*/steamdeck-0/.*
+  key_groups:
+  - pgp: [ *ccat3z ]
+    age: [ *steamdeck-0 ]
 - path_regex: secrets/.*
   key_groups:
   - pgp: [ *ccat3z ]
-    age: [ *laptop-0, *pc-0, *steamdeck-live ]
+    age: [ *laptop-0, *pc-0, *steamdeck-live, *steamdeck-0 ]
