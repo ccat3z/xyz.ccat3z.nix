@@ -2,7 +2,6 @@
   imports = [
     jovian-nixos.nixosModules.default
     ./hardware.nix
-    ./backport.nix
     ./nebula.nix
   ];
 
@@ -18,7 +17,7 @@
     (writeScriptBin "with-tcmalloc" ''
       #! /bin/sh
 
-      exec env LD_PRELOAD=${gperftools}/lib/libtcmalloc_minimal.so "$@"
+      exec env LD_PRELOAD=${gperftools}/lib/libtcmalloc_minimal.so:${pkgsi686Linux.gperftools}/lib/libtcmalloc_minimal.so "$@"
     '')
     tproxy-helper
   ];
