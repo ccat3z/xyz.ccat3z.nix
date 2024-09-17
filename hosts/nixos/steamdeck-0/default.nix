@@ -7,24 +7,35 @@
   ];
 
   services.xserver.displayManager.gdm.enable = false;
-  services.xserver.displayManager.startx.enable = true;
   jovian.steam = {
     enable = true;
     autoStart = true;
     user = config.myUser;
-    desktopSession = "gnome-xorg";
+    desktopSession = "gnome";
   };
 
   environment.systemPackages = with pkgs; [
-    xorg.xinit
-    gnome.caribou
+    (writeScriptBin "with-tcmalloc" ''
+      #! /bin/sh
+
+      exec env LD_PRELOAD=${gperftools}/lib/libtcmalloc_minimal.so "$@"
+    '')
+    tproxy-helper
   ];
 
-  # users.users.${config.myUser}.extraGroups = [ "input" ];
+  my.home.packages = with pkgs; [
+    sc-controller
+  ];
+
+  boot.tmp.cleanOnBoot = true;
+
+  services.logind.killUserProcesses = true;
+
+  programs.steam.extest.enable = true;
 
   my.slim = true;
-  security.sudo.wheelNeedsPassword = false;
 
   services.proxy.enable = true;
   system.stateVersion = "24.05";
 }
+
