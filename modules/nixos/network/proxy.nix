@@ -26,9 +26,10 @@ in
     in
     lib.mkIf cfg.enable
       {
-        environment.systemPackages = [ v2ray ];
+        environment.systemPackages = with pkgs; [ v2ray tproxy-helper ];
 
-        systemd.packages = with pkgs; [ v2ray ];
+        systemd.packages = with pkgs; [ v2ray tproxy-helper ];
+        services.dbus.packages = with pkgs; [ tproxy-helper ];
         systemd.services.v2ray =
           {
             wantedBy = [ "multi-user.target" ];

@@ -1,5 +1,7 @@
 #! /usr/bin/env sh
 
-set -x
-trap "tproxy-helper-bypass-current-cgroup clean" EXIT
-systemd-run --user --scope --expand-environment=no bash -c 'set -x; tproxy-helper-bypass-current-cgroup && exec "$@"' -- "$@"
+PATH="@PATH@:$PATH"
+
+exec systemd-run --user --scope --expand-environment=no bash -c \
+  'dbus-send --system --dest=xyz.ccat3z.TProxyHelper --type=method_call --print-reply /xyz/ccat3z/tproxy_helper xyz.ccat3z.TProxyHelper.bypass_sender_cgroup && exec "$@"' \
+  -- "$@"

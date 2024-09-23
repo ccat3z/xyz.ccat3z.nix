@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+PATH="@PATH@:$PATH"
+
 set -e
 
 has_cap_amb () {
