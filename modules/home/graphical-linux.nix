@@ -74,7 +74,7 @@
           wireshark
           moonlight-qt
           zotero
-          (vscode.fhsWithPackages (pkgs: with pkgs; [ host-spawn ]))
+          (vscode.fhsWithPackages (pkgs: with pkgs; [ host-spawn clang-tools_18 ]))
           drawio
           wpsoffice-cn
         ];
