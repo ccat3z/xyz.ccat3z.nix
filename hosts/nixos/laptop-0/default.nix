@@ -59,7 +59,13 @@
   '';
 
   programs.adb.enable = true;
-  users.users.${config.myUser}.extraGroups = [ "adbusers" ];
+  users.users.${config.myUser} = {
+    openssh.authorizedKeys.keys = [
+      # libvirtd win11
+      "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCplt5+93oGfn3BFCsXXNTqcVDLkMkj5iShpSc+pfDJhq6E8kPNif6NyVpCAiDIHA6insMFfp6FV147qjHzu64EFUNv98zKf2FcLidV2MY8tHiMCN80hcFWLsfo2UCzQEKpsmA6WEL+UEGKgTHAkbKZ86GlVSs+y08tpAYv9qKu957X4hnxwWEIwZavv8Sfvca7ZJ4nEhyAtXOmn0RE+UeAgnw/8+J9OqBMsiAph1nFs+8XZA63C6I5oUCe7Wd4Sa2VD7Jz305tpUVmhmtkc8oIpfazs65JdUNNg60IE/L2RjUFscljFzLmdFH6YRZxeyR8j75RPsQl89L3JhBVicujscXA5I7owMbz9xaTqvkMwU3yIv/BnABMnSysvIcDIZHcss0Y6HDLDAbCMxVwSHf7z1mAVCriYYtsA1uuKN/2+oDGeiT6hKbB1hX2O4H2RgIRUsOKIAngRUDyx4zVcFbN2YYJ1PmuCy6b0mOu3oyNcIsYVxSBKenCJpKnrqASd9k="
+    ];
+    extraGroups = [ "adbusers" ];
+  };
 
   services.xserver.desktopManager.gnome = {
     extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
