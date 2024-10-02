@@ -23,6 +23,7 @@
   ];
 
   my.home.packages = with pkgs; [
+    protontricks
     sc-controller
   ];
 
