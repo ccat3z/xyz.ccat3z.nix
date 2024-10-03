@@ -25,6 +25,7 @@
   my.home.packages = with pkgs; [
     protontricks
     sc-controller
+    pcsxr
   ];
 
   boot.tmp.cleanOnBoot = true;
