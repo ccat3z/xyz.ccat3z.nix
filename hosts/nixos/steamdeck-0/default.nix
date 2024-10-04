@@ -26,6 +26,7 @@
     protontricks
     sc-controller
     pcsxr
+    frogatto
   ];
 
   boot.tmp.cleanOnBoot = true;
