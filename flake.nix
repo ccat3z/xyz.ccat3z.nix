@@ -97,6 +97,7 @@
 
                   # Add this flake to system registry
                   nix.channel.enable = false;
+                  nix.settings.flake-registry = "";
                   nix.registry = {
                     nixpkgs.flake = nixpkgs;
                     ccat3z.to = {
