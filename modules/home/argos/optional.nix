@@ -22,7 +22,7 @@ let
   '';
 in
 {
-  programs.argos.scripts."pc-0-top.5s.sh" = lib.mkIf (config.hostName != "pc-0") pc-0-top;
+  programs.argos.scripts."pc-0-top.5s.sh" = lib.mkIf (!(builtins.elem config.hostName [ "pc-0" "steamdeck-0" ])) pc-0-top;
 }
 
 
