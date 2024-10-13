@@ -27,6 +27,7 @@
     sc-controller
     pcsxr
     frogatto
+    ckan
   ];
 
   boot.tmp.cleanOnBoot = true;
