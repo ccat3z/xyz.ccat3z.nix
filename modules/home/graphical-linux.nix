@@ -60,7 +60,7 @@
             patches = [ ./patches/gesture-improvements-hotfix.patch ];
             patchFlags = [ "-p4" ];
           })
-          clipboard-indicator
+          pkgs.clipboard-indicator
           tiling-assistant
           syncthing-icon
           panel-workspace-scroll
