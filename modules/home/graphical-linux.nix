@@ -67,6 +67,7 @@
           pkgs.astra-monitor
           pkgs.rounded-window-corners
           pkgs.translate-label
+          pkgs.extend-left-box
         ]);
       })
       ({
