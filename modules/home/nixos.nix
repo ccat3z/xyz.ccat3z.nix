@@ -39,4 +39,5 @@ in
   virtualisation.spiceUSBRedirection.enable = true;
 
   my.hostName = config.networking.hostName;
+  my.linuxGraphical.enable = config.gui.enable;
 }
