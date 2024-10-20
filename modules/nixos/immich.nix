@@ -29,14 +29,14 @@ in
           serverAndMicroservices = {
             imageName = "ghcr.io/immich-app/immich-server";
             imageDigest =
-              "sha256:9ef9d53759126ec884689d4f554096dd5f6f6e0189fda3d43a264f8a40996987"; # v1.108.0
-            sha256 = "sha256-bsXuWRxJKsL5pHUN0aEduzyLissg7w3Orx30/cnM8yI=";
+              "sha256:f158810c90f80162f9b08729bbaec963731f12662960be38ff93093b78a0bbdf"; # v1.118.2
+            sha256 = "sha256-5ksVxbVqied1Tz+HSlTnjbnw5LGhgX7Zco708kYoQKU=";
           };
           machineLearning = {
             imageName = "ghcr.io/immich-app/immich-machine-learning";
             imageDigest =
-              "sha256:bcbfad794b8a9a8a6154b08d3dd42bf399bf3096767b93e08a3a0c15bf612b0a"; # v1.108.0
-            sha256 = "sha256-x8qTfiS+x3I/un0OtDq05RT+sHqBYY+06N0OoXSvDNw=";
+              "sha256:4d89a309fd08a93649f1ae4a7572ae98f09d66b4c1dfb7916b71d31dec7eda38"; # v1.118.2
+            sha256 = "sha256-7fxDu1K93KLhB8kpMv2tr2eAADWAaVtqsDBakipBTw8=";
           };
         };
         dbUsername = user;
@@ -114,7 +114,7 @@ in
               PGID = toString gid;
             };
 
-            ports = [ "${toString cfg.port}:3001" ];
+            ports = [ "${toString cfg.port}:2283" ];
 
             autoStart = true;
           };
