@@ -46,6 +46,7 @@
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj6dXkK6qPaLWZAqrDXD19tGLpWb2QNkNDVl0nILN8L6GHV9eC5e4jUVMsmMC9rlYtSUI4M9Ub6vJI5m1CkE9Weph8vaoXT2sF5nS4TybFtEnHId1seEMrA/g2uADcPLeSf0tcx+eZNR6EnxyizlzUECfH2C2/hBzrcFbPQpdUi8cjneMYw5lHDLNhwTeMQysRji4HeXJeYVTHVKhZoWFQCv+FXqXoGEg70KZET1l0EtRf96237e7Tc0ZAmvKphOH5sJes67QkQMGTK5fa7hDOzSD3ChTpY3YJgK2PSGcrNiglAN7uLKfWLnCqYpgt7QYfvUeswrLpDJZY6mAH/MzNKx3M5Nma6LvoD0YSMY4/32M5NL2TXxAbD5SndIl7n6hhIRH58zcu3jrGptImcAi2ZBRNn0WVAr3Gv4yt1PN0WLmvd5yKzy31guPl/oc6bBhVkcpHEy/YdIinXljja2lzc5zJNGq0XLKkdtqYGlloWtJAg+Gsmjpg/DKyN9Pxvz8="
   ];
 
+  gui.enable = false;
   services.xserver.displayManager.gdm.autoSuspend = false;
 
   system.stateVersion = "23.11";
