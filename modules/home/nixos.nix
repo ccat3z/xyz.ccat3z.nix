@@ -33,7 +33,7 @@ in
   users.users.${user}.shell = pkgs.zsh;
 
   # Required by host-spawn
-  services.flatpak.enable = true;
+  services.flatpak.enable = config.gui.enable;
 
   # Spice
   virtualisation.spiceUSBRedirection.enable = true;
