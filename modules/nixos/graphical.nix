@@ -13,7 +13,14 @@
 
   config = lib.mkIf config.gui.enable {
     services.xserver.enable = true;
-    services.xserver.desktopManager.gnome.enable = true;
+    services.xserver.desktopManager.gnome = {
+      enable = true;
+      extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+      extraGSettingsOverrides = ''
+        [org.gnome.mutter]
+        experimental-features=['scale-monitor-framebuffer']
+      '';
+    };
     services.xserver.displayManager.gdm.enable = lib.mkDefault true;
     services.gnome.core-utilities.enable = true;
     environment.gnome.excludePackages = with pkgs.gnome; [
