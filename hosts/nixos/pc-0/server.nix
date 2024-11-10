@@ -17,14 +17,21 @@
 
   # miniflux module will setup postgresql implicitly
   services.miniflux = {
-    enable = false; # FIXME: Broken
+    enable = true;
     config = {
       ADMIN_USERNAME = "ccat3z";
       LISTEN_ADDR = "127.0.0.1:3741";
     };
-    adminCredentialsFile = config.sops.secrets."miniflux/env".path;
+    adminCredentialsFile = config.sops.secrets."miniflux.env".path;
+  };
+  sops.secrets."miniflux.env" = {
+    sopsFile = ./miniflux.env;
+    format = "binary";
+    mode = "0444";
   };
   services.nginx.virtualHosts."rss.ccat3z.xyz".locations."/".proxyPass = "http://127.0.0.1:3741";
+  # Wait a while for postgresql to notice dynamic user.
+  systemd.services.miniflux.serviceConfig.ExecStartPre = [ "${pkgs.coreutils-full}/bin/sleep 5" ];
 
   # RSSHub
   virtualisation.oci-containers.containers = {

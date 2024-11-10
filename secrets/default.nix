@@ -8,7 +8,6 @@
     defaultSopsFile = ./keys.yaml;
     secrets = {
       "users/password" = { neededForUsers = true; };
-      "miniflux/env" = { };
       "v2ray.yaml" = {
         sopsFile = ./v2ray.yaml.enc;
         format = "binary";
