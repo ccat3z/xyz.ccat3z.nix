@@ -17,7 +17,7 @@
 
   # miniflux module will setup postgresql implicitly
   services.miniflux = {
-    enable = true;
+    enable = false; # FIXME: Peer authentication failed for user "miniflux"
     config = {
       ADMIN_USERNAME = "ccat3z";
       LISTEN_ADDR = "127.0.0.1:3741";
