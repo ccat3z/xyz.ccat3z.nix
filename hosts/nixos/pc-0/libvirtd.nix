@@ -26,6 +26,7 @@ lib.mkMerge [
     boot.blacklistedKernelModules = [ "xpad" ];
 
     environment.variables.LIBVIRT_DEFAULT_URI = "qemu:///system";
+    virtualisation.libvirtd.onShutdown = "shutdown";
 
     environment.systemPackages = [
       (pkgs.writeScriptBin "libvirt-win11-inputs" ''
