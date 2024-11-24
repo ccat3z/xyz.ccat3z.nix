@@ -31,7 +31,7 @@
   };
   services.nginx.virtualHosts."rss.ccat3z.xyz".locations."/".proxyPass = "http://127.0.0.1:3741";
   # Wait a while for postgresql to notice dynamic user.
-  systemd.services.miniflux.serviceConfig.ExecStartPre = [ "${pkgs.coreutils-full}/bin/sleep 5" ];
+  # systemd.services.miniflux.serviceConfig.ExecStartPre = [ "${pkgs.coreutils-full}/bin/sleep 5" ];
 
   # RSSHub
   virtualisation.oci-containers.containers = {
