@@ -28,6 +28,7 @@
     hledger
     hledger-web
     git-remote-gcrypt
+    android-studio
   ];
 
   my.home.sessionVariables = {
