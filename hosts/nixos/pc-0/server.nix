@@ -55,14 +55,14 @@
   networking.hosts."127.0.0.1" = [ "rsshub.local" ];
 
   # Immich
-  services.immich = {
+  services.immich-docker = {
     enable = true;
     port = 3187;
     storagePath = "/var/lib/immich";
   };
   services.nginx.virtualHosts."immich.ccat3z.xyz" = {
     http2 = true;
-    locations."/".proxyPass = "http://127.0.0.1:${builtins.toString config.services.immich.port}";
+    locations."/".proxyPass = "http://127.0.0.1:${builtins.toString config.services.immich-docker.port}";
 
     extraConfig = ''
       # Allow uploading media files up to 10 gigabytes in size.

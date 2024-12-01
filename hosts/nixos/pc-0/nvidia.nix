@@ -19,7 +19,7 @@ in
         RUN+="${nvidia-modprobe}/bin/nvidia-modprobe -c 0 -u"
     '';
 
-  hardware.opengl = {
+  hardware.graphics = {
     extraPackages = [ nvidiaPackage.out ];
     extraPackages32 = [ nvidiaPackage.lib32 ];
   };

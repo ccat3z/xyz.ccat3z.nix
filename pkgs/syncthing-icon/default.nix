@@ -17,6 +17,7 @@ stdenvNoCC.mkDerivation {
 
   patches = [
     ./port-46.patch
+    ./port-47.patch
     ./default-dir.patch
   ];
 

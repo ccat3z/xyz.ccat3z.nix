@@ -5,10 +5,10 @@
 #
 { config, lib, pkgs, ... }:
 let
-  cfg = config.services.immich;
+  cfg = config.services.immich-docker;
 in
 {
-  options.services.immich = {
+  options.services.immich-docker = {
     enable = lib.mkEnableOption "Immich";
 
     port = lib.mkOption {
@@ -29,14 +29,14 @@ in
           serverAndMicroservices = {
             imageName = "ghcr.io/immich-app/immich-server";
             imageDigest =
-              "sha256:f158810c90f80162f9b08729bbaec963731f12662960be38ff93093b78a0bbdf"; # v1.118.2
-            sha256 = "sha256-5ksVxbVqied1Tz+HSlTnjbnw5LGhgX7Zco708kYoQKU=";
+              "sha256:851c02f28891f1854c5b5762ee8d2e254e2de528cfe3627b2fbcb37a7f108ff3"; # v1.121.0
+            sha256 = "sha256-3IRz7yPkPZ9uWU7MNmv+EVRvDaBSlqQ4bw2W7yFLErI=";
           };
           machineLearning = {
             imageName = "ghcr.io/immich-app/immich-machine-learning";
             imageDigest =
-              "sha256:4d89a309fd08a93649f1ae4a7572ae98f09d66b4c1dfb7916b71d31dec7eda38"; # v1.118.2
-            sha256 = "sha256-7fxDu1K93KLhB8kpMv2tr2eAADWAaVtqsDBakipBTw8=";
+              "sha256:1b8494bb9fe2194f2dc72c4d6b0104e16718f50e8772d54ade57909770816ad1"; # v1.121.0
+            sha256 = "sha256-R3NKeNsvShwlolbUFGkvHwoyLlm5fHfFMAQ5f30yLkY=";
           };
         };
         dbUsername = user;

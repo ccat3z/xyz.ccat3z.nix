@@ -27,8 +27,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "ccat3z";
               repo = "Graphite-gtk-theme";
-              rev = "0e670f021624fce8f6267a28fea5427b64185497";
-              hash = "sha256-RZfP9g4Cf6Td0D4dgcmiPQpLfDccacSYKU3xfxxGNYE=";
+              rev = "747c502cc7f5b4869e319fd4c7e384630e8275b4";
+              hash = "sha256-v/asZwUwEav3T4+nP32TGjfkmVGdwtaQNhY9hHREPkw=";
             };
           }))
 
@@ -39,10 +39,10 @@
           (firefox.override {
             nativeMessagingHosts = [ browserpass ];
           })
-          gnome.gnome-tweaks
+          gnome-tweaks
           remmina
           dconf
-          gnome.dconf-editor
+          dconf-editor
           virt-manager
           gedit
           d-spy
@@ -56,10 +56,11 @@
           user-themes
           ddterm
           just-perfection
-          (gesture-improvements.overrideAttrs {
-            patches = [ ./patches/gesture-improvements-hotfix.patch ];
-            patchFlags = [ "-p4" ];
-          })
+          # FIXME: Enable gesture-improvements
+          # (gesture-improvements.overrideAttrs {
+          #   patches = [ ./patches/gesture-improvements-hotfix.patch ];
+          #   patchFlags = [ "-p4" ];
+          # })
           pkgs.clipboard-indicator
           tiling-assistant
           syncthing-icon
@@ -76,7 +77,7 @@
           moonlight-qt
           zotero
           (vscode.fhsWithPackages (pkgs: with pkgs; [ host-spawn clang-tools_18 go ]))
-          drawio
+          # drawio # FIXME: Enable drawio
           wpsoffice-cn
         ];
       })

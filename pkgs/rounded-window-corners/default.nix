@@ -8,11 +8,11 @@ buildNpmPackage {
   src = fetchFromGitHub {
     owner = "flexagoon";
     repo = "rounded-window-corners";
-    rev = "5021d66232ca0ab7eee7e5fa564d61bb2ee49303";
-    hash = "sha256-BkbV2VS/HtRjNeOxwujb75fKxtN4Q+FHpEUKmZbrwoU=";
+    rev = "c98ca5082e95aa3b9c976180843336d7e03904e5";
+    hash = "sha256-CKePsjcywC86WlDqaGOY8VKbVT4HSvxCa1NRrjS65FM=";
   };
-  version = "20240613";
-  npmDepsHash = "sha256-2brE1GlzyHN9G/161aKiuHVVbjrpnN/0FBwuBDg/8W0=";
+  version = "20241127";
+  npmDepsHash = "sha256-Xce5b/X3R1IE1b7RY9l7HgZ1TVAqq2b3hLETo14xks8=";
 
   nativeBuildInputs = with pkgs; [
     glib.dev

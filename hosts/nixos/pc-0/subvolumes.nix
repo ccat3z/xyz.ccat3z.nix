@@ -17,7 +17,7 @@ in
     "v /var/lib/libvirt          0700 :root :root"
     "v /var/lib/postgresql       0700 :root :root"
     "v /var/backup/postgresql    0700 :root :root"
-    "v ${config.services.immich.storagePath} 0755 immich immich"
+    "v ${config.services.immich-docker.storagePath} 0755 immich immich"
   ];
 
   # Subvol out of rootfs
@@ -76,7 +76,7 @@ in
           "/var/lib/docker" = targetPolicy.no;
           "/var/lib/libvirt" = targetPolicy.two_week;
           "/var/backup/postgresql" = targetPolicy.two_week;
-          "${config.services.immich.storagePath}" = targetPolicy.two_week;
+          "${config.services.immich-docker.storagePath}" = targetPolicy.two_week;
         };
       };
     };

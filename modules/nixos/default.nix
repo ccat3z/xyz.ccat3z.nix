@@ -12,7 +12,7 @@
 
   time.timeZone = "Asia/Shanghai";
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" "repl-flake" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   environment.systemPackages = with pkgs; [ git vim wget ];
 
   # Openssh
@@ -24,12 +24,10 @@
   programs.gnupg.agent.enableSSHSupport = true;
   nixpkgs.overlays = [
     (final: prev: {
-      gnome = prev.gnome.overrideScope (gfinal: gprev: {
-        gnome-keyring = gprev.gnome-keyring.overrideAttrs (oldAttrs: {
-          configureFlags = oldAttrs.configureFlags or [ ] ++ [
-            "--disable-ssh-agent"
-          ];
-        });
+      gnome-keyring = prev.gnome-keyring.overrideAttrs (oldAttrs: {
+        configureFlags = oldAttrs.configureFlags or [ ] ++ [
+          "--disable-ssh-agent"
+        ];
       });
     })
   ];

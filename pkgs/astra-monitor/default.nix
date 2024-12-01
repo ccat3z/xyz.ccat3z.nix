@@ -1,7 +1,7 @@
 { pkgs, fetchzip, gnomeExtensions, ... }:
 let
-  version = 12;
-  sha256 = "sMibsNSSZBjtfZqPnI+kF4cpRSvNZk4ni9qALS82/mU=";
+  version = 29;
+  sha256 = "sha256-Cz9VnTcZI8VoPAvPNeK3rhvewM9jHP3RfIVx0rcD3iM=";
   inherit (gnomeExtensions) buildShellExtension;
 in
 (buildShellExtension {
@@ -9,9 +9,8 @@ in
   pname = "astra-monitor";
   description = "Resource Monitor for GNOME shell";
   link = "https://github.com/AstraExt/astra-monitor";
-  version = 12;
   name = "";
-  inherit sha256;
+  inherit version sha256;
   metadata = "";
 }).overrideAttrs {
   src = fetchzip {

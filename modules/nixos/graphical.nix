@@ -15,7 +15,7 @@
     services.xserver.enable = true;
     services.xserver.desktopManager.gnome = {
       enable = true;
-      extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+      extraGSettingsOverridePackages = [ pkgs.mutter ];
       extraGSettingsOverrides = ''
         [org.gnome.mutter]
         experimental-features=['scale-monitor-framebuffer']
@@ -23,25 +23,25 @@
     };
     services.xserver.displayManager.gdm.enable = lib.mkDefault true;
     services.gnome.core-utilities.enable = true;
-    environment.gnome.excludePackages = with pkgs.gnome; [
-      pkgs.gnome-console
-      pkgs.loupe
-      pkgs.gnome-connections
+    environment.gnome.excludePackages = with pkgs; [
+      gnome-console
+      loupe
+      gnome-connections
       gnome-weather
       gnome-maps
       gnome-logs
       gnome-music
       epiphany
-      pkgs.gnome-tour
+      gnome-tour
       gnome-contacts
     ];
-    services.gnome.tracker-miners.enable = false;
-    services.gnome.tracker.enable = false;
+    services.gnome.tinysparql.enable = false;
+    services.gnome.localsearch.enable = false;
 
     environment.systemPackages = with pkgs; [
-      gnome.eog
-      gnome.nautilus-python
-      (gnome.gnome-terminal.overrideAttrs {
+      eog
+      nautilus-python
+      (gnome-terminal.overrideAttrs {
         patches = [ ./patches/gnome-terminal-resize.patch ];
       })
     ];
@@ -72,7 +72,8 @@
     };
 
     i18n.inputMethod = {
-      enabled = "ibus";
+      enable = true;
+      type = "ibus";
       ibus.engines = with pkgs.ibus-engines; [ rime ];
     };
 

@@ -2,12 +2,11 @@
   description = "ccat3z's NixOS Flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-sd.url = "github:NixOS/nixpkgs/8a3354191c0d7144db9756a74755672387b702ba";
     sops-nix.url = "github:Mic92/sops-nix";
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dream2nix = {
@@ -20,7 +19,7 @@
     };
     nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
     jovian-nixos = {
-      url = "github:ccat3z/Jovian-NixOS/24.05-backport";
+      url = "github:ccat3z/Jovian-NixOS/24.11-backport";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

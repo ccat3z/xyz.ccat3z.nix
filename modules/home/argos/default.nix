@@ -32,7 +32,16 @@ in
 
   config = lib.mkIf config.linuxGraphical.enable {
     home.packages = [
-      (pkgs.gnomeExtensions.argos.overrideAttrs { patches = [ ./argos.patch ]; })
+      (pkgs.gnomeExtensions.argos.overrideAttrs {
+        src = pkgs.fetchFromGitHub {
+          owner = "p-e-w";
+          repo = "argos";
+          rev = "cd0de7c79072979bed41e0ad75741bbd8e113950";
+          hash = "sha256-rNS2rvHZOpl9mSoERfsX6UfEaAb6lWTI9y6HXKrl81E=";
+        };
+        version = "latest";
+        patches = [ ./argos.patch ];
+      })
     ];
 
     home.file = {
