@@ -11,48 +11,9 @@
   };
   services.postgresqlBackup = {
     enable = true;
-    databases = [ "miniflux" "immich" ];
+    databases = [ "immich" ];
     startAt = "*-*-* 23:00:00";
   };
-
-  # miniflux module will setup postgresql implicitly
-  services.miniflux = {
-    enable = false; # FIXME: Peer authentication failed for user "miniflux"
-    config = {
-      ADMIN_USERNAME = "ccat3z";
-      LISTEN_ADDR = "127.0.0.1:3741";
-    };
-    adminCredentialsFile = config.sops.secrets."miniflux.env".path;
-  };
-  sops.secrets."miniflux.env" = {
-    sopsFile = ./miniflux.env;
-    format = "binary";
-    mode = "0444";
-  };
-  services.nginx.virtualHosts."rss.ccat3z.xyz".locations."/".proxyPass = "http://127.0.0.1:3741";
-  # Wait a while for postgresql to notice dynamic user.
-  # systemd.services.miniflux.serviceConfig.ExecStartPre = [ "${pkgs.coreutils-full}/bin/sleep 5" ];
-
-  # RSSHub
-  virtualisation.oci-containers.containers = {
-    "rsshub" = rec {
-      imageFile = pkgs.dockerTools.pullImage {
-        imageName = "diygod/rsshub";
-        # 2024-11-08 See: https://hub.docker.com/r/diygod/rsshub/tags
-        imageDigest = "sha256:978a21afccd1ef2aba55395d4d5bfe8e383efa122d949b24a110033b00c53c53";
-        sha256 = "sha256-u/SC9tOytsD+0LS3HAm8xObV0+K5PvgzW/HFJ8FlnjE=";
-      };
-      image = "diygod/rsshub";
-      autoStart = true;
-      extraOptions = [ "--network=host" ];
-      environment = {
-        PORT = "1200";
-      };
-      ports = [ "127.0.0.1:1200:1200" ];
-    };
-  };
-  services.nginx.virtualHosts."rsshub.local".locations."/".proxyPass = "http://127.0.0.1:1200";
-  networking.hosts."127.0.0.1" = [ "rsshub.local" ];
 
   # Immich
   services.immich-docker = {
