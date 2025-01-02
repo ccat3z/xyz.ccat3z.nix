@@ -13,14 +13,24 @@
       url = "github:nix-community/dream2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
     jovian-nixos = {
       url = "github:ccat3z/Jovian-NixOS/24.11-backport";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Darwin inputs
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
+    nix-darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
+    };
+    nixpkgs-firefox-darwin = {
+      url = "github:bandithedoge/nixpkgs-firefox-darwin";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
+    };
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
   };
 
@@ -128,7 +138,10 @@
               modules = [
                 {
                   config = {
-                    nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
+                    nixpkgs.overlays = [
+                      inputs.nixpkgs-firefox-darwin.overlay
+                      self.overlays.default
+                    ];
                     nix.settings.flake-registry = "";
                     nix.registry.ccat3z.to = {
                       type = "path";
@@ -142,7 +155,7 @@
                 hostModule
               ];
               specialArgs = {
-                inherit (inputs) sops-nix home-manager nixpkgs-unstable;
+                inherit (inputs) sops-nix home-manager nixpkgs-unstable mac-app-util;
               };
             }
           ))

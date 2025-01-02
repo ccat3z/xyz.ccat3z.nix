@@ -1,4 +1,4 @@
-{ pkgs, lib, config, home-manager, ... }:
+{ pkgs, lib, config, home-manager, mac-app-util, ... }:
 let
   user = config.myUser;
 in
@@ -11,6 +11,8 @@ in
       home-manager.verbose = true;
 
       home-manager.users.${user} = import ./.;
+
+      home-manager.sharedModules = [ mac-app-util.homeManagerModules.default ];
     }
     (lib.mkAliasOptionModule [ "my" ] [ "home-manager" "users" user ])
   ];
